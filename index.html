@@ -1,10 +1,41 @@
-<!doctype html><html lang='es'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@300;400&display=swap' rel='stylesheet'>
-<link rel='stylesheet' href='css/style.css'></head><body>
-<section class='hero'><div class='overlay'></div><div class='content'>
-<p class='kicker'>NOS CASAMOS</p><h1>David <span>&</span> Raquel</h1>
-<p class='date'>22 · NOVIEMBRE · 2026 · 17:00</p>
-<button>Abrir invitación</button>
-<div class='scroll'>⌄</div></div></section>
-<section style='height:100vh;background:#f7f4ee;display:flex;align-items:center;justify-content:center;font-family:Inter'>Aquí empezará la siguiente sección.</section>
-</body></html>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>David & Raquel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+<section class="hero" id="portada">
+  <div class="hero__content">
+    <p class="eyebrow">Nos casamos</p>
+    <h1><span>David</span><em>&</em><span>Raquel</span></h1>
+    <div class="divider"></div>
+    <p class="date">22 · noviembre · 2026</p>
+    <p class="time">17:00 horas</p>
+    <button id="openInvitation">Abrir invitación</button>
+  </div>
+</section>
+
+<section class="countdown-section" id="cuenta-atras">
+  <div class="countdown-inner">
+    <p class="script">Faltan</p>
+    <h2>Cuenta atrás</h2>
+    <div class="countdown" aria-live="polite">
+      <div class="count-item"><strong id="days">000</strong><span>Días</span></div>
+      <div class="count-item"><strong id="hours">00</strong><span>Horas</span></div>
+      <div class="count-item"><strong id="minutes">00</strong><span>Min</span></div>
+      <div class="count-item"><strong id="seconds">00</strong><span>Seg</span></div>
+    </div>
+    <p class="closing">para celebrar juntos nuestro gran día</p>
+  </div>
+</section>
+</main>
+<script src="js/app.js"></script>
+</body>
+</html>
