@@ -1,1 +1,53 @@
-const target=new Date("2026-11-22T17:00:00+01:00");const ids=["days","hours","minutes","seconds"].map(id=>document.getElementById(id));function pad(n,l=2){return String(n).padStart(l,"0")}function tick(){let d=Math.max(0,target-Date.now());let v=[Math.floor(d/86400000),Math.floor(d%86400000/3600000),Math.floor(d%3600000/60000),Math.floor(d%60000/1000)];ids.forEach((e,i)=>e.textContent=pad(v[i],i===0?3:2))}document.getElementById("openInvitation").onclick=()=>document.getElementById("cuenta-atras").scrollIntoView({behavior:"smooth"});const o=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("is-visible");o.unobserve(e.target)}}),{threshold:.18});document.querySelectorAll(".reveal").forEach(e=>o.observe(e));tick();setInterval(tick,1000);
+const WEDDING_DATE = new Date("2026-11-22T17:00:00+01:00");
+
+const els = {
+  days: document.getElementById("days"),
+  hours: document.getElementById("hours"),
+  minutes: document.getElementById("minutes"),
+  seconds: document.getElementById("seconds"),
+  openButton: document.getElementById("openInvitation"),
+  countdownSection: document.getElementById("cuenta-atras")
+};
+
+function pad(value, length = 2) {
+  return String(value).padStart(length, "0");
+}
+
+function updateCountdown() {
+  let difference = WEDDING_DATE.getTime() - Date.now();
+  if (difference < 0) difference = 0;
+
+  const days = Math.floor(difference / 86_400_000);
+  const hours = Math.floor((difference % 86_400_000) / 3_600_000);
+  const minutes = Math.floor((difference % 3_600_000) / 60_000);
+  const seconds = Math.floor((difference % 60_000) / 1_000);
+
+  els.days.textContent = pad(days, 3);
+  els.hours.textContent = pad(hours);
+  els.minutes.textContent = pad(minutes);
+  els.seconds.textContent = pad(seconds);
+}
+
+els.openButton.addEventListener("click", () => {
+  els.countdownSection.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
+
+const observer = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.16 }
+);
+
+document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
+
+updateCountdown();
+window.setInterval(updateCountdown, 1000);
