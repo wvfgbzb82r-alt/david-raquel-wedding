@@ -1,1 +1,1 @@
-document.getElementById("openBtn").onclick=()=>alert("En la v0.2 comenzará la animación de apertura.");
+document.getElementById('open').onclick=()=>document.querySelector('.next').scrollIntoView({behavior:'smooth'});
