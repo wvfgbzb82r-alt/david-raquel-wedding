@@ -1,9 +1,8 @@
-# David & Raquel
-Portada y cuenta atrás.
+# David & Raquel — v2
 
-- Fondo claro.
-- Letras doradas.
-- Sin sección Bienvenida.
-- Cuenta atrás hasta el 22/11/2026 a las 17:00.
-
-Copia estos archivos dentro de tu repositorio, haz Commit y luego Push origin.
+Cambios incluidos:
+- “Nos casamos” ligeramente más grande.
+- 22, NOVIEMBRE y 2026 con el mismo tamaño.
+- “Cuenta atrás” colocado encima de “Faltan”.
+- Texto final: “para celebrar juntos nuestro gran día”.
+- Añadido el inicio de la sección “Nuestra historia”.
