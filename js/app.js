@@ -1,1 +1,2 @@
-document.getElementById('open').onclick=()=>document.querySelector('.next').scrollIntoView({behavior:'smooth'});
+const btn=document.getElementById('open');const c=document.getElementById('content');btn.onclick=()=>{document.querySelector('.hero').style.display='none';c.classList.remove('hidden');tick();setInterval(tick,1000);}
+function tick(){const t=new Date('2026-11-22T17:00:00')-new Date();const d=Math.max(0,Math.floor(t/86400000));const h=Math.floor(t/3600000)%24,m=Math.floor(t/60000)%60,s=Math.floor(t/1000)%60;count.textContent=`${d} días ${h} h ${m} min ${s} s`; }
