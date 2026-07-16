@@ -1,0 +1,1 @@
+Sustituye index.html, css/style.css y js/app.js. Añade la carpeta assets/images. Luego Commit y Push origin.
