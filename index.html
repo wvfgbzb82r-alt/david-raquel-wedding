@@ -222,6 +222,63 @@
         </article>
       </div>
     </section>
+    <section class="rsvp" id="confirmacion" aria-labelledby="rsvp-title">
+      <div class="rsvp__intro reveal">
+        <p class="section-kicker">Confirmación</p>
+        <h2 id="rsvp-title">Nos encantará contar contigo</h2>
+        <div class="section-divider" aria-hidden="true"></div>
+        <p>
+          Por favor, confirma tu asistencia antes del 15 de octubre de 2026
+          para ayudarnos a preparar este día con todo el cariño.
+        </p>
+      </div>
+
+      <form class="rsvp-form reveal" id="rsvpForm" novalidate>
+        <div class="form-field form-field--full">
+          <label for="guestName">Nombre y apellidos</label>
+          <input id="guestName" name="nombre" type="text" autocomplete="name" required>
+          <small class="field-error" data-error-for="guestName"></small>
+        </div>
+
+        <fieldset class="form-field form-field--full attendance-field">
+          <legend>¿Podrás acompañarnos?</legend>
+          <label class="radio-option">
+            <input type="radio" name="asistencia" value="Sí" required>
+            <span>Sí, allí estaré</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="asistencia" value="No">
+            <span>No podré asistir</span>
+          </label>
+          <small class="field-error" data-error-for="attendance"></small>
+        </fieldset>
+
+        <div class="form-field">
+          <label for="companion">Nombre del acompañante</label>
+          <input id="companion" name="acompanante" type="text" autocomplete="name">
+        </div>
+
+        <div class="form-field">
+          <label for="allergies">Alergias o preferencias alimentarias</label>
+          <input id="allergies" name="alergias" type="text">
+        </div>
+
+        <div class="form-field form-field--full">
+          <label for="comments">¿Quieres decirnos algo?</label>
+          <textarea id="comments" name="comentarios" rows="5"></textarea>
+        </div>
+
+        <input type="hidden" name="fecha_envio" id="submissionDate">
+
+        <div class="form-actions form-field--full">
+          <button class="primary-button rsvp-submit" type="submit">
+            Confirmar asistencia
+          </button>
+          <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
   </main>
 
   <script src="js/app.js"></script>
