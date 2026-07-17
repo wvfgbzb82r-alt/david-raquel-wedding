@@ -144,3 +144,74 @@ rsvpForm.addEventListener("submit", async event => {
     submitButton.textContent = originalButtonText;
   }
 });
+
+const welcomeScreen=document.getElementById("welcomeScreen");
+const enterInvitation=document.getElementById("enterInvitation");
+const musicControl=document.getElementById("musicControl");
+const backgroundMusic=document.getElementById("backgroundMusic");
+const scrollProgress=document.getElementById("scrollProgress");
+
+enterInvitation.addEventListener("click",()=>{
+  welcomeScreen.classList.add("is-hidden");
+  document.body.classList.remove("is-locked");
+  backgroundMusic.play().then(()=>{
+    musicControl.classList.add("is-playing");
+    musicControl.setAttribute("aria-pressed","true");
+  }).catch(()=>{});
+});
+
+musicControl.addEventListener("click",async()=>{
+  if(backgroundMusic.paused){
+    try{
+      await backgroundMusic.play();
+      musicControl.classList.add("is-playing");
+      musicControl.setAttribute("aria-pressed","true");
+    }catch(error){}
+  }else{
+    backgroundMusic.pause();
+    musicControl.classList.remove("is-playing");
+    musicControl.setAttribute("aria-pressed","false");
+  }
+});
+
+function updateScrollProgress(){
+  const max=document.documentElement.scrollHeight-window.innerHeight;
+  const value=max>0?(window.scrollY/max)*100:0;
+  scrollProgress.style.width=`${Math.min(100,Math.max(0,value))}%`;
+}
+window.addEventListener("scroll",updateScrollProgress,{passive:true});
+window.addEventListener("resize",updateScrollProgress);
+updateScrollProgress();
+
+const TEMPORARY_ACCESS_CODE="DR221126";
+const accessGate=document.getElementById("accessGate");
+const accessForm=document.getElementById("accessForm");
+const accessCode=document.getElementById("accessCode");
+const accessMessage=document.getElementById("accessMessage");
+
+function grantAccess(){
+  accessGate.classList.add("is-hidden");
+  sessionStorage.setItem("wedding_access_granted","true");
+}
+if(sessionStorage.getItem("wedding_access_granted")==="true"){grantAccess();}
+accessForm.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(accessCode.value.trim().toUpperCase()===TEMPORARY_ACCESS_CODE){
+    accessMessage.textContent="";
+    grantAccess();
+  }else{
+    accessMessage.textContent="Código incorrecto.";
+    accessCode.select();
+  }
+});
+
+document.querySelectorAll("[data-copy]").forEach(btn=>{
+  btn.addEventListener("click",async()=>{
+    try{
+      await navigator.clipboard.writeText(btn.dataset.copy);
+      document.getElementById("copyStatus").textContent="IBAN copiado";
+    }catch(e){
+      document.getElementById("copyStatus").textContent="No se pudo copiar automáticamente";
+    }
+  });
+});

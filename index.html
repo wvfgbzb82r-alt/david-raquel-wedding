@@ -4,15 +4,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f7f2e8">
+  <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="description" content="Invitación de boda de David y Raquel">
-  <title>David & Raquel · 22 de noviembre de 2026</title>
+  <title>David & Raquel · Nuestra boda</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="is-locked">
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <div class="access-gate" id="accessGate">
+    <div class="access-card">
+      <p class="access-kicker">Invitación privada</p>
+      <h1>David &amp; Raquel</h1>
+      <div class="access-divider"></div>
+      <p>Introduce el código de acceso.</p>
+      <form id="accessForm">
+        <input id="accessCode" type="password" required placeholder="Código">
+        <button type="submit">Entrar</button>
+        <p id="accessMessage" class="access-message"></p>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="welcome-screen" id="welcomeScreen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="welcome-screen__content">
+      <p class="welcome-screen__kicker">Nos casamos</p>
+      <h1 id="welcomeTitle" class="welcome-screen__names">
+        <span>David</span><em>&amp;</em><span>Raquel</span>
+      </h1>
+      <div class="welcome-screen__divider" aria-hidden="true"></div>
+      <p class="welcome-screen__date">22 · noviembre · 2026</p>
+      <p class="welcome-screen__phrase">El comienzo de nuestro para siempre</p>
+      <button class="welcome-screen__button" id="enterInvitation" type="button">Abrir invitación</button>
+    </div>
+  </div>
+
   <main>
     <section class="hero" id="portada" aria-labelledby="titulo-principal">
       <div class="hero__content">
@@ -286,7 +317,68 @@
       </form>
     </section>
 
+    
+    <section class="gifts" id="regalos" aria-labelledby="gifts-title">
+      <div class="gifts__inner reveal">
+        <p class="section-kicker">Un detalle</p>
+        <h2 id="gifts-title">El mejor regalo</h2>
+        <div class="section-divider"></div>
+        <p class="gifts__lead">
+          Vuestra presencia será el mejor regalo. Si además queréis ayudarnos
+          a comenzar esta nueva etapa, podéis hacerlo mediante transferencia bancaria.
+        </p>
+        <div class="gift-card">
+          <span class="gift-card__symbol">♡</span>
+          <p class="gift-card__title">Cuenta para regalos</p>
+          <div class="gift-data">
+            <span>IBAN</span>
+            <strong>ES54 0182 0451 4502 0164 3567</strong>
+            <button class="copy-button" type="button" data-copy="ES5401820451450201643567">Copiar IBAN</button>
+          </div>
+          <div class="gift-phones">
+            <p>Para cualquier duda:</p>
+            <a href="tel:+34652199526">652 199 526</a>
+            <span>·</span>
+            <a href="tel:+34640108316">640 108 316</a>
+          </div>
+          <p id="copyStatus" class="copy-status"></p>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="farewell" id="despedida" aria-labelledby="farewell-title">
+      <div class="farewell__inner reveal">
+        <p class="section-kicker">Nos vemos muy pronto</p>
+        <h2 id="farewell-title">Gracias por acompañarnos</h2>
+        <div class="section-divider" aria-hidden="true"></div>
+        <p>
+          Gracias por formar parte de nuestra historia. Os esperamos con muchísima ilusión
+          para celebrar juntos uno de los días más importantes de nuestras vidas.
+        </p>
+        <p class="farewell__names">David &amp; Raquel</p>
+        <p class="farewell__date">22 · noviembre · 2026</p>
+        <a class="back-to-top" href="#portada">Volver al inicio ↑</a>
+      </div>
+    </section>
+
   </main>
+
+  <button class="music-control" id="musicControl" type="button"
+          aria-label="Activar o pausar música" aria-pressed="false">
+    <span aria-hidden="true">♪</span>
+  </button>
+  <audio id="backgroundMusic" loop preload="none">
+    <source src="assets/music/boda.mp3" type="audio/mpeg">
+  </audio>
+
+  <nav class="floating-nav" aria-label="Navegación de la invitación">
+    <a href="#portada" aria-label="Ir a portada">Inicio</a>
+    <a href="#historia" aria-label="Ir a nuestra historia">Historia</a>
+    <a href="#programa" aria-label="Ir al programa">Programa</a>
+    <a href="#ubicaciones" aria-label="Ir a ubicaciones">Lugares</a>
+    <a href="#confirmacion" aria-label="Ir a confirmación">Confirmar</a>
+  </nav>
 
   <script src="js/app.js"></script>
 </body>
