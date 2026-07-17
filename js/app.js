@@ -1,1 +1,43 @@
-const target=new Date("2026-11-22T17:00:00+01:00");function pad(v,l=2){return String(v).padStart(l,"0")}function tick(){let d=target-Date.now();if(d<0)d=0;days.textContent=pad(Math.floor(d/86400000),3);hours.textContent=pad(Math.floor((d%86400000)/3600000));minutes.textContent=pad(Math.floor((d%3600000)/60000));seconds.textContent=pad(Math.floor((d%60000)/1000))}openInvitation.onclick=()=>document.getElementById("cuenta-atras").scrollIntoView({behavior:"smooth"});const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("is-visible");observer.unobserve(e.target)}}),{threshold:.15});document.querySelectorAll(".reveal").forEach(e=>observer.observe(e));tick();setInterval(tick,1000);
+const WEDDING_DATE = new Date("2026-11-22T17:00:00+01:00");
+const els = {
+  days: document.getElementById("days"),
+  hours: document.getElementById("hours"),
+  minutes: document.getElementById("minutes"),
+  seconds: document.getElementById("seconds"),
+  openButton: document.getElementById("openInvitation"),
+  countdownSection: document.getElementById("cuenta-atras")
+};
+
+function pad(value, length = 2) {
+  return String(value).padStart(length, "0");
+}
+
+function updateCountdown() {
+  let difference = WEDDING_DATE.getTime() - Date.now();
+  if (difference < 0) difference = 0;
+  const days = Math.floor(difference / 86400000);
+  const hours = Math.floor((difference % 86400000) / 3600000);
+  const minutes = Math.floor((difference % 3600000) / 60000);
+  const seconds = Math.floor((difference % 60000) / 1000);
+  els.days.textContent = pad(days, 3);
+  els.hours.textContent = pad(hours);
+  els.minutes.textContent = pad(minutes);
+  els.seconds.textContent = pad(seconds);
+}
+
+els.openButton.addEventListener("click", () => {
+  els.countdownSection.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.16 });
+
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+updateCountdown();
+setInterval(updateCountdown, 1000);

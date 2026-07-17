@@ -1,15 +1,229 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>David & Raquel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"></head><body><main>
-<section class="hero"><div class="hero__content"><p class="hero__eyebrow">Nos casamos</p><h1 class="hero__names"><span>David</span><span class="hero__ampersand">&</span><span>Raquel</span></h1><div class="hero__divider"></div><p class="hero__date"><span>22</span><span>noviembre</span><span>2026</span></p><p class="hero__time">17:00 horas</p><button class="primary-button" id="openInvitation">Abrir invitación</button></div></section>
-<section class="countdown-section" id="cuenta-atras"><div class="countdown-section__inner"><h2>Cuenta atrás</h2><p class="countdown-section__script">Faltan</p><div class="countdown"><article class="countdown__item"><strong id="days">000</strong><span>Días</span></article><article class="countdown__item"><strong id="hours">00</strong><span>Horas</span></article><article class="countdown__item"><strong id="minutes">00</strong><span>Min</span></article><article class="countdown__item"><strong id="seconds">00</strong><span>Seg</span></article></div><p class="countdown-section__closing">para celebrar juntos nuestro gran día</p></div></section>
-<section class="story"><div class="story__intro reveal"><p class="section-kicker">Nuestra historia</p><h2>Cómo empezó todo</h2><div class="section-divider"></div><p class="story__lead">Nos encontramos en un momento inesperado que cambió nuestras vidas para siempre. Desde ese día, cada instante juntos se ha convertido en una historia de amor que merece ser contada. Quizá nuestro hilo rojo llevaba años entrelazando nuestros caminos, esperando el momento perfecto para unirnos. Hoy, con el corazón lleno de ilusión, queremos compartir con vosotros el comienzo de nuestro para siempre.</p></div><div class="timeline">
-<article class="timeline__item reveal"><span class="timeline__number">01</span><div class="timeline__content"><span class="timeline__icon">♥</span><p class="timeline__eyebrow">Nos conocimos</p><h3>Algo especial</h3><p>Y aunque no era el momento, sentimos que había algo especial entre nosotros.</p></div></article>
-<article class="timeline__item reveal"><span class="timeline__number">02</span><div class="timeline__content"><span class="timeline__icon">✦</span><p class="timeline__eyebrow">Nuestro primer viaje</p><h3>Empezamos a soñar</h3><p>Apenas un mes y medio después emprendimos nuestro primer viaje juntos. Desde entonces, no hemos dejado de soñar, descubrir lugares y construir una vida compartida.</p></div></article>
-<article class="timeline__item reveal"><span class="timeline__number">03</span><div class="timeline__content"><span class="timeline__icon">◇</span><p class="timeline__eyebrow">La pedida</p><h3>Un atardecer inolvidable</h3><p>Un atardecer, en un lugar muy especial, llegó una pregunta que cambiaría nuestras vidas para siempre. Y, por supuesto, la respuesta fue un “sí” lleno de ilusión.</p></div></article>
-<article class="timeline__item reveal"><span class="timeline__number">04</span><div class="timeline__content"><span class="timeline__icon">♡</span><p class="timeline__eyebrow">22 de noviembre de 2026</p><h3>Una nueva etapa</h3><p>Y aquí estamos. A punto de comenzar la aventura más bonita de todas. Nos haría muchísima ilusión que formarais parte del primer capítulo de esta nueva e ilusionante etapa de nuestras vidas.</p></div></article></div></section>
-<section class="program"><div class="program__intro reveal"><p class="section-kicker">Programa</p><h2>Nuestro gran día</h2><div class="section-divider"></div><p>Cada momento de este día ha sido preparado con muchísima ilusión. Esperamos compartirlo con vosotros.</p></div><div class="program__timeline">
-<article class="program__item reveal"><time>16:30</time><div class="program__dot"></div><div class="program__content"><span>✦</span><h3>Recepción de invitados</h3><p>Comenzaremos a recibiros para dar inicio a un día muy especial.</p></div></article>
-<article class="program__item reveal"><time>17:00</time><div class="program__dot"></div><div class="program__content"><span>♡</span><h3>Ceremonia</h3><p>El momento en el que diremos «sí, quiero».</p></div></article>
-<article class="program__item reveal"><time>19:30</time><div class="program__dot"></div><div class="program__content"><span>◇</span><h3>Cóctel</h3><p>Brindaremos, compartiremos risas y comenzaremos la celebración.</p></div></article>
-<article class="program__item reveal"><time>20:30</time><div class="program__dot"></div><div class="program__content"><span>✧</span><h3>Cena</h3><p>Un momento para disfrutar juntos alrededor de la mesa.</p></div></article>
-<article class="program__item reveal"><time>22:00</time><div class="program__dot"></div><div class="program__content"><span>★</span><h3>¡Empieza la fiesta!</h3><p>Baile, música, sorpresas… y muchas ganas de celebrar.</p></div></article>
-</div></section></main><script src="js/app.js"></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f2e8">
+  <meta name="description" content="Invitación de boda de David y Raquel">
+  <title>David & Raquel · 22 de noviembre de 2026</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main>
+    <section class="hero" id="portada" aria-labelledby="titulo-principal">
+      <div class="hero__content">
+        <p class="hero__eyebrow">Nos casamos</p>
+        <h1 id="titulo-principal" class="hero__names">
+          <span>David</span>
+          <span class="hero__ampersand">&</span>
+          <span>Raquel</span>
+        </h1>
+        <div class="hero__divider" aria-hidden="true"></div>
+        <p class="hero__date">
+          <span>22</span><span>noviembre</span><span>2026</span>
+        </p>
+        <p class="hero__time">17:00 horas</p>
+        <button class="primary-button" id="openInvitation" type="button">Abrir invitación</button>
+      </div>
+    </section>
+
+    <section class="countdown-section" id="cuenta-atras" aria-labelledby="countdown-title">
+      <div class="countdown-section__inner">
+        <h2 id="countdown-title">Cuenta atrás</h2>
+        <p class="countdown-section__script">Faltan</p>
+        <div class="countdown" role="timer" aria-live="polite">
+          <article class="countdown__item"><strong id="days">000</strong><span>Días</span></article>
+          <article class="countdown__item"><strong id="hours">00</strong><span>Horas</span></article>
+          <article class="countdown__item"><strong id="minutes">00</strong><span>Min</span></article>
+          <article class="countdown__item"><strong id="seconds">00</strong><span>Seg</span></article>
+        </div>
+        <p class="countdown-section__closing">para celebrar juntos nuestro gran día</p>
+      </div>
+    </section>
+
+    <section class="story" id="historia" aria-labelledby="story-title">
+      <div class="story__intro reveal">
+        <p class="section-kicker">Nuestra historia</p>
+        <h2 id="story-title">Cómo empezó todo</h2>
+        <div class="section-divider" aria-hidden="true"></div>
+        <p class="story__lead">
+          Nos encontramos en un momento inesperado que cambió nuestras vidas para siempre.
+          Desde ese día, cada instante juntos se ha convertido en una historia de amor que
+          merece ser contada. Quizá nuestro hilo rojo llevaba años entrelazando nuestros
+          caminos, esperando el momento perfecto para unirnos. Hoy, con el corazón lleno
+          de ilusión, queremos compartir con vosotros el comienzo de nuestro para siempre.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <article class="timeline__item reveal">
+          <span class="timeline__number">01</span>
+          <div class="timeline__content">
+            <span class="timeline__icon">♥</span>
+            <p class="timeline__eyebrow">Nos conocimos</p>
+            <h3>Algo especial</h3>
+            <p>Y aunque no era el momento, sentimos que había algo especial entre nosotros.</p>
+          </div>
+        </article>
+
+        <article class="timeline__item reveal">
+          <span class="timeline__number">02</span>
+          <div class="timeline__content">
+            <span class="timeline__icon">✦</span>
+            <p class="timeline__eyebrow">Nuestro primer viaje</p>
+            <h3>Empezamos a soñar</h3>
+            <p>
+              Apenas un mes y medio después emprendimos nuestro primer viaje juntos.
+              Desde entonces, no hemos dejado de soñar, descubrir lugares y construir
+              una vida compartida.
+            </p>
+          </div>
+        </article>
+
+        <article class="timeline__item reveal">
+          <span class="timeline__number">03</span>
+          <div class="timeline__content">
+            <span class="timeline__icon">◇</span>
+            <p class="timeline__eyebrow">La pedida</p>
+            <h3>Un atardecer inolvidable</h3>
+            <p>
+              Un atardecer, en un lugar muy especial, llegó una pregunta que cambiaría
+              nuestras vidas para siempre. Y, por supuesto, la respuesta fue un “sí”
+              lleno de ilusión.
+            </p>
+          </div>
+        </article>
+
+        <article class="timeline__item reveal">
+          <span class="timeline__number">04</span>
+          <div class="timeline__content">
+            <span class="timeline__icon">♡</span>
+            <p class="timeline__eyebrow">22 de noviembre de 2026</p>
+            <h3>Una nueva etapa</h3>
+            <p>
+              Y aquí estamos. A punto de comenzar la aventura más bonita de todas.
+              Nos haría muchísima ilusión que formarais parte del primer capítulo
+              de esta nueva e ilusionante etapa de nuestras vidas.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="program" id="programa" aria-labelledby="program-title">
+      <div class="program__intro reveal">
+        <p class="section-kicker">Programa</p>
+        <h2 id="program-title">Nuestro gran día</h2>
+        <div class="section-divider" aria-hidden="true"></div>
+        <p>
+          Cada momento de este día ha sido preparado con muchísima ilusión.
+          Esperamos compartirlo con vosotros.
+        </p>
+      </div>
+
+      <div class="program__timeline">
+        <article class="program__item reveal">
+          <time datetime="2026-11-22T16:30:00+01:00">16:30</time>
+          <div class="program__dot" aria-hidden="true"></div>
+          <div class="program__content">
+            <span class="program__icon" aria-hidden="true">✦</span>
+            <h3>Recepción de invitados</h3>
+            <p>Comenzaremos a recibiros para dar inicio a un día muy especial.</p>
+          </div>
+        </article>
+
+        <article class="program__item reveal">
+          <time datetime="2026-11-22T17:00:00+01:00">17:00</time>
+          <div class="program__dot" aria-hidden="true"></div>
+          <div class="program__content">
+            <span class="program__icon" aria-hidden="true">♡</span>
+            <h3>Ceremonia</h3>
+            <p>El momento en el que diremos «sí, quiero».</p>
+          </div>
+        </article>
+
+        <article class="program__item reveal">
+          <time datetime="2026-11-22T19:30:00+01:00">19:30</time>
+          <div class="program__dot" aria-hidden="true"></div>
+          <div class="program__content">
+            <span class="program__icon" aria-hidden="true">◇</span>
+            <h3>Cóctel</h3>
+            <p>Brindaremos, compartiremos risas y comenzaremos la celebración.</p>
+          </div>
+        </article>
+
+        <article class="program__item reveal">
+          <time datetime="2026-11-22T20:30:00+01:00">20:30</time>
+          <div class="program__dot" aria-hidden="true"></div>
+          <div class="program__content">
+            <span class="program__icon" aria-hidden="true">✧</span>
+            <h3>Cena</h3>
+            <p>Un momento para disfrutar juntos alrededor de la mesa.</p>
+          </div>
+        </article>
+
+        <article class="program__item reveal">
+          <time datetime="2026-11-22T22:00:00+01:00">22:00</time>
+          <div class="program__dot" aria-hidden="true"></div>
+          <div class="program__content">
+            <span class="program__icon" aria-hidden="true">★</span>
+            <h3>¡Empieza la fiesta!</h3>
+            <p>Baile, música, sorpresas… y muchas ganas de celebrar.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="locations" id="ubicaciones" aria-labelledby="locations-title">
+      <div class="locations__intro reveal">
+        <p class="section-kicker">Dónde nos vemos</p>
+        <h2 id="locations-title">Ceremonia y celebración</h2>
+        <div class="section-divider" aria-hidden="true"></div>
+        <p>Dos lugares especiales para un día que recordaremos siempre.</p>
+      </div>
+
+      <div class="locations__grid">
+        <article class="location-card reveal">
+          <span class="location-card__symbol" aria-hidden="true">♡</span>
+          <p class="location-card__eyebrow">Ceremonia</p>
+          <h3>Iglesia Nuestra Señora de los Dolores</h3>
+          <p class="location-card__time">17:00 h</p>
+          <address>
+            C/ Gran Vía, 16<br>
+            21410 Isla Cristina, Huelva
+          </address>
+          <a class="location-card__link"
+             href="https://maps.app.goo.gl/Jamyn2j72FHvNAZL6"
+             target="_blank"
+             rel="noopener noreferrer">
+            Cómo llegar <span aria-hidden="true">→</span>
+          </a>
+        </article>
+
+        <article class="location-card reveal">
+          <span class="location-card__symbol" aria-hidden="true">✦</span>
+          <p class="location-card__eyebrow">Celebración</p>
+          <h3>Espacio Capitana</h3>
+          <p class="location-card__time">19:30 h</p>
+          <address>
+            Plaza de la Ribera, 7 · Planta 2<br>
+            21410 Isla Cristina, Huelva
+          </address>
+          <a class="location-card__link"
+             href="https://maps.app.goo.gl/ya43y34Dr1dVxKy76"
+             target="_blank"
+             rel="noopener noreferrer">
+            Cómo llegar <span aria-hidden="true">→</span>
+          </a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
