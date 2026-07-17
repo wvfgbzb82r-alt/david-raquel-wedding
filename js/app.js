@@ -42,16 +42,17 @@ document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-
-// Confirmación de asistencia
-const RSVP_ENDPOINT = "PEGA_AQUI_LA_URL_DE_TU_WEB_APP";
+// Confirmación de asistencia conectada con Supabase
+const SUPABASE_URL = "https://impauxkdtcwngvlknysa.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_TN0nnQZ_g6l1RNTuE4f9qg_iaI_USWV";
 
 const rsvpForm = document.getElementById("rsvpForm");
 const formStatus = document.getElementById("formStatus");
-const submissionDate = document.getElementById("submissionDate");
 
 function clearRsvpErrors() {
-  document.querySelectorAll(".field-error").forEach(el => el.textContent = "");
+  document.querySelectorAll(".field-error").forEach(element => {
+    element.textContent = "";
+  });
   formStatus.textContent = "";
   formStatus.className = "form-status";
 }
@@ -61,7 +62,9 @@ function validateRsvpForm() {
   let valid = true;
 
   const guestName = document.getElementById("guestName");
-  const attendance = rsvpForm.querySelector('input[name="asistencia"]:checked');
+  const attendance = rsvpForm.querySelector(
+    'input[name="asistencia"]:checked'
+  );
 
   if (!guestName.value.trim()) {
     document.querySelector('[data-error-for="guestName"]').textContent =
@@ -78,42 +81,66 @@ function validateRsvpForm() {
   return valid;
 }
 
+function getRsvpPayload() {
+  const formData = new FormData(rsvpForm);
+
+  return {
+    nombre: String(formData.get("nombre") || "").trim(),
+    telefono: String(formData.get("telefono") || "").trim(),
+    asistencia: String(formData.get("asistencia") || "").trim(),
+    acompanante: String(formData.get("acompanante") || "").trim(),
+    alergias: String(formData.get("alergias") || "").trim(),
+    comentarios: String(formData.get("comentarios") || "").trim()
+  };
+}
+
 rsvpForm.addEventListener("submit", async event => {
   event.preventDefault();
 
-  if (!validateRsvpForm()) return;
-
-  if (RSVP_ENDPOINT.includes("PEGA_AQUI")) {
-    formStatus.textContent =
-      "El formulario está preparado, pero todavía falta conectar la URL de Google Apps Script.";
-    formStatus.classList.add("is-error");
+  if (!validateRsvpForm()) {
     return;
   }
 
   const submitButton = rsvpForm.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.textContent;
+
   submitButton.disabled = true;
-  submissionDate.value = new Date().toISOString();
-  formStatus.textContent = "Enviando confirmación…";
+  submitButton.textContent = "Enviando…";
+  formStatus.textContent = "Estamos guardando tu confirmación…";
 
   try {
-    const response = await fetch(RSVP_ENDPOINT, {
-      method: "POST",
-      body: new FormData(rsvpForm)
-    });
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/invitados`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(getRsvpPayload())
+      }
+    );
 
     if (!response.ok) {
-      throw new Error("No se pudo enviar la confirmación.");
+      const errorText = await response.text();
+      throw new Error(errorText || "No se pudo guardar la confirmación.");
     }
 
-    formStatus.textContent =
-      "¡Muchas gracias! Hemos recibido tu confirmación.";
-    formStatus.classList.add("is-success");
     rsvpForm.reset();
-  } catch (error) {
     formStatus.textContent =
-      "No hemos podido enviar la confirmación. Inténtalo de nuevo en unos minutos.";
-    formStatus.classList.add("is-error");
+      "¡Muchas gracias! Hemos recibido tu confirmación. " +
+      "Estamos deseando celebrar este día contigo.";
+    formStatus.className = "form-status is-success";
+  } catch (error) {
+    console.error("Error al enviar la confirmación:", error);
+    formStatus.textContent =
+      "No hemos podido guardar la confirmación. " +
+      "Comprueba la conexión e inténtalo de nuevo.";
+    formStatus.className = "form-status is-error";
   } finally {
     submitButton.disabled = false;
+    submitButton.textContent = originalButtonText;
   }
 });

@@ -178,6 +178,7 @@ button{font:inherit}
 }
 
 .form-field input[type="text"],
+.form-field input[type="tel"],
 .form-field textarea {
   width: 100%;
   border: 0;
@@ -197,6 +198,7 @@ button{font:inherit}
 }
 
 .form-field input[type="text"]:focus,
+.form-field input[type="tel"]:focus,
 .form-field textarea:focus {
   border-color: var(--gold);
   box-shadow: 0 1px 0 var(--gold);
@@ -284,5 +286,184 @@ button{font:inherit}
   .rsvp {
     padding-left: 14px;
     padding-right: 14px;
+  }
+}
+
+
+/* Regalos y despedida */
+.gifts,
+.farewell {
+  position: relative;
+  overflow: hidden;
+  padding: 110px 20px 130px;
+}
+
+.gifts {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(216,192,141,.10), transparent 25%),
+    radial-gradient(circle at 85% 80%, rgba(185,152,87,.08), transparent 25%),
+    var(--ivory);
+}
+
+.gifts__inner,
+.farewell__inner {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 820px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.gifts h2,
+.farewell h2 {
+  margin: 0;
+  color: var(--gold);
+  font-family: var(--script);
+  font-size: clamp(3.8rem, 9vw, 6.4rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.gifts__lead,
+.farewell__inner > p {
+  margin: 0 auto;
+  max-width: 700px;
+  font-family: var(--serif);
+  font-size: clamp(1.12rem, 2.4vw, 1.35rem);
+  line-height: 1.8;
+}
+
+.gift-card {
+  margin: 54px auto 0;
+  max-width: 660px;
+  padding: 42px 32px;
+  border: 1px solid rgba(185,152,87,.24);
+  border-radius: 28px;
+  background: rgba(255,255,255,.42);
+  box-shadow: var(--shadow);
+}
+
+.gift-card__symbol {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(185,152,87,.45);
+  border-radius: 50%;
+  color: var(--gold);
+  font-family: var(--serif);
+  font-size: 1.35rem;
+}
+
+.gift-card__title {
+  margin: 0 0 12px;
+  color: var(--gold-dark);
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.gift-card__text {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.farewell {
+  min-height: 88svh;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,.55)),
+    var(--ivory-soft);
+}
+
+.farewell__names {
+  margin-top: 36px !important;
+  color: var(--gold);
+  font-family: var(--script) !important;
+  font-size: clamp(3.7rem, 8vw, 5.8rem) !important;
+  line-height: 1 !important;
+}
+
+.farewell__date {
+  margin-top: 10px !important;
+  color: var(--gold-dark);
+  font-family: var(--serif) !important;
+  font-size: 1.15rem !important;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.back-to-top {
+  display: inline-block;
+  margin-top: 34px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gold);
+  color: var(--gold-dark);
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* Navegación flotante */
+.floating-nav {
+  position: fixed;
+  z-index: 50;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  max-width: calc(100vw - 24px);
+  padding: 7px;
+  border: 1px solid rgba(185,152,87,.25);
+  border-radius: 999px;
+  background: rgba(251,248,242,.9);
+  box-shadow: 0 12px 40px rgba(119,94,51,.15);
+  backdrop-filter: blur(12px);
+}
+
+.floating-nav a {
+  padding: 10px 13px;
+  border-radius: 999px;
+  color: var(--gold-dark);
+  font-size: .66rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: .2s ease;
+}
+
+.floating-nav a:hover,
+.floating-nav a:focus-visible {
+  background: var(--gold);
+  color: #fff;
+  outline: none;
+}
+
+@media (max-width: 620px) {
+  .floating-nav a {
+    padding: 9px 10px;
+    font-size: .58rem;
+  }
+
+  .gifts,
+  .farewell {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+
+@media (max-width: 430px) {
+  .floating-nav a:nth-child(2),
+  .floating-nav a:nth-child(4) {
+    display: none;
   }
 }
