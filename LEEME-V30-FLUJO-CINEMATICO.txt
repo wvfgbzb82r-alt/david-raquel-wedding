@@ -1,0 +1,27 @@
+DAVID & RAQUEL — V30 FLUJO CINEMATOGRÁFICO
+
+SECUENCIA:
+1. Fondo negro con código privado.
+2. Al validar, aparece «David & Raquel» con fundido y desenfoque.
+3. Después aparece el sobre.
+4. El invitado pulsa únicamente el sello D&R.
+5. Empieza la música, se abre el sobre y sale la carta.
+6. La carta crece y da paso directamente a la invitación.
+7. No aparece ningún botón «Abrir invitación».
+
+CAMBIOS:
+- Eliminado el botón del hero.
+- El código privado es la primera pantalla real.
+- La introducción ya no se reproduce detrás de la pantalla del código.
+- Flujo ordenado y automático.
+- Sobre con fondo oscuro, papel cálido y sombras más realistas.
+- Se mantiene el MP3 integrado.
+- No necesita cambios de Supabase.
+
+INSTALACIÓN:
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. No ejecutes SQL.
+4. Commit to main y Push origin.
+5. Abre en una pestaña privada:
+   https://davidyraquel.es/?v=30

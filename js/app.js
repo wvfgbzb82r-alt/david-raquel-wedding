@@ -4,7 +4,6 @@ const els = {
   hours: document.getElementById("hours"),
   minutes: document.getElementById("minutes"),
   seconds: document.getElementById("seconds"),
-  openButton: document.getElementById("openInvitation"),
   countdownSection: document.getElementById("cuenta-atras")
 };
 
@@ -25,9 +24,6 @@ function updateCountdown() {
   els.seconds.textContent = pad(seconds);
 }
 
-els.openButton.addEventListener("click", () => {
-  els.countdownSection.scrollIntoView({ behavior: "smooth", block: "start" });
-});
 
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
@@ -236,18 +232,60 @@ const accessForm=document.getElementById("accessForm");
 const accessCode=document.getElementById("accessCode");
 const accessMessage=document.getElementById("accessMessage");
 
-function grantAccess(){
-  accessGate.classList.add("is-hidden");
-  sessionStorage.setItem("wedding_access_granted","true");
+let introStarted = false;
+
+function startWeddingIntro() {
+  if (introStarted) return;
+  introStarted = true;
+
+  document.body.classList.add("is-locked");
+  accessGate.classList.add("is-leaving");
+
+  window.setTimeout(() => {
+    accessGate.hidden = true;
+
+    cinematicPrelude.hidden = false;
+    cinematicPrelude.classList.add("is-active");
+    cinematicPrelude.setAttribute("aria-hidden", "false");
+  }, 650);
+
+  window.setTimeout(() => {
+    cinematicPrelude.hidden = true;
+    cinematicPrelude.classList.remove("is-active");
+    cinematicPrelude.setAttribute("aria-hidden", "true");
+
+    welcomeScreen.hidden = false;
+    welcomeScreen.classList.add("is-ready");
+    welcomeScreen.setAttribute("aria-hidden", "false");
+  }, 4050);
 }
-if(sessionStorage.getItem("wedding_access_granted")==="true"){grantAccess();}
-accessForm.addEventListener("submit",e=>{
-  e.preventDefault();
-  if(accessCode.value.trim().toUpperCase()===TEMPORARY_ACCESS_CODE){
-    accessMessage.textContent="";
+
+function grantAccess({ remember = true } = {}) {
+  if (remember) {
+    sessionStorage.setItem("wedding_access_granted", "true");
+  }
+
+  startWeddingIntro();
+}
+
+if (sessionStorage.getItem("wedding_access_granted") === "true") {
+  // Conservamos el acceso durante la pestaña, pero repetimos la experiencia.
+  window.setTimeout(() => grantAccess({ remember: false }), 120);
+}
+
+accessForm.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const submitButton = accessForm.querySelector('button[type="submit"]');
+  const code = accessCode.value.trim().toUpperCase();
+
+  if (code === TEMPORARY_ACCESS_CODE) {
+    accessMessage.textContent = "";
+    submitButton.disabled = true;
+    submitButton.textContent = "Accediendo…";
     grantAccess();
-  }else{
-    accessMessage.textContent="Código incorrecto.";
+  } else {
+    accessMessage.textContent = "Código incorrecto.";
     accessCode.select();
   }
 });
@@ -375,10 +413,6 @@ async function loadPersonalizedInvitation() {
 loadPersonalizedInvitation();
 
 
-// Retira completamente la introducción oscura al finalizar la animación.
-window.setTimeout(() => {
-  cinematicPrelude?.remove();
-}, 3400);
 
 
 if (backgroundMusic) {

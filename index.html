@@ -11,30 +11,47 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=29">
+  <link rel="stylesheet" href="css/style.css?v=30">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
 
-  <div class="access-gate" id="accessGate">
-    <div class="access-card">
-      <p class="access-kicker">Invitación privada</p>
-      <h1>David &amp; Raquel</h1>
-      <div class="access-divider"></div>
-      <p>Introduce el código de acceso.</p>
-      <form id="accessForm">
-        <input id="accessCode" type="password" required placeholder="Código">
-        <button type="submit">Entrar</button>
-        <p id="accessMessage" class="access-message"></p>
+  <div class="access-gate access-gate--cinematic" id="accessGate">
+    <div class="access-card access-card--dark">
+      <div class="access-lock" aria-hidden="true">◇</div>
+      <p class="access-kicker">Código privado</p>
+      <p class="access-copy">
+        Introduce el código para acceder<br>
+        a nuestra invitación
+      </p>
+
+      <form id="accessForm" class="access-form-cinematic">
+        <label class="sr-only" for="accessCode">Código privado</label>
+        <input id="accessCode"
+               type="password"
+               required
+               maxlength="20"
+               autocomplete="off"
+               inputmode="text"
+               placeholder="Código">
+        <button type="submit">Continuar</button>
+        <p id="accessMessage"
+           class="access-message"
+           role="status"
+           aria-live="polite"></p>
       </form>
+
+      <div class="access-ornament" aria-hidden="true">
+        <span></span><i>♡</i><span></span>
+      </div>
     </div>
   </div>
 
-  <div class="cinematic-prelude" id="cinematicPrelude" aria-hidden="true">
+  <div class="cinematic-prelude" id="cinematicPrelude" aria-hidden="true" hidden>
     <div class="cinematic-prelude__names">David <span>&amp;</span> Raquel</div>
   </div>
 
-  <div class="welcome-screen envelope-intro" id="welcomeScreen"
+  <div class="welcome-screen envelope-intro" id="welcomeScreen" hidden
        role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
 
     <div class="envelope-stage">
@@ -89,7 +106,6 @@
           <span>22</span><span>noviembre</span><span>2026</span>
         </p>
         <p class="hero__time">17:00 horas</p>
-        <button class="primary-button" id="openInvitation" type="button">Abrir invitación</button>
       </div>
     </section>
 
