@@ -205,15 +205,62 @@ accessForm.addEventListener("submit",e=>{
   }
 });
 
-document.querySelectorAll("[data-copy]").forEach(btn=>{
-  btn.addEventListener("click",async()=>{
-    const message = btn.dataset.success || "Copiado";
-    try{
-      await navigator.clipboard.writeText(btn.dataset.copy);
-      document.getElementById("copyStatus").textContent = message;
-    }catch(e){
-      document.getElementById("copyStatus").textContent =
-        "No se pudo copiar automáticamente.";
+
+async function copyTextToClipboard(value) {
+  // Método moderno: funciona normalmente en HTTPS.
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  // Método alternativo para navegadores móviles o permisos restringidos.
+  const temporaryInput = document.createElement("textarea");
+  temporaryInput.value = value;
+  temporaryInput.setAttribute("readonly", "");
+  temporaryInput.style.position = "fixed";
+  temporaryInput.style.left = "-9999px";
+  temporaryInput.style.top = "0";
+  document.body.appendChild(temporaryInput);
+
+  temporaryInput.focus();
+  temporaryInput.select();
+  temporaryInput.setSelectionRange(0, temporaryInput.value.length);
+
+  const copied = document.execCommand("copy");
+  document.body.removeChild(temporaryInput);
+
+  if (!copied) {
+    throw new Error("El navegador no permitió copiar.");
+  }
+}
+
+document.querySelectorAll("[data-copy]").forEach(button => {
+  button.addEventListener("click", async () => {
+    const copyStatus = document.getElementById("copyStatus");
+    const originalText = button.textContent;
+    const successMessage = button.dataset.success || "Copiado";
+
+    button.disabled = true;
+    button.textContent = "Copiando…";
+
+    try {
+      await copyTextToClipboard(button.dataset.copy);
+      copyStatus.textContent = successMessage;
+      button.textContent = "¡Copiado!";
+
+      window.setTimeout(() => {
+        button.textContent = originalText;
+      }, 1600);
+    } catch (error) {
+      console.error("Error al copiar:", error);
+      copyStatus.textContent =
+        "No se ha podido copiar automáticamente. Mantén pulsado el número para copiarlo.";
+      button.textContent = originalText;
+    } finally {
+      window.setTimeout(() => {
+        button.disabled = false;
+      }, 500);
     }
   });
 });
+
