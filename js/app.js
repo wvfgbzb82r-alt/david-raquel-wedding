@@ -152,7 +152,6 @@ rsvpForm.addEventListener("submit", async event => {
 });
 
 const welcomeScreen=document.getElementById("welcomeScreen");
-const enterInvitation=document.getElementById("enterInvitation");
 const openEnvelope=document.getElementById("openEnvelope");
 const envelopeScene=document.getElementById("envelopeScene");
 const cinematicPrelude=document.getElementById("cinematicPrelude");
@@ -161,36 +160,52 @@ const backgroundMusic=document.getElementById("backgroundMusic");
 const scrollProgress=document.getElementById("scrollProgress");
 
 openEnvelope?.addEventListener("click",()=>{
+  if (envelopeScene?.classList.contains("is-open")) return;
+
   envelopeScene?.classList.add("is-open");
+  welcomeScreen?.classList.add("auto-opening");
   openEnvelope.setAttribute("aria-expanded","true");
 
-  // Vibración muy breve solo en dispositivos compatibles.
   if (navigator.vibrate) {
     navigator.vibrate(22);
   }
 
-  // La música solo puede arrancar después de una interacción del usuario.
-  backgroundMusic?.play().then(()=>{
-    musicControl?.classList.add("is-playing");
-    musicControl?.setAttribute("aria-pressed","true");
-  }).catch(()=>{});
-});
+  if (backgroundMusic) {
+    backgroundMusic.volume = 0;
+    backgroundMusic.play().then(()=>{
+      musicControl?.classList.add("is-playing");
+      musicControl?.setAttribute("aria-pressed","true");
 
-enterInvitation.addEventListener("click",()=>{
-  document.body.classList.add("invitation-opening");
+      const fadeDuration = 2600;
+      const targetVolume = 0.24;
+      const startedAt = performance.now();
+
+      function fadeIn(now) {
+        const progress = Math.min(1, (now - startedAt) / fadeDuration);
+        backgroundMusic.volume = targetVolume * progress;
+
+        if (progress < 1) {
+          requestAnimationFrame(fadeIn);
+        }
+      }
+
+      requestAnimationFrame(fadeIn);
+    }).catch(()=>{});
+  }
+
+  // Un único clic: después de mostrar la carta, se entra automáticamente.
+  window.setTimeout(()=>{
+    document.body.classList.add("invitation-opening");
+  }, 4100);
 
   window.setTimeout(()=>{
-    welcomeScreen.classList.add("is-hidden");
+    welcomeScreen?.classList.add("is-hidden");
     document.body.classList.remove("is-locked");
     document.body.classList.remove("invitation-opening");
-  }, 720);
-  window.setTimeout(()=>{
-    backgroundMusic.play().then(()=>{
-      musicControl.classList.add("is-playing");
-      musicControl.setAttribute("aria-pressed","true");
-    }).catch(()=>{});
-  }, 760);
+    welcomeScreen?.setAttribute("aria-hidden","true");
+  }, 4850);
 });
+
 
 musicControl.addEventListener("click",async()=>{
   if(backgroundMusic.paused){
@@ -364,3 +379,8 @@ loadPersonalizedInvitation();
 window.setTimeout(() => {
   cinematicPrelude?.remove();
 }, 3400);
+
+
+if (backgroundMusic) {
+  backgroundMusic.volume = 0.24;
+}

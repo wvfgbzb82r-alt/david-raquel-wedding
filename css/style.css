@@ -1085,3 +1085,96 @@ body.invitation-opening .envelope-stage {
     animation: none;
   }
 }
+
+
+/* =========================================================
+   V29 · Un solo clic sobre el sello
+   ========================================================= */
+
+.envelope-scene.is-open .envelope-letter {
+  animation: letterBecomeInvitation 3.8s 1.05s
+    cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+.envelope-scene.is-open .envelope-body {
+  animation: envelopeLeave 1.15s 1.7s ease forwards;
+}
+
+.envelope-scene.is-open .envelope-letter__inner {
+  animation: introContentLeave .72s 3.6s ease forwards;
+}
+
+.welcome-screen.auto-opening {
+  background: #fffaf2;
+}
+
+.welcome-screen.auto-opening .envelope-stage {
+  transform: scale(1.08);
+}
+
+@keyframes letterBecomeInvitation {
+  0% {
+    top: -20%;
+    left: 2%;
+    right: 2%;
+    height: 135%;
+    border-radius: 8px;
+  }
+  48% {
+    top: -28%;
+    left: -5%;
+    right: -5%;
+    height: 154%;
+    border-radius: 5px;
+  }
+  100% {
+    top: -65vh;
+    left: -55vw;
+    right: -55vw;
+    height: 230vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+@keyframes envelopeLeave {
+  from {
+    opacity: 1;
+    transform: translateY(18%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(48%) scale(.88);
+  }
+}
+
+@keyframes introContentLeave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+}
+
+@media (max-width: 700px) {
+  @keyframes letterBecomeInvitation {
+    0% {
+      top: -35%;
+      left: 0;
+      right: 0;
+      height: 165%;
+      border-radius: 8px;
+    }
+    100% {
+      top: -72vh;
+      left: -62vw;
+      right: -62vw;
+      height: 245vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+}

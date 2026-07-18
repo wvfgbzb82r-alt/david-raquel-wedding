@@ -1,0 +1,21 @@
+DAVID & RAQUEL — V29 INTRODUCCIÓN, UN SOLO CLIC
+
+CAMBIOS:
+- Integrado el MP3 enviado como assets/music/boda.mp3.
+- Eliminado el botón «Abrir invitación».
+- El sello D&R es la única interacción.
+- Al pulsar el sello comienza la música con fundido suave.
+- Se abre el sobre y aparece la carta.
+- La carta crece hasta ocupar la pantalla.
+- La invitación se abre automáticamente.
+- La música continúa de fondo al 24 % de volumen.
+- Se conserva el control flotante para pausar o reanudar.
+
+INSTALACIÓN:
+1. Copia todos los archivos sobre el proyecto actual.
+2. Conserva CNAME.
+3. No hace falta tocar Supabase ni ejecutar SQL.
+4. Haz Commit to main y Push origin.
+5. Prueba en:
+   https://davidyraquel.es/?v=29
+6. En móvil, usa una pestaña privada para evitar la caché.
