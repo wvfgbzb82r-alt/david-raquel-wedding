@@ -3,7 +3,7 @@
 const CONFIG = Object.freeze({
   url: "https://impauxkdtcwngvlknysa.supabase.co",
   key: "sb_publishable_TN0nnQZ_g6l1RNTuE4f9qg_iaI_USWV",
-  bucket: "wedding-media",
+  bucket: "wedding-media-v24",
   maxFileBytes: 100 * 1024 * 1024,
   maxFiles: 50
 });
@@ -132,7 +132,7 @@ async function uploadFile(file, path) {
 }
 
 async function saveMetadata(file, path) {
-  const response = await fetch(`${CONFIG.url}/rest/v1/media_uploads`, {
+  const response = await fetch(`${CONFIG.url}/rest/v1/media_uploads_v24`, {
     method: "POST",
     headers: {
       apikey: CONFIG.key,
@@ -196,7 +196,7 @@ form.addEventListener("submit", async event => {
     const missingBucket = /bucket not found/i.test(error.message);
     setMessage(
       missingBucket
-        ? "El álbum todavía no está activado. Ejecuta el archivo supabase-estabilizacion-v23.sql en Supabase."
+        ? "El álbum todavía no está activado. Ejecuta el archivo supabase-v24.sql en Supabase."
         : `No se pudo completar la subida: ${error.message}`,
       true
     );

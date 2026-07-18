@@ -104,7 +104,7 @@ function renderGuests() {
 async function loadGuests(allowRetry = true) {
   dashboardMessage.textContent = "Cargando respuestas…";
   try {
-    guests = await api("/rest/v1/invitados?select=*&order=created_at.desc");
+    guests = await api("/rest/v1/confirmaciones_v24?select=*&order=created_at.desc");
     updateStats();
     renderGuests();
     byId("lastUpdate").textContent = `Actualizado: ${new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}`;
@@ -164,7 +164,7 @@ try { session = JSON.parse(sessionStorage.getItem(CONFIG.sessionKey) || "null");
 if (session?.access_token) showDashboard(); else showLogin();
 
 // V22 · Álbum privado
-const MEDIA_BUCKET = "wedding-media";
+const MEDIA_BUCKET = "wedding-media-v24";
 const mediaGrid = byId("mediaGrid");
 const mediaMessage = byId("mediaMessage");
 let mediaItems = [];
@@ -198,7 +198,7 @@ async function loadMedia() {
   if (!mediaGrid) return;
   mediaMessage.textContent = "Cargando fotos y vídeos…";
   try {
-    mediaItems = await api("/rest/v1/media_uploads?select=*&order=created_at.desc&limit=200");
+    mediaItems = await api("/rest/v1/media_uploads_v24?select=*&order=created_at.desc&limit=200");
     byId("mediaTotal").textContent = mediaItems.length;
     byId("mediaPhotos").textContent = mediaItems.filter(item => String(item.mime_type || "").startsWith("image/")).length;
     byId("mediaVideos").textContent = mediaItems.filter(item => String(item.mime_type || "").startsWith("video/")).length;

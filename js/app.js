@@ -110,7 +110,7 @@ rsvpForm.addEventListener("submit", async event => {
 
   try {
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/invitados`,
+      `${SUPABASE_URL}/rest/v1/rpc/guardar_confirmacion_v24`,
       {
         method: "POST",
         headers: {
@@ -118,7 +118,7 @@ rsvpForm.addEventListener("submit", async event => {
           "Content-Type": "application/json",
           "Prefer": "return=minimal"
         },
-        body: JSON.stringify(getRsvpPayload())
+        body: JSON.stringify({ datos: getRsvpPayload() })
       }
     );
 
@@ -139,10 +139,10 @@ rsvpForm.addEventListener("submit", async event => {
     formStatus.className = "form-status is-success";
   } catch (error) {
     console.error("Error al enviar la confirmación:", error);
-    const configurationProblem = /column|policy|permission|row-level|schema|relation/i.test(error.message);
+    const configurationProblem = /column|policy|permission|row-level|schema|relation|function|rpc/i.test(error.message);
     formStatus.textContent = configurationProblem
-      ? "No hemos podido guardar la confirmación porque falta terminar la configuración. Avisadnos, por favor."
-      : "No hemos podido guardar la confirmación. Comprueba la conexión e inténtalo de nuevo.";
+      ? "La confirmación todavía no está activada. Ejecuta supabase-v24.sql en Supabase."
+      : `No hemos podido guardar la confirmación: ${error.message}`;
     formStatus.className = "form-status is-error";
   } finally {
     submitButton.disabled = false;
