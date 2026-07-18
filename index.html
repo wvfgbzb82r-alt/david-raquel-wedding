@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=21">
+  <link rel="stylesheet" href="css/style.css?v=27">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -30,17 +30,49 @@
     </div>
   </div>
 
+  <div class="welcome-screen envelope-intro" id="welcomeScreen"
+       role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
 
-  <div class="welcome-screen" id="welcomeScreen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
-    <div class="welcome-screen__content">
-      <p class="welcome-screen__kicker">Nos casamos</p>
-      <h1 id="welcomeTitle" class="welcome-screen__names">
-        <span>David</span><em>&amp;</em><span>Raquel</span>
-      </h1>
-      <div class="welcome-screen__divider" aria-hidden="true"></div>
-      <p class="welcome-screen__date">22 · noviembre · 2026</p>
-      <p class="welcome-screen__phrase">El comienzo de nuestro para siempre</p>
-      <button class="welcome-screen__button" id="enterInvitation" type="button">Abrir invitación</button>
+    <div class="envelope-stage">
+      <div class="envelope-scene" id="envelopeScene">
+
+        <div class="envelope-letter" aria-live="polite">
+          <div class="envelope-letter__inner">
+            <p class="welcome-screen__kicker">Nos casamos</p>
+
+            <h1 id="welcomeTitle" class="welcome-screen__names">
+              <span>David</span><em>&amp;</em><span>Raquel</span>
+            </h1>
+
+            <div class="welcome-screen__divider" aria-hidden="true"></div>
+
+            <p class="welcome-screen__date">22 · noviembre · 2026</p>
+            <p class="welcome-screen__phrase">
+              El comienzo de nuestro para siempre
+            </p>
+
+            <button class="welcome-screen__button"
+                    id="enterInvitation" type="button">
+              Abrir invitación
+            </button>
+          </div>
+        </div>
+
+        <div class="envelope-body" aria-hidden="true">
+          <div class="envelope-body__back"></div>
+          <div class="envelope-body__left"></div>
+          <div class="envelope-body__right"></div>
+          <div class="envelope-body__bottom"></div>
+          <div class="envelope-flap"></div>
+        </div>
+
+        <button class="wax-seal" id="openEnvelope" type="button"
+                aria-label="Abrir el sobre">
+          <span>D&amp;R</span>
+        </button>
+
+        <p class="envelope-hint">Pulsa el sello para abrir</p>
+      </div>
     </div>
   </div>
 

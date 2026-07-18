@@ -153,9 +153,16 @@ rsvpForm.addEventListener("submit", async event => {
 
 const welcomeScreen=document.getElementById("welcomeScreen");
 const enterInvitation=document.getElementById("enterInvitation");
+const openEnvelope=document.getElementById("openEnvelope");
+const envelopeScene=document.getElementById("envelopeScene");
 const musicControl=document.getElementById("musicControl");
 const backgroundMusic=document.getElementById("backgroundMusic");
 const scrollProgress=document.getElementById("scrollProgress");
+
+openEnvelope?.addEventListener("click",()=>{
+  envelopeScene?.classList.add("is-open");
+  openEnvelope.setAttribute("aria-expanded","true");
+});
 
 enterInvitation.addEventListener("click",()=>{
   welcomeScreen.classList.add("is-hidden");

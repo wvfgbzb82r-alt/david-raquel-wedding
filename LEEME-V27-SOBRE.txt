@@ -1,0 +1,20 @@
+DAVID & RAQUEL — V27 SOBRE ANIMADO
+
+NOVEDADES:
+- Nueva pantalla inicial con sobre elegante.
+- Sello de lacre con iniciales D&R.
+- Al pulsar el sello, la solapa se abre.
+- La tarjeta interior sube y muestra:
+  «Nos casamos», nombres, fecha y mensaje.
+- Después aparece el botón «Abrir invitación».
+- Compatible con enlaces personalizados de invitados.
+- Adaptado a móvil y escritorio.
+
+INSTALACIÓN:
+1. Copia los archivos del ZIP sobre el proyecto actual.
+2. Conserva CNAME.
+3. No hace falta ejecutar ningún SQL.
+4. Haz Commit to main y Push origin.
+5. Prueba en:
+   https://davidyraquel.es/?v=27
+6. En móvil, abre una pestaña privada o recarga sin caché.
