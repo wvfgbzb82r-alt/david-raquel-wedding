@@ -207,11 +207,13 @@ accessForm.addEventListener("submit",e=>{
 
 document.querySelectorAll("[data-copy]").forEach(btn=>{
   btn.addEventListener("click",async()=>{
+    const message = btn.dataset.success || "Copiado";
     try{
       await navigator.clipboard.writeText(btn.dataset.copy);
-      document.getElementById("copyStatus").textContent="IBAN copiado";
+      document.getElementById("copyStatus").textContent = message;
     }catch(e){
-      document.getElementById("copyStatus").textContent="No se pudo copiar automáticamente";
+      document.getElementById("copyStatus").textContent =
+        "No se pudo copiar automáticamente.";
     }
   });
 });

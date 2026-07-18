@@ -318,33 +318,67 @@
     </section>
 
     
+    
     <section class="gifts" id="regalos" aria-labelledby="gifts-title">
       <div class="gifts__inner reveal">
         <p class="section-kicker">Un detalle</p>
         <h2 id="gifts-title">El mejor regalo</h2>
         <div class="section-divider"></div>
+
         <p class="gifts__lead">
-          Vuestra presencia será el mejor regalo. Si además queréis ayudarnos
-          a comenzar esta nueva etapa, podéis hacerlo mediante transferencia bancaria.
+          Vuestra presencia será, sin duda, el mejor regalo. Si además queréis ayudarnos
+          a comenzar esta nueva etapa, podéis hacerlo mediante transferencia bancaria
+          o Bizum.
         </p>
+
         <div class="gift-card">
-          <span class="gift-card__symbol">♡</span>
-          <p class="gift-card__title">Cuenta para regalos</p>
-          <div class="gift-data">
-            <span>IBAN</span>
-            <strong>ES54 0182 0451 4502 0164 3567</strong>
-            <button class="copy-button" type="button" data-copy="ES5401820451450201643567">Copiar IBAN</button>
+          <span class="gift-card__symbol" aria-hidden="true">♡</span>
+
+          <div class="gift-option">
+            <p class="gift-card__title">Transferencia bancaria</p>
+            <div class="gift-data">
+              <span class="gift-data__label">IBAN</span>
+              <strong>ES54 0182 0451 4502 0164 3567</strong>
+              <button class="copy-button" type="button"
+                      data-copy="ES5401820451450201643567"
+                      data-success="IBAN copiado">
+                Copiar IBAN
+              </button>
+            </div>
           </div>
-          <div class="gift-phones">
-            <p>Para cualquier duda:</p>
-            <a href="tel:+34652199526">652 199 526</a>
-            <span>·</span>
-            <a href="tel:+34640108316">640 108 316</a>
+
+          <div class="gift-option gift-option--bizum">
+            <p class="gift-card__title">Bizum</p>
+            <p class="gift-option__text">
+              Podéis enviarlo a cualquiera de estos dos números:
+            </p>
+
+            <div class="bizum-grid">
+              <div class="bizum-number">
+                <a href="tel:+34652199526">652 199 526</a>
+                <button class="copy-button" type="button"
+                        data-copy="652199526"
+                        data-success="Número de Bizum copiado">
+                  Copiar número
+                </button>
+              </div>
+
+              <div class="bizum-number">
+                <a href="tel:+34640108316">640 108 316</a>
+                <button class="copy-button" type="button"
+                        data-copy="640108316"
+                        data-success="Número de Bizum copiado">
+                  Copiar número
+                </button>
+              </div>
+            </div>
           </div>
-          <p id="copyStatus" class="copy-status"></p>
+
+          <p class="copy-status" id="copyStatus" role="status" aria-live="polite"></p>
         </div>
       </div>
     </section>
+
 
 
     <section class="farewell" id="despedida" aria-labelledby="farewell-title">

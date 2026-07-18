@@ -508,3 +508,48 @@ body.is-locked{overflow:hidden}
 .gift-phones a{color:var(--gold-dark);text-decoration:none}
 .gift-phones span{margin:0 8px;color:var(--gold)}
 .copy-status{min-height:1.2em;margin-top:12px;color:#6f8669;font-family:var(--serif)}
+
+
+/* V1.2 · Opciones de regalo por transferencia y Bizum */
+.gift-option + .gift-option {
+  margin-top: 34px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(185,152,87,.22);
+}
+
+.gift-option__text {
+  margin: 0 0 20px;
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.bizum-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 18px;
+}
+
+.bizum-number {
+  display: grid;
+  gap: 12px;
+  padding: 22px 18px;
+  border: 1px solid rgba(185,152,87,.22);
+  border-radius: 20px;
+  background: rgba(255,255,255,.32);
+}
+
+.bizum-number a {
+  color: var(--gold-dark);
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-decoration: none;
+}
+
+@media (max-width: 620px) {
+  .bizum-grid {
+    grid-template-columns: 1fr;
+  }
+}
