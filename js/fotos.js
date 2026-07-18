@@ -109,7 +109,7 @@ dropZone.addEventListener("drop", event => setFiles(event.dataTransfer.files));
 
 async function uploadFile(file, path) {
   const response = await fetch(
-    `${CONFIG.url}/storage/v1/object/${CONFIG.bucket}/${path.split("/").map(encodeURIComponent).join("/")}`,
+    `${CONFIG.url}/storage/v1/object/${CONFIG.bucket}/${path}`,
     {
       method: "POST",
       headers: {
@@ -198,7 +198,7 @@ form.addEventListener("submit", async event => {
     const missingBucket = /bucket not found/i.test(error.message);
     setMessage(
       missingBucket
-        ? "No existe el álbum privado en Supabase. Ejecuta CORRECCION-SUPABASE.sql completo."
+        ? "El álbum todavía no está activado. Ejecuta INSTALACION-UNICA-SUPABASE.sql en Supabase."
         : `No se pudo completar la subida: ${error.message}`,
       true
     );

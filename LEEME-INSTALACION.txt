@@ -1,0 +1,13 @@
+INSTALACIÓN ÚNICA
+
+1. Copia todo el contenido de esta carpeta dentro del proyecto de GitHub.
+2. Conserva el archivo CNAME.
+3. Abre Supabase > SQL Editor > New query.
+4. Abre INSTALACION-UNICA-SUPABASE.sql, copia TODO y pégalo.
+5. Pulsa Run.
+6. Deben aparecer cinco filas con OK.
+7. GitHub Desktop: Commit to main y Push origin.
+8. Prueba en ventana privada:
+   - https://davidyraquel.es
+   - https://davidyraquel.es/fotos/
+   - https://davidyraquel.es/admin/

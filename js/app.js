@@ -116,7 +116,8 @@ rsvpForm.addEventListener("submit", async event => {
         headers: {
           "apikey": SUPABASE_PUBLISHABLE_KEY,
           "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Prefer": "return=representation"
         },
         body: JSON.stringify({ datos: getRsvpPayload() })
       }
@@ -139,7 +140,10 @@ rsvpForm.addEventListener("submit", async event => {
     formStatus.className = "form-status is-success";
   } catch (error) {
     console.error("Error al enviar la confirmación:", error);
-    formStatus.textContent = `No hemos podido guardar la confirmación: ${error.message}`;
+    const configurationProblem = /column|policy|permission|row-level|schema|relation|function|rpc/i.test(error.message);
+    formStatus.textContent = configurationProblem
+      ? "La confirmación todavía no está activada. Ejecuta INSTALACION-UNICA-SUPABASE.sql en Supabase."
+      : `No hemos podido guardar la confirmación: ${error.message}`;
     formStatus.className = "form-status is-error";
   } finally {
     submitButton.disabled = false;
