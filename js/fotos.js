@@ -109,11 +109,12 @@ dropZone.addEventListener("drop", event => setFiles(event.dataTransfer.files));
 
 async function uploadFile(file, path) {
   const response = await fetch(
-    `${CONFIG.url}/storage/v1/object/${CONFIG.bucket}/${path}`,
+    `${CONFIG.url}/storage/v1/object/${CONFIG.bucket}/${path.split("/").map(encodeURIComponent).join("/")}`,
     {
       method: "POST",
       headers: {
         apikey: CONFIG.key,
+        Authorization: `Bearer ${CONFIG.key}`,
         "Content-Type": file.type || "application/octet-stream",
         "x-upsert": "false"
       },
@@ -136,6 +137,7 @@ async function saveMetadata(file, path) {
     method: "POST",
     headers: {
       apikey: CONFIG.key,
+      Authorization: `Bearer ${CONFIG.key}`,
       "Content-Type": "application/json",
       Prefer: "return=minimal"
     },
@@ -196,7 +198,7 @@ form.addEventListener("submit", async event => {
     const missingBucket = /bucket not found/i.test(error.message);
     setMessage(
       missingBucket
-        ? "El álbum todavía no está activado. Ejecuta el archivo supabase-v24.sql en Supabase."
+        ? "No existe el álbum privado en Supabase. Ejecuta CORRECCION-SUPABASE.sql completo."
         : `No se pudo completar la subida: ${error.message}`,
       true
     );

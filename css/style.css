@@ -554,3 +554,18 @@ body.is-locked{overflow:hidden}
   }
 }
 \n\n/* V23 · Evita enlaces automáticos y subrayados de Safari/iPhone */\n.account-number,\n.account-number:link,\n.account-number:visited {\n  color: var(--gold-dark) !important;\n  text-decoration: none !important;\n  -webkit-text-decoration: none !important;\n  font-variant-numeric: tabular-nums;\n  unicode-bidi: isolate;\n}\n\na[x-apple-data-detectors],\na[x-apple-data-detectors]:link,\na[x-apple-data-detectors]:visited,\n*[x-apple-data-detectors] {\n  color: inherit !important;\n  text-decoration: none !important;\n  border-bottom: 0 !important;\n  font: inherit !important;\n}\n
+
+/* Corrección Safari/iPhone: evita enlaces azules automáticos en IBAN y teléfonos */
+a[x-apple-data-detectors],
+a[x-apple-data-detectors]:hover,
+a[x-apple-data-detectors]:focus,
+a[x-apple-data-detectors]:active {
+  color: inherit !important;
+  text-decoration: none !important;
+  font: inherit !important;
+}
+.gift-data strong, .bizum-number a {
+  color: var(--gold-dark) !important;
+  text-decoration: none !important;
+  -webkit-text-decoration: none !important;
+}
