@@ -1,0 +1,27 @@
+DAVID & RAQUEL — V26 INVITACIONES PERSONALIZADAS
+
+SIGUIENTE PASO:
+Crear la lista de familias e invitados desde el panel privado.
+
+NOVEDADES:
+- Nueva sección «Invitaciones personalizadas» en /admin/.
+- Crear una invitación indicando nombre, teléfono y personas.
+- Código aleatorio automático.
+- Copiar enlace individual.
+- Abrir WhatsApp con el mensaje y enlace preparados.
+- Saber cuándo se abrió por primera vez.
+- La portada saluda al invitado por su nombre.
+- El nombre queda escrito automáticamente en el formulario.
+- Un enlace personalizado evita la contraseña temporal general.
+
+FORMATO DE ENLACE:
+https://davidyraquel.es/?i=CODIGO
+
+INSTALACIÓN:
+1. Copia todos los archivos a la carpeta del proyecto.
+2. Conserva CNAME.
+3. Supabase > SQL Editor > New query.
+4. Pega y ejecuta INSTALACION-V26-INVITACIONES.sql.
+5. Deben aparecer dos filas con OK.
+6. Commit to main y Push origin.
+7. Abre https://davidyraquel.es/admin/?v=26

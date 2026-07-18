@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=25.1">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=26">
 </head>
 <body>
   <main>
@@ -79,6 +79,46 @@
       </div>
       <div class="guest-cards" id="guestCards"></div>
 
+
+      <section class="invitation-manager" aria-labelledby="invitationManagerTitle">
+        <div class="media-section__header">
+          <div>
+            <p class="kicker">Invitaciones personalizadas</p>
+            <h2 id="invitationManagerTitle">Enlaces únicos</h2>
+          </div>
+          <button id="refreshInvitationsButton" type="button">Actualizar invitaciones</button>
+        </div>
+
+        <form id="invitationForm" class="invitation-form">
+          <label>
+            <span>Nombre que verá el invitado</span>
+            <input id="invitationName" type="text"
+                   placeholder="Ej.: Juan y María" required>
+          </label>
+
+          <label>
+            <span>Teléfono para WhatsApp</span>
+            <input id="invitationPhone" type="tel"
+                   placeholder="Ej.: 612345678">
+          </label>
+
+          <label>
+            <span>Número máximo de personas</span>
+            <input id="invitationPeople" type="number"
+                   min="1" max="20" value="1" required>
+          </label>
+
+          <button class="primary-button" type="submit">
+            Crear invitación
+          </button>
+        </form>
+
+        <p id="invitationMessage" class="dashboard-message"
+           role="status" aria-live="polite"></p>
+
+        <div class="invitation-list" id="invitationList"></div>
+      </section>
+
       <section class="media-section" aria-labelledby="mediaTitle">
         <div class="media-section__header">
           <div>
@@ -98,6 +138,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=25.1"></script>
+  <script src="../js/admin-v21.js?v=26"></script>
 </body>
 </html>

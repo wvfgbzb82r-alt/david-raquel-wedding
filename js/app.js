@@ -270,3 +270,65 @@ document.querySelectorAll("[data-copy]").forEach(button => {
   });
 });
 
+
+
+// =========================================================
+// V26 · Apertura personalizada mediante ?i=CODIGO
+// =========================================================
+
+async function loadPersonalizedInvitation() {
+  const params = new URLSearchParams(window.location.search);
+  const code = String(params.get("i") || "").trim().toUpperCase();
+
+  if (!code) return;
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/rpc/abrir_invitacion_personalizada`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ codigo_recibido: code })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Código no válido");
+    }
+
+    const invitation = Array.isArray(data) ? data[0] : data;
+    if (!invitation?.nombre_mostrado) return;
+
+    // Los enlaces personalizados sustituyen la contraseña temporal general.
+    if (typeof grantAccess === "function") {
+      grantAccess();
+    }
+
+    const kicker = document.querySelector(".welcome-screen__kicker");
+    const phrase = document.querySelector(".welcome-screen__phrase");
+    const guestNameInput = document.getElementById("guestName");
+
+    if (kicker) kicker.textContent = "Bienvenidos";
+    if (phrase) {
+      phrase.textContent =
+        `${invitation.nombre_mostrado}, nos hace muchísima ilusión ` +
+        "compartir este día con vosotros.";
+    }
+
+    if (guestNameInput && !guestNameInput.value) {
+      guestNameInput.value = invitation.nombre_mostrado;
+    }
+
+    document.documentElement.dataset.invitationCode = code;
+  } catch (error) {
+    console.warn("Invitación personalizada no válida:", error);
+  }
+}
+
+loadPersonalizedInvitation();

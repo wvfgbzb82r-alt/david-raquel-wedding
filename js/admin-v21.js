@@ -353,3 +353,201 @@ mediaGrid?.addEventListener("click", event => {
   if (!button) return;
   deleteMediaItem(button.dataset.deleteMedia, button.dataset.objectPath);
 });
+
+
+// =========================================================
+// V26 · Gestión de invitaciones personalizadas
+// =========================================================
+
+const invitationForm = byId("invitationForm");
+const invitationName = byId("invitationName");
+const invitationPhone = byId("invitationPhone");
+const invitationPeople = byId("invitationPeople");
+const invitationList = byId("invitationList");
+const invitationMessage = byId("invitationMessage");
+const refreshInvitationsButton = byId("refreshInvitationsButton");
+
+let personalizedInvitations = [];
+
+function weddingInvitationUrl(code) {
+  return `${window.location.origin}/?i=${encodeURIComponent(code)}`;
+}
+
+function whatsappUrl(phone, name, code) {
+  const cleanPhone = String(phone || "").replace(/\D/g, "");
+  const text =
+    `Hola ${name}, nos hace muchísima ilusión invitarte a nuestra boda. ` +
+    `Puedes abrir tu invitación personalizada aquí: ${weddingInvitationUrl(code)}`;
+
+  const base = cleanPhone
+    ? `https://wa.me/34${cleanPhone}`
+    : "https://wa.me/";
+
+  return `${base}?text=${encodeURIComponent(text)}`;
+}
+
+async function copyInvitationLink(code) {
+  const link = weddingInvitationUrl(code);
+
+  try {
+    await navigator.clipboard.writeText(link);
+    invitationMessage.textContent = "Enlace copiado correctamente.";
+  } catch {
+    window.prompt("Copia este enlace:", link);
+  }
+}
+
+function renderInvitations() {
+  if (!personalizedInvitations.length) {
+    invitationList.innerHTML = "";
+    invitationMessage.textContent =
+      "Todavía no habéis creado invitaciones personalizadas.";
+    return;
+  }
+
+  invitationList.innerHTML = personalizedInvitations.map(item => {
+    const opened = item.opened_at
+      ? `Abierta: ${formatDate(item.opened_at)}`
+      : "Todavía no abierta";
+
+    return `
+      <article class="invitation-item">
+        <div>
+          <h3>${escapeHtml(item.nombre_mostrado)}</h3>
+          <p><span class="invitation-code">${escapeHtml(item.codigo)}</span></p>
+        </div>
+
+        <div>
+          <p>${escapeHtml(item.telefono || "Sin teléfono")}</p>
+          <p>${Number(item.max_personas || 1)} persona(s)</p>
+        </div>
+
+        <div class="invitation-state">
+          ${opened}
+        </div>
+
+        <div class="invitation-actions">
+          <button type="button"
+                  data-copy-invitation="${escapeHtml(item.codigo)}">
+            Copiar enlace
+          </button>
+
+          <a href="${whatsappUrl(
+            item.telefono,
+            item.nombre_mostrado,
+            item.codigo
+          )}"
+             target="_blank" rel="noopener">
+            WhatsApp
+          </a>
+
+          <button type="button" class="danger-link"
+                  data-delete-invitation="${item.id}">
+            Eliminar
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  invitationMessage.textContent =
+    `${personalizedInvitations.length} invitación` +
+    `${personalizedInvitations.length === 1 ? "" : "es"} creada` +
+    `${personalizedInvitations.length === 1 ? "" : "s"}.`;
+}
+
+async function loadInvitations() {
+  if (!invitationList) return;
+
+  invitationMessage.textContent = "Cargando invitaciones…";
+
+  try {
+    personalizedInvitations = await api(
+      "/rest/v1/invitaciones_personalizadas" +
+      "?select=*&order=created_at.desc"
+    );
+    renderInvitations();
+  } catch (error) {
+    invitationMessage.textContent =
+      `No se pudieron cargar las invitaciones: ${error.message}`;
+  }
+}
+
+async function createInvitation(event) {
+  event.preventDefault();
+
+  const name = invitationName.value.trim();
+  if (!name) {
+    invitationMessage.textContent = "Escribe el nombre del invitado.";
+    return;
+  }
+
+  invitationMessage.textContent = "Creando invitación…";
+
+  try {
+    await api("/rest/v1/invitaciones_personalizadas", {
+      method: "POST",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({
+        nombre_mostrado: name,
+        telefono: invitationPhone.value.trim() || null,
+        max_personas: Number(invitationPeople.value || 1)
+      })
+    });
+
+    invitationForm.reset();
+    invitationPeople.value = "1";
+    await loadInvitations();
+    invitationMessage.textContent = "Invitación creada correctamente.";
+  } catch (error) {
+    invitationMessage.textContent =
+      `No se pudo crear la invitación: ${error.message}`;
+  }
+}
+
+async function deleteInvitation(id) {
+  if (!confirm(
+    "¿Seguro que quieres eliminar esta invitación personalizada?"
+  )) return;
+
+  invitationMessage.textContent = "Eliminando invitación…";
+
+  try {
+    await api(
+      `/rest/v1/invitaciones_personalizadas?id=eq.${encodeURIComponent(id)}`,
+      {
+        method: "DELETE",
+        headers: { Prefer: "return=minimal" }
+      }
+    );
+
+    await loadInvitations();
+    invitationMessage.textContent = "Invitación eliminada.";
+  } catch (error) {
+    invitationMessage.textContent =
+      `No se pudo eliminar la invitación: ${error.message}`;
+  }
+}
+
+invitationForm?.addEventListener("submit", createInvitation);
+refreshInvitationsButton?.addEventListener("click", loadInvitations);
+
+invitationList?.addEventListener("click", event => {
+  const copyButton = event.target.closest("[data-copy-invitation]");
+  if (copyButton) {
+    copyInvitationLink(copyButton.dataset.copyInvitation);
+    return;
+  }
+
+  const deleteButton = event.target.closest("[data-delete-invitation]");
+  if (deleteButton) {
+    deleteInvitation(deleteButton.dataset.deleteInvitation);
+  }
+});
+
+// Cargar también las invitaciones cuando el panel ya tiene sesión.
+const originalShowDashboardV26 = showDashboard;
+showDashboard = function () {
+  originalShowDashboardV26();
+  loadInvitations();
+};
