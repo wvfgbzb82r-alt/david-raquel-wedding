@@ -94,12 +94,64 @@ function statusPill(value) {
   return `<span class="status ${category}">${escapeHtml(value || "Sin indicar")}</span>`;
 }
 
+function confirmationActions(guest) {
+  const hasComment = normalize(guest.comentarios);
+  return `<div class="row-actions">
+    ${hasComment ? `<button type="button" class="danger-link" data-clear-comment="${guest.id}">Borrar comentario</button>` : ""}
+    <button type="button" class="danger-link" data-delete-response="${guest.id}">Eliminar respuesta</button>
+  </div>`;
+}
+
 function renderGuests() {
   const rows = filteredGuests();
-  tableBody.innerHTML = rows.map(g => `<tr><td>${formatDate(g.created_at)}</td><td>${escapeHtml(g.nombre || "—")}</td><td>${escapeHtml(g.telefono || "—")}</td><td>${statusPill(g.asistencia)}</td><td>${escapeHtml(g.acompanante || "—")}</td><td>${escapeHtml(g.alergias || "—")}</td><td>${escapeHtml(g.comentarios || "—")}</td></tr>`).join("");
-  cards.innerHTML = rows.map(g => `<article class="guest-card"><h2>${escapeHtml(g.nombre || "Sin nombre")}</h2>${statusPill(g.asistencia)}<dl><dt>Fecha</dt><dd>${formatDate(g.created_at)}</dd><dt>Teléfono</dt><dd>${escapeHtml(g.telefono || "—")}</dd><dt>Acompañante</dt><dd>${escapeHtml(g.acompanante || "—")}</dd><dt>Alergias</dt><dd>${escapeHtml(g.alergias || "—")}</dd><dt>Comentarios</dt><dd>${escapeHtml(g.comentarios || "—")}</dd></dl></article>`).join("");
+  tableBody.innerHTML = rows.map(g => `<tr><td>${formatDate(g.created_at)}</td><td>${escapeHtml(g.nombre || "—")}</td><td>${escapeHtml(g.telefono || "—")}</td><td>${statusPill(g.asistencia)}</td><td>${escapeHtml(g.acompanante || "—")}</td><td>${escapeHtml(g.alergias || "—")}</td><td>${escapeHtml(g.comentarios || "—")}</td><td>${confirmationActions(g)}</td></tr>`).join("");
+  cards.innerHTML = rows.map(g => `<article class="guest-card"><h2>${escapeHtml(g.nombre || "Sin nombre")}</h2>${statusPill(g.asistencia)}<dl><dt>Fecha</dt><dd>${formatDate(g.created_at)}</dd><dt>Teléfono</dt><dd>${escapeHtml(g.telefono || "—")}</dd><dt>Acompañante</dt><dd>${escapeHtml(g.acompanante || "—")}</dd><dt>Alergias</dt><dd>${escapeHtml(g.alergias || "—")}</dd><dt>Comentarios</dt><dd>${escapeHtml(g.comentarios || "—")}</dd></dl>${confirmationActions(g)}</article>`).join("");
   dashboardMessage.textContent = rows.length ? `${rows.length} respuesta${rows.length === 1 ? "" : "s"} mostrada${rows.length === 1 ? "" : "s"}.` : "No hay resultados.";
 }
+
+async function clearComment(id) {
+  if (!confirm("¿Quieres borrar únicamente el comentario de esta respuesta?")) return;
+  dashboardMessage.textContent = "Borrando comentario…";
+  try {
+    await api(`/rest/v1/confirmaciones_v24?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({ comentarios: null })
+    });
+    await loadGuests();
+    dashboardMessage.textContent = "Comentario borrado correctamente.";
+  } catch (error) {
+    dashboardMessage.textContent = `No se pudo borrar el comentario: ${error.message}`;
+  }
+}
+
+async function deleteResponse(id) {
+  if (!confirm("¿Seguro que quieres eliminar por completo esta respuesta? Esta acción no se puede deshacer.")) return;
+  dashboardMessage.textContent = "Eliminando respuesta…";
+  try {
+    await api(`/rest/v1/confirmaciones_v24?id=eq.${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { Prefer: "return=minimal" }
+    });
+    await loadGuests();
+    dashboardMessage.textContent = "Respuesta eliminada correctamente.";
+  } catch (error) {
+    dashboardMessage.textContent = `No se pudo eliminar la respuesta: ${error.message}`;
+  }
+}
+
+function handleGuestAction(event) {
+  const clearButton = event.target.closest("[data-clear-comment]");
+  if (clearButton) {
+    clearComment(clearButton.dataset.clearComment);
+    return;
+  }
+  const deleteButton = event.target.closest("[data-delete-response]");
+  if (deleteButton) deleteResponse(deleteButton.dataset.deleteResponse);
+}
+
+tableBody.addEventListener("click", handleGuestAction);
+cards.addEventListener("click", handleGuestAction);
 
 async function loadGuests(allowRetry = true) {
   dashboardMessage.textContent = "Cargando respuestas…";
@@ -222,7 +274,7 @@ async function loadMedia() {
         : url && isVideo
           ? `<video src="${url}" controls preload="metadata"></video>`
           : `<span>Archivo privado</span>`;
-      cardsHtml.push(`<article class="media-card"><div class="media-preview">${preview}</div><div class="media-card__body"><h3 title="${escapeHtml(item.original_name)}">${escapeHtml(item.original_name)}</h3><p>${escapeHtml(item.uploader_name || "Remitente sin indicar")}</p><p>${formatDate(item.created_at)} · ${humanMediaSize(item.size_bytes)}</p>${url ? `<a href="${url}" download target="_blank" rel="noopener">Abrir / descargar</a>` : ""}</div></article>`);
+      cardsHtml.push(`<article class="media-card"><div class="media-preview">${preview}</div><div class="media-card__body"><h3 title="${escapeHtml(item.original_name)}">${escapeHtml(item.original_name)}</h3><p>${escapeHtml(item.uploader_name || "Remitente sin indicar")}</p><p>${formatDate(item.created_at)} · ${humanMediaSize(item.size_bytes)}</p><div class="media-actions">${url ? `<a href="${url}" download target="_blank" rel="noopener">Abrir / descargar</a>` : ""}<button type="button" class="danger-link" data-delete-media="${item.id}" data-object-path="${escapeHtml(item.object_path)}">Eliminar archivo</button></div></div></article>`);
     }
     mediaGrid.innerHTML = cardsHtml.join("");
     mediaMessage.textContent = `${mediaItems.length} archivo${mediaItems.length === 1 ? "" : "s"} recibido${mediaItems.length === 1 ? "" : "s"}.`;
@@ -237,3 +289,27 @@ showDashboard = function () {
   originalShowDashboard();
   loadMedia();
 };
+
+
+async function deleteMediaItem(id, objectPath) {
+  if (!confirm("¿Seguro que quieres eliminar esta foto o vídeo? Esta acción no se puede deshacer.")) return;
+  mediaMessage.textContent = "Eliminando archivo…";
+  try {
+    const encodedPath = encodeStoragePath(objectPath);
+    await api(`/storage/v1/object/${MEDIA_BUCKET}/${encodedPath}`, { method: "DELETE" });
+    await api(`/rest/v1/media_uploads_v24?id=eq.${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { Prefer: "return=minimal" }
+    });
+    await loadMedia();
+    mediaMessage.textContent = "Archivo eliminado correctamente.";
+  } catch (error) {
+    mediaMessage.textContent = `No se pudo eliminar el archivo: ${error.message}`;
+  }
+}
+
+mediaGrid?.addEventListener("click", event => {
+  const button = event.target.closest("[data-delete-media]");
+  if (!button) return;
+  deleteMediaItem(button.dataset.deleteMedia, button.dataset.objectPath);
+});

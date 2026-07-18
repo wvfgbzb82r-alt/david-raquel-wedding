@@ -1,0 +1,14 @@
+V25 · BORRADO DESDE EL PANEL
+
+NOVEDADES:
+- Botón «Borrar comentario» en cada confirmación.
+- Botón «Eliminar respuesta» para borrar la confirmación completa.
+- Botón «Eliminar archivo» en cada foto o vídeo.
+- Confirmación antes de borrar para evitar errores.
+
+PASOS:
+1. Copia todos los archivos del ZIP al proyecto y conserva CNAME.
+2. En Supabase > SQL Editor > New query, ejecuta PERMISOS-BORRADO-V25.sql.
+3. Debe aparecer OK.
+4. Commit to main y Push origin.
+5. Abre https://davidyraquel.es/admin/?v=25 y recarga.
