@@ -40,14 +40,54 @@ function escapeHtml(value) {
 }
 
 async function api(path, options = {}) {
-  const headers = { apikey: CONFIG.key, "Content-Type": "application/json", ...(options.headers || {}) };
-  if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
+  const headers = {
+    apikey: CONFIG.key,
+    ...(options.headers || {})
+  };
+
+  // Solo se envía Content-Type cuando la petición contiene realmente un cuerpo.
+  // Safari y Supabase rechazan algunos DELETE vacíos si se incluye esta cabecera.
+  if (options.body !== undefined && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  }
+
   let response;
-  try { response = await fetch(`${CONFIG.url}${path}`, { ...options, headers }); }
-  catch { throw new Error("No se pudo conectar con Supabase. Comprueba la conexión a Internet."); }
+  try {
+    response = await fetch(`${CONFIG.url}${path}`, {
+      ...options,
+      headers
+    });
+  } catch {
+    throw new Error(
+      "No se pudo conectar con Supabase. Comprueba la conexión a Internet."
+    );
+  }
+
   let data = null;
-  try { data = await response.json(); } catch { data = null; }
-  if (!response.ok) throw new Error(data?.error_description || data?.msg || data?.message || `Error ${response.status}`);
+  const responseText = await response.text();
+
+  if (responseText) {
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      data = responseText;
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error_description ||
+      data?.msg ||
+      data?.message ||
+      (typeof data === "string" ? data : "") ||
+      `Error ${response.status}`
+    );
+  }
+
   return data;
 }
 

@@ -1,0 +1,18 @@
+DAVID & RAQUEL — V25.1
+
+CORRECCIÓN:
+- Solucionado el error:
+  “Body cannot be empty when content-type is set”.
+- El botón «Eliminar archivo» ya envía correctamente la petición DELETE.
+- Se mantiene el borrado de comentarios y respuestas.
+- No hace falta ejecutar ningún SQL nuevo.
+
+INSTALACIÓN:
+1. Sustituye únicamente:
+   - admin/index.html
+   - js/admin-v21.js
+2. Haz Commit to main.
+3. Pulsa Push origin.
+4. Abre:
+   https://davidyraquel.es/admin/?v=25.1
+5. Fuerza la actualización con Ctrl + F5.
