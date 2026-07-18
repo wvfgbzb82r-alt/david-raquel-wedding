@@ -1,11 +1,7 @@
 const SUPABASE_URL = "https://impauxkdtcwngvlknysa.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_TN0nnQZ_g6l1RNTuE4f9qg_iaI_USWV";
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_TN0nnQZ_g6l1RNTuE4f9qg_iaI_USWV";
 const ADMIN_EMAIL = "davidn6783@gmail.com";
-
-const db = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
 
 const login = document.getElementById("login");
 const dashboard = document.getElementById("dash");
@@ -28,6 +24,8 @@ const logoutButton = document.getElementById("logout");
 const refreshButton = document.getElementById("refresh");
 const exportButton = document.getElementById("export");
 
+const STORAGE_KEY = "david_raquel_admin_session";
+let accessToken = "";
 let guests = [];
 
 function normalize(value) {
@@ -36,7 +34,8 @@ function normalize(value) {
 
 function isYes(value) {
   const text = normalize(value);
-  return ["sí", "si", "yes"].includes(text) || text.includes("allí estaré");
+  return ["sí", "si", "yes"].includes(text) ||
+    text.includes("allí estaré");
 }
 
 function isNo(value) {
@@ -58,7 +57,7 @@ function filteredGuests() {
   const filter = attendanceFilter.value;
 
   return guests.filter(guest => {
-    const searchableText = normalize([
+    const searchable = normalize([
       guest.nombre,
       guest.telefono,
       guest.asistencia,
@@ -67,13 +66,14 @@ function filteredGuests() {
       guest.comentarios
     ].join(" "));
 
-    const matchesSearch = !query || searchableText.includes(query);
-    const matchesFilter =
-      !filter ||
-      (filter === "si" && isYes(guest.asistencia)) ||
-      (filter === "no" && isNo(guest.asistencia));
-
-    return matchesSearch && matchesFilter;
+    return (
+      (!query || searchable.includes(query)) &&
+      (
+        !filter ||
+        (filter === "si" && isYes(guest.asistencia)) ||
+        (filter === "no" && isNo(guest.asistencia))
+      )
+    );
   });
 }
 
@@ -88,9 +88,8 @@ function updateStats() {
     (total, guest) => total + 1 + (guest.acompanante ? 1 : 0),
     0
   );
-  allergiesStat.textContent = guests.filter(
-    guest => normalize(guest.alergias)
-  ).length;
+  allergiesStat.textContent =
+    guests.filter(guest => normalize(guest.alergias)).length;
 }
 
 function renderGuests() {
@@ -123,22 +122,70 @@ function renderGuests() {
     `${rows.length} respuesta${rows.length === 1 ? "" : "s"} mostrada${rows.length === 1 ? "" : "s"}.`;
 }
 
+async function signIn(password) {
+  const response = await fetch(
+    `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+    {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: ADMIN_EMAIL,
+        password
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error_description ||
+      data.msg ||
+      data.message ||
+      "No se pudo iniciar sesión."
+    );
+  }
+
+  accessToken = data.access_token;
+  sessionStorage.setItem(STORAGE_KEY, accessToken);
+}
+
 async function loadGuests() {
   dashboardMessage.textContent = "Cargando respuestas…";
 
-  const { data, error } = await db
-    .from("invitados")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/invitados?select=*&order=created_at.desc`,
+    {
+      headers: {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": `Bearer ${accessToken}`
+      }
+    }
+  );
 
-  if (error) {
-    console.error("Error al cargar invitados:", error);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error("Error al cargar respuestas:", data);
+
+    if (response.status === 401) {
+      sessionStorage.removeItem(STORAGE_KEY);
+      accessToken = "";
+      showLogin();
+      loginMessage.textContent =
+        "La sesión ha caducado. Introduce el código de nuevo.";
+      return;
+    }
+
     dashboardMessage.textContent =
-      "No se pudieron cargar las respuestas. Revisa la política RLS.";
+      "No se pudieron cargar las respuestas. Revisa la política SQL.";
     return;
   }
 
-  guests = data || [];
+  guests = Array.isArray(data) ? data : [];
   updateStats();
   renderGuests();
 }
@@ -164,28 +211,29 @@ loginForm.addEventListener("submit", async event => {
 
   loginMessage.textContent = "Comprobando acceso…";
 
-  const { error } = await db.auth.signInWithPassword({
-    email: ADMIN_EMAIL,
-    password: codeInput.value
-  });
-
-  if (error) {
+  try {
+    await signIn(codeInput.value);
+    loginMessage.textContent = "";
+    codeInput.value = "";
+    showDashboard();
+  } catch (error) {
     console.error("Error de acceso:", error);
-    loginMessage.textContent =
-      error.message === "Email not confirmed"
-        ? "El usuario todavía no está confirmado en Supabase."
-        : "Código incorrecto.";
-    codeInput.select();
-    return;
-  }
 
-  loginMessage.textContent = "";
-  codeInput.value = "";
-  showDashboard();
+    if (error.message.toLowerCase().includes("confirm")) {
+      loginMessage.textContent =
+        "El usuario todavía no está confirmado en Supabase.";
+    } else {
+      loginMessage.textContent =
+        `No se pudo entrar: ${error.message}`;
+    }
+
+    codeInput.select();
+  }
 });
 
-logoutButton.addEventListener("click", async () => {
-  await db.auth.signOut();
+logoutButton.addEventListener("click", () => {
+  sessionStorage.removeItem(STORAGE_KEY);
+  accessToken = "";
   showLogin();
 });
 
@@ -205,13 +253,21 @@ exportButton.addEventListener("click", () => {
   ]);
 
   const csv = [
-    ["Fecha", "Nombre", "Teléfono", "Asistencia", "Acompañante", "Alergias", "Comentarios"],
+    [
+      "Fecha",
+      "Nombre",
+      "Teléfono",
+      "Asistencia",
+      "Acompañante",
+      "Alergias",
+      "Comentarios"
+    ],
     ...rows
   ]
     .map(row =>
-      row.map(value =>
-        `"${String(value).replaceAll('"', '""')}"`
-      ).join(";")
+      row
+        .map(value => `"${String(value).replaceAll('"', '""')}"`)
+        .join(";")
     )
     .join("\n");
 
@@ -228,13 +284,10 @@ exportButton.addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
-db.auth.getSession().then(({ data }) => {
-  if (data.session) {
-    showDashboard();
-  } else {
-    showLogin();
-  }
-}).catch(error => {
-  console.error("Error al comprobar la sesión:", error);
-  loginMessage.textContent = "No se pudo iniciar el panel.";
-});
+accessToken = sessionStorage.getItem(STORAGE_KEY) || "";
+
+if (accessToken) {
+  showDashboard();
+} else {
+  showLogin();
+}
