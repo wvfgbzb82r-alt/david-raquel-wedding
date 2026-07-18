@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=21">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=22">
 </head>
 <body>
   <main>
@@ -78,8 +78,26 @@
         </table>
       </div>
       <div class="guest-cards" id="guestCards"></div>
+
+      <section class="media-section" aria-labelledby="mediaTitle">
+        <div class="media-section__header">
+          <div>
+            <p class="kicker">Álbum privado</p>
+            <h2 id="mediaTitle">Fotos y vídeos</h2>
+          </div>
+          <button id="refreshMediaButton" type="button">Actualizar archivos</button>
+        </div>
+        <section class="media-stats">
+          <article><span>Archivos</span><strong id="mediaTotal">0</strong></article>
+          <article><span>Fotos</span><strong id="mediaPhotos">0</strong></article>
+          <article><span>Vídeos</span><strong id="mediaVideos">0</strong></article>
+          <article><span>Espacio</span><strong id="mediaSize">0 MB</strong></article>
+        </section>
+        <p id="mediaMessage" class="dashboard-message" role="status" aria-live="polite"></p>
+        <div class="media-grid" id="mediaGrid"></div>
+      </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=21"></script>
+  <script src="../js/admin-v21.js?v=22"></script>
 </body>
 </html>

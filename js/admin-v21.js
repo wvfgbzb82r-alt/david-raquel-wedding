@@ -162,3 +162,78 @@ byId("exportButton").addEventListener("click", () => {
 
 try { session = JSON.parse(sessionStorage.getItem(CONFIG.sessionKey) || "null"); } catch { session = null; }
 if (session?.access_token) showDashboard(); else showLogin();
+
+// V22 · Álbum privado
+const MEDIA_BUCKET = "wedding-media";
+const mediaGrid = byId("mediaGrid");
+const mediaMessage = byId("mediaMessage");
+let mediaItems = [];
+
+function humanMediaSize(bytes) {
+  const units = ["B", "KB", "MB", "GB"];
+  let value = Number(bytes || 0);
+  let index = 0;
+  while (value >= 1024 && index < units.length - 1) {
+    value /= 1024;
+    index += 1;
+  }
+  return `${value.toFixed(index ? 1 : 0)} ${units[index]}`;
+}
+
+function encodeStoragePath(path) {
+  return String(path).split("/").map(encodeURIComponent).join("/");
+}
+
+async function signedMediaUrl(path) {
+  const data = await api(
+    `/storage/v1/object/sign/${MEDIA_BUCKET}/${encodeStoragePath(path)}`,
+    { method: "POST", body: JSON.stringify({ expiresIn: 3600 }) }
+  );
+  const signed = data?.signedURL || data?.signedUrl;
+  if (!signed) throw new Error("No se pudo crear el enlace privado.");
+  return signed.startsWith("http") ? signed : `${CONFIG.url}/storage/v1${signed}`;
+}
+
+async function loadMedia() {
+  if (!mediaGrid) return;
+  mediaMessage.textContent = "Cargando fotos y vídeos…";
+  try {
+    mediaItems = await api("/rest/v1/media_uploads?select=*&order=created_at.desc&limit=200");
+    byId("mediaTotal").textContent = mediaItems.length;
+    byId("mediaPhotos").textContent = mediaItems.filter(item => String(item.mime_type || "").startsWith("image/")).length;
+    byId("mediaVideos").textContent = mediaItems.filter(item => String(item.mime_type || "").startsWith("video/")).length;
+    byId("mediaSize").textContent = humanMediaSize(mediaItems.reduce((sum, item) => sum + Number(item.size_bytes || 0), 0));
+
+    if (!mediaItems.length) {
+      mediaGrid.innerHTML = "";
+      mediaMessage.textContent = "Todavía no se ha subido ningún recuerdo.";
+      return;
+    }
+
+    mediaMessage.textContent = "Preparando vistas privadas…";
+    const cardsHtml = [];
+    for (const item of mediaItems) {
+      let url = "";
+      try { url = await signedMediaUrl(item.object_path); } catch (error) { console.warn(error); }
+      const isImage = String(item.mime_type || "").startsWith("image/");
+      const isVideo = String(item.mime_type || "").startsWith("video/");
+      const preview = url && isImage
+        ? `<img src="${url}" alt="${escapeHtml(item.original_name)}" loading="lazy">`
+        : url && isVideo
+          ? `<video src="${url}" controls preload="metadata"></video>`
+          : `<span>Archivo privado</span>`;
+      cardsHtml.push(`<article class="media-card"><div class="media-preview">${preview}</div><div class="media-card__body"><h3 title="${escapeHtml(item.original_name)}">${escapeHtml(item.original_name)}</h3><p>${escapeHtml(item.uploader_name || "Remitente sin indicar")}</p><p>${formatDate(item.created_at)} · ${humanMediaSize(item.size_bytes)}</p>${url ? `<a href="${url}" download target="_blank" rel="noopener">Abrir / descargar</a>` : ""}</div></article>`);
+    }
+    mediaGrid.innerHTML = cardsHtml.join("");
+    mediaMessage.textContent = `${mediaItems.length} archivo${mediaItems.length === 1 ? "" : "s"} recibido${mediaItems.length === 1 ? "" : "s"}.`;
+  } catch (error) {
+    mediaMessage.textContent = `No se pudieron cargar los archivos: ${error.message}`;
+  }
+}
+
+byId("refreshMediaButton")?.addEventListener("click", loadMedia);
+const originalShowDashboard = showDashboard;
+showDashboard = function () {
+  originalShowDashboard();
+  loadMedia();
+};

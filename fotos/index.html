@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#f7f2e8">
+  <title>Comparte tus recuerdos · David & Raquel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/fotos.css?v=22">
+</head>
+<body>
+  <main class="upload-page">
+    <section class="upload-card">
+      <p class="kicker">David &amp; Raquel</p>
+      <div class="camera" aria-hidden="true">♡</div>
+      <h1>Comparte tus recuerdos</h1>
+      <div class="divider"></div>
+      <p class="intro">
+        Queremos recordar este día también a través de vuestros ojos.
+        Selecciona las fotos y vídeos que quieras compartir con nosotros.
+      </p>
+
+      <form id="uploadForm" novalidate>
+        <label class="name-field" for="uploaderName">
+          <span>Tu nombre (opcional)</span>
+          <input id="uploaderName" name="uploaderName" type="text" autocomplete="name" maxlength="100" placeholder="Para saber quién nos las envía">
+        </label>
+
+        <label class="drop-zone" id="dropZone" for="mediaFiles">
+          <input id="mediaFiles" type="file" accept="image/*,video/mp4,video/quicktime" multiple hidden>
+          <span class="drop-zone__icon" aria-hidden="true">＋</span>
+          <strong>Elegir fotos y vídeos</strong>
+          <small>También puedes arrastrarlos aquí</small>
+        </label>
+
+        <div class="selection" id="selection" hidden>
+          <p id="selectionSummary"></p>
+          <ul id="fileList"></ul>
+          <button class="text-button" id="clearButton" type="button">Quitar selección</button>
+        </div>
+
+        <button class="upload-button" id="uploadButton" type="submit" disabled>
+          Subir recuerdos
+        </button>
+
+        <div class="progress" id="progressWrap" hidden>
+          <div class="progress__bar"><span id="progressBar"></span></div>
+          <p id="progressText">Preparando archivos…</p>
+        </div>
+
+        <p class="message" id="uploadMessage" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="privacy-note">
+        Las fotos y vídeos son privados. Los demás invitados no podrán verlos.
+      </p>
+    </section>
+  </main>
+  <script src="../js/fotos.js?v=22"></script>
+</body>
+</html>
