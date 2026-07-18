@@ -155,6 +155,7 @@ const welcomeScreen=document.getElementById("welcomeScreen");
 const enterInvitation=document.getElementById("enterInvitation");
 const openEnvelope=document.getElementById("openEnvelope");
 const envelopeScene=document.getElementById("envelopeScene");
+const cinematicPrelude=document.getElementById("cinematicPrelude");
 const musicControl=document.getElementById("musicControl");
 const backgroundMusic=document.getElementById("backgroundMusic");
 const scrollProgress=document.getElementById("scrollProgress");
@@ -162,15 +163,33 @@ const scrollProgress=document.getElementById("scrollProgress");
 openEnvelope?.addEventListener("click",()=>{
   envelopeScene?.classList.add("is-open");
   openEnvelope.setAttribute("aria-expanded","true");
+
+  // Vibración muy breve solo en dispositivos compatibles.
+  if (navigator.vibrate) {
+    navigator.vibrate(22);
+  }
+
+  // La música solo puede arrancar después de una interacción del usuario.
+  backgroundMusic?.play().then(()=>{
+    musicControl?.classList.add("is-playing");
+    musicControl?.setAttribute("aria-pressed","true");
+  }).catch(()=>{});
 });
 
 enterInvitation.addEventListener("click",()=>{
-  welcomeScreen.classList.add("is-hidden");
-  document.body.classList.remove("is-locked");
-  backgroundMusic.play().then(()=>{
-    musicControl.classList.add("is-playing");
-    musicControl.setAttribute("aria-pressed","true");
-  }).catch(()=>{});
+  document.body.classList.add("invitation-opening");
+
+  window.setTimeout(()=>{
+    welcomeScreen.classList.add("is-hidden");
+    document.body.classList.remove("is-locked");
+    document.body.classList.remove("invitation-opening");
+  }, 720);
+  window.setTimeout(()=>{
+    backgroundMusic.play().then(()=>{
+      musicControl.classList.add("is-playing");
+      musicControl.setAttribute("aria-pressed","true");
+    }).catch(()=>{});
+  }, 760);
 });
 
 musicControl.addEventListener("click",async()=>{
@@ -339,3 +358,9 @@ async function loadPersonalizedInvitation() {
 }
 
 loadPersonalizedInvitation();
+
+
+// Retira completamente la introducción oscura al finalizar la animación.
+window.setTimeout(() => {
+  cinematicPrelude?.remove();
+}, 3400);

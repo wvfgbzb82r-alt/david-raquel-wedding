@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=27">
+  <link rel="stylesheet" href="css/style.css?v=28">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -28,6 +28,10 @@
         <p id="accessMessage" class="access-message"></p>
       </form>
     </div>
+  </div>
+
+  <div class="cinematic-prelude" id="cinematicPrelude" aria-hidden="true">
+    <div class="cinematic-prelude__names">David <span>&amp;</span> Raquel</div>
   </div>
 
   <div class="welcome-screen envelope-intro" id="welcomeScreen"
@@ -434,7 +438,7 @@
           aria-label="Activar o pausar música" aria-pressed="false">
     <span aria-hidden="true">♪</span>
   </button>
-  <audio id="backgroundMusic" loop preload="none">
+  <audio id="backgroundMusic" loop preload="auto">
     <source src="assets/music/boda.mp3" type="audio/mpeg">
   </audio>
 

@@ -1,0 +1,23 @@
+DAVID & RAQUEL — V28 APERTURA CINEMATOGRÁFICA
+
+NOVEDADES:
+- Introducción oscura con los nombres.
+- Sobre con textura y movimiento suave.
+- Sello D&R con efecto de lacre.
+- Animación de rotura del sello.
+- Vibración breve en Android compatible.
+- Carta con iluminación y aparición escalonada.
+- Transición de la carta hacia la invitación.
+- Música preparada para comenzar al tocar el sello.
+
+MÚSICA:
+Añade el archivo MP3 en:
+assets/music/boda.mp3
+
+INSTALACIÓN:
+1. Copia los archivos sobre el proyecto.
+2. Conserva CNAME.
+3. No requiere SQL.
+4. Commit to main y Push origin.
+5. Prueba en:
+   https://davidyraquel.es/?v=28

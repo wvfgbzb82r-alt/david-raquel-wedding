@@ -1,0 +1,5 @@
+Coloca aquí el archivo MP3 con el nombre exacto:
+
+boda.mp3
+
+La música comenzará al pulsar el sello D&R.
