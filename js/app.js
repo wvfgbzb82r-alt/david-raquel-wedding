@@ -115,7 +115,6 @@ rsvpForm.addEventListener("submit", async event => {
         method: "POST",
         headers: {
           "apikey": SUPABASE_PUBLISHABLE_KEY,
-          "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
           "Content-Type": "application/json",
           "Prefer": "return=minimal"
         },
@@ -125,7 +124,12 @@ rsvpForm.addEventListener("submit", async event => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(errorText || "No se pudo guardar la confirmación.");
+      let detail = errorText;
+      try {
+        const parsed = JSON.parse(errorText);
+        detail = parsed.message || parsed.details || parsed.hint || errorText;
+      } catch {}
+      throw new Error(detail || `Error ${response.status}`);
     }
 
     rsvpForm.reset();
@@ -135,9 +139,10 @@ rsvpForm.addEventListener("submit", async event => {
     formStatus.className = "form-status is-success";
   } catch (error) {
     console.error("Error al enviar la confirmación:", error);
-    formStatus.textContent =
-      "No hemos podido guardar la confirmación. " +
-      "Comprueba la conexión e inténtalo de nuevo.";
+    const configurationProblem = /column|policy|permission|row-level|schema|relation/i.test(error.message);
+    formStatus.textContent = configurationProblem
+      ? "No hemos podido guardar la confirmación porque falta terminar la configuración. Avisadnos, por favor."
+      : "No hemos podido guardar la confirmación. Comprueba la conexión e inténtalo de nuevo.";
     formStatus.className = "form-status is-error";
   } finally {
     submitButton.disabled = false;

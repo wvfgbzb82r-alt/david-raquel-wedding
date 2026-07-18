@@ -114,7 +114,6 @@ async function uploadFile(file, path) {
       method: "POST",
       headers: {
         apikey: CONFIG.key,
-        Authorization: `Bearer ${CONFIG.key}`,
         "Content-Type": file.type || "application/octet-stream",
         "x-upsert": "false"
       },
@@ -137,7 +136,6 @@ async function saveMetadata(file, path) {
     method: "POST",
     headers: {
       apikey: CONFIG.key,
-      Authorization: `Bearer ${CONFIG.key}`,
       "Content-Type": "application/json",
       Prefer: "return=minimal"
     },
@@ -195,7 +193,13 @@ form.addEventListener("submit", async event => {
     selection.hidden = true;
   } catch (error) {
     console.error(error);
-    setMessage(`No se pudo completar la subida: ${error.message}`, true);
+    const missingBucket = /bucket not found/i.test(error.message);
+    setMessage(
+      missingBucket
+        ? "El álbum todavía no está activado. Ejecuta el archivo supabase-estabilizacion-v23.sql en Supabase."
+        : `No se pudo completar la subida: ${error.message}`,
+      true
+    );
     progressText.textContent =
       `Se subieron ${completed} de ${selectedFiles.length} archivos.`;
   } finally {
