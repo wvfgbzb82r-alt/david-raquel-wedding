@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#f7f2e8">
+  <title>Panel privado · David & Raquel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=21">
+</head>
+<body>
+  <main>
+    <section class="login-view" id="loginView">
+      <div class="login-card">
+        <p class="kicker">Acceso privado</p>
+        <h1>David <span>&amp;</span> Raquel</h1>
+        <div class="divider"></div>
+        <p class="intro">Introduce vuestra contraseña privada para consultar las confirmaciones.</p>
+        <form id="loginForm" novalidate>
+          <label for="adminCode">Código de acceso</label>
+          <div class="password-row">
+            <input id="adminCode" type="password" autocomplete="current-password" required>
+            <button id="togglePassword" class="secondary-button" type="button">Ver</button>
+          </div>
+          <button id="loginButton" class="primary-button" type="submit">Entrar al panel</button>
+          <p id="loginMessage" class="message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="dashboard" id="dashboard" hidden>
+      <header class="dashboard-header">
+        <div>
+          <p class="kicker">Panel privado</p>
+          <h1>Confirmaciones</h1>
+          <p class="last-update" id="lastUpdate"></p>
+        </div>
+        <div class="header-actions">
+          <button id="refreshButton" type="button">Actualizar</button>
+          <button id="exportButton" type="button">Exportar CSV</button>
+          <button id="logoutButton" type="button">Cerrar sesión</button>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Resumen de confirmaciones">
+        <article><span>Respuestas</span><strong id="statTotal">0</strong></article>
+        <article><span>Asistirán</span><strong id="statYes">0</strong></article>
+        <article><span>No asistirán</span><strong id="statNo">0</strong></article>
+        <article><span>Personas estimadas</span><strong id="statPeople">0</strong></article>
+        <article><span>Alergias</span><strong id="statAllergies">0</strong></article>
+      </section>
+
+      <section class="toolbar">
+        <label>
+          <span>Buscar</span>
+          <input id="searchInput" type="search" placeholder="Nombre, teléfono, alergias…">
+        </label>
+        <label>
+          <span>Asistencia</span>
+          <select id="attendanceFilter">
+            <option value="">Todas</option>
+            <option value="yes">Sí</option>
+            <option value="no">No</option>
+            <option value="other">Sin clasificar</option>
+          </select>
+        </label>
+      </section>
+
+      <p id="dashboardMessage" class="dashboard-message" role="status" aria-live="polite"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Asistencia</th><th>Acompañante</th><th>Alergias</th><th>Comentarios</th></tr></thead>
+          <tbody id="guestTableBody"></tbody>
+        </table>
+      </div>
+      <div class="guest-cards" id="guestCards"></div>
+    </section>
+  </main>
+  <script src="../js/admin-v21.js?v=21"></script>
+</body>
+</html>
