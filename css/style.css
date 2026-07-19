@@ -2061,3 +2061,379 @@ a[data-detected-links] {
     bottom: -38px;
   }
 }
+
+
+/* =========================================================
+   V35 · Sobre natural, una sola pieza, sin saltos de imagen
+   ========================================================= */
+
+/* Desactiva completamente cualquier resto de las versiones fotográficas. */
+.envelope-photo-wrap,
+.envelope-photo,
+.seal-hotspot {
+  display: none !important;
+}
+
+/* Escenario más compacto y centrado. */
+.envelope-stage {
+  width: min(94vw, 760px);
+  min-height: min(82svh, 720px);
+}
+
+.envelope-scene {
+  width: min(90vw, 660px);
+  aspect-ratio: 1.48 / 1;
+  transform-style: preserve-3d;
+  filter:
+    drop-shadow(0 38px 50px rgba(0,0,0,.5))
+    drop-shadow(0 7px 8px rgba(195,137,68,.08));
+}
+
+/* Un único sobre físico compuesto por capas coherentes. */
+.envelope-body {
+  inset: 17% 0 0;
+  z-index: 8;
+  transform-style: preserve-3d;
+}
+
+.envelope-body__back {
+  border: 1px solid rgba(92,58,27,.32);
+  border-radius: 10px 10px 24px 24px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.22), transparent 38%),
+    repeating-linear-gradient(
+      14deg,
+      rgba(83,49,21,.034) 0,
+      rgba(83,49,21,.034) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    linear-gradient(135deg, #dfc6a2, #c59c69);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.46),
+    inset 0 -20px 28px rgba(83,46,16,.08);
+}
+
+.envelope-body__left {
+  clip-path: polygon(0 0, 53% 55%, 0 100%);
+  background:
+    linear-gradient(120deg, rgba(255,255,255,.15), transparent 42%),
+    repeating-linear-gradient(
+      16deg,
+      rgba(84,50,22,.03) 0,
+      rgba(84,50,22,.03) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    linear-gradient(135deg, #ead2ae, #bd9362);
+}
+
+.envelope-body__right {
+  clip-path: polygon(100% 0, 47% 55%, 100% 100%);
+  background:
+    linear-gradient(240deg, rgba(255,255,255,.12), transparent 40%),
+    repeating-linear-gradient(
+      -16deg,
+      rgba(84,50,22,.03) 0,
+      rgba(84,50,22,.03) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    linear-gradient(225deg, #dfc39b, #b98d59);
+}
+
+.envelope-body__bottom {
+  clip-path: polygon(0 100%, 50% 42%, 100% 100%);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.12), transparent 30%),
+    repeating-linear-gradient(
+      12deg,
+      rgba(80,47,19,.028) 0,
+      rgba(80,47,19,.028) 1px,
+      transparent 1px,
+      transparent 6px
+    ),
+    linear-gradient(180deg, #d8ba8c, #c39a68);
+}
+
+.envelope-flap {
+  z-index: 12;
+  clip-path: polygon(0 0, 100% 0, 50% 62%);
+  border-top: 1px solid rgba(255,255,255,.25);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.22), transparent 42%),
+    repeating-linear-gradient(
+      -10deg,
+      rgba(84,50,22,.038) 0,
+      rgba(84,50,22,.038) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    linear-gradient(145deg, #ead2ae, #bb8f5d);
+  box-shadow:
+    inset 0 -18px 28px rgba(84,45,14,.10),
+    0 2px 0 rgba(255,255,255,.14);
+  transform-origin: 50% 0;
+  backface-visibility: visible;
+}
+
+/* Carta: misma textura que el sobre, pero más clara. */
+.envelope-letter {
+  left: 7%;
+  right: 7%;
+  top: 19%;
+  height: 72%;
+  z-index: 6;
+  border: 1px solid rgba(143,100,49,.24);
+  border-radius: 9px;
+  background:
+    linear-gradient(rgba(255,253,248,.78), rgba(255,249,238,.78)),
+    repeating-linear-gradient(
+      0deg,
+      rgba(86,54,27,.024) 0,
+      rgba(86,54,27,.024) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(119,82,42,.017) 0,
+      rgba(119,82,42,.017) 1px,
+      transparent 1px,
+      transparent 8px
+    ),
+    #f3e3c8;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.2),
+    inset 0 0 38px rgba(136,92,45,.045);
+  transform: translateY(22%) scale(.965);
+}
+
+/* Sello realista, único y coherente. */
+.wax-seal--natural {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  top: 53.5%;
+  width: clamp(78px, 14vw, 104px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 48% 52% 47% 53% / 52% 45% 55% 48%;
+  cursor: pointer;
+  color: #f0d2a7;
+  background:
+    radial-gradient(circle at 31% 23%, rgba(255,234,199,.24), transparent 13%),
+    radial-gradient(circle at 52% 56%, #9f5c37 0 40%, #76371f 41% 63%, #4f2114 64% 100%);
+  box-shadow:
+    0 11px 22px rgba(34,14,7,.48),
+    inset 0 2px 0 rgba(255,227,190,.18),
+    inset 0 -8px 13px rgba(42,15,7,.25),
+    inset 0 0 0 3px rgba(255,221,180,.11),
+    inset 0 0 0 9px rgba(59,24,12,.18);
+  transition:
+    transform .24s ease,
+    filter .24s ease,
+    opacity .38s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wax-seal--natural::before,
+.wax-seal--natural::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.wax-seal--natural::before {
+  inset: 9%;
+  border: 1px solid rgba(240,202,151,.34);
+}
+
+.wax-seal--natural::after {
+  inset: 20%;
+  border: 2px double rgba(222,176,117,.42);
+}
+
+.wax-seal__monogram {
+  position: relative;
+  z-index: 2;
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(1rem, 3.2vw, 1.45rem);
+  letter-spacing: .02em;
+  text-shadow: 0 1px 0 rgba(65,24,10,.75);
+}
+
+.wax-seal__shine {
+  position: absolute;
+  inset: 12% 18% auto 18%;
+  height: 24%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255,244,220,.18), transparent);
+  transform: rotate(-12deg);
+}
+
+.wax-seal--natural:hover,
+.wax-seal--natural:focus-visible {
+  transform: translate(-50%, -50%) scale(1.045);
+  filter: brightness(1.06);
+  outline: none;
+}
+
+/* Indicador de toque sutil y totalmente vectorial. */
+.seal-touch-indicator {
+  position: absolute;
+  z-index: 19;
+  left: 50%;
+  top: 53.5%;
+  width: 116px;
+  height: 116px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.seal-touch-indicator__ring,
+.seal-touch-indicator__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.seal-touch-indicator__ring {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(222,183,113,.26);
+  animation: touchRingNatural 2.1s ease-out infinite;
+}
+
+.seal-touch-indicator__dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(238,205,144,.72);
+  box-shadow: 0 0 16px rgba(224,178,98,.42);
+  animation: touchDotNatural 2.1s ease-in-out infinite;
+}
+
+@keyframes touchRingNatural {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.68); }
+  25% { opacity: .68; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.18); }
+}
+
+@keyframes touchDotNatural {
+  0%,100% { opacity: .35; transform: translate(-50%, -50%) scale(.8); }
+  45% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+}
+
+/* Rotura sutil: el sello se inclina y cae, sin cambiar de imagen. */
+.envelope-scene.is-breaking .wax-seal--natural {
+  animation: sealBreakNatural .78s cubic-bezier(.2,.8,.25,1) forwards;
+}
+
+@keyframes sealBreakNatural {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+  }
+  38% {
+    transform: translate(-50%, -50%) scale(1.08) rotate(-4deg);
+  }
+  72% {
+    opacity: 1;
+    transform: translate(-48%, -42%) scale(.96) rotate(9deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-42%, 38px) scale(.72) rotate(18deg);
+  }
+}
+
+.envelope-scene.is-breaking .seal-touch-indicator {
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+/* Apertura continua del mismo sobre. */
+.envelope-scene.is-open .envelope-flap {
+  transform: rotateX(-178deg);
+  z-index: 1;
+  transition: transform 1.05s cubic-bezier(.22,.74,.25,1);
+}
+
+.envelope-scene.is-open .envelope-letter {
+  z-index: 16;
+  top: -20%;
+  left: 2%;
+  right: 2%;
+  height: 135%;
+  transform: translateY(0) scale(1);
+  transition:
+    transform 1.15s .32s cubic-bezier(.17,.77,.23,1),
+    top 1.05s .32s ease,
+    left 1.05s .32s ease,
+    right 1.05s .32s ease,
+    height 1.05s .32s ease;
+}
+
+.envelope-scene.is-open .envelope-body {
+  transform: translateY(18%);
+  transition: transform 1s .52s ease, opacity .7s .7s ease;
+}
+
+/* No finger photo, no photo swaps, no duplicate overlay. */
+.envelope-scene.is-ready-for-touch .envelope-photo--finger,
+.envelope-scene.is-pressing .envelope-photo--finger,
+.envelope-scene.is-pressing .envelope-photo--closed,
+.envelope-scene.is-open .envelope-photo-wrap {
+  display: none !important;
+}
+
+/* Hint más discreto. */
+.envelope-hint {
+  bottom: -46px;
+  color: #d6b271;
+  font-size: clamp(.92rem,2.2vw,1.05rem);
+  font-style: italic;
+  letter-spacing: .02em;
+}
+
+.envelope-hint::before {
+  content: "";
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .envelope-stage {
+    min-height: 72svh;
+  }
+
+  .envelope-scene {
+    width: 93vw;
+  }
+
+  .wax-seal--natural {
+    top: 54%;
+    width: 86px;
+  }
+
+  .seal-touch-indicator {
+    top: 54%;
+    width: 104px;
+    height: 104px;
+  }
+
+  .envelope-hint {
+    bottom: -34px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seal-touch-indicator__ring,
+  .seal-touch-indicator__dot {
+    animation: none;
+  }
+}

@@ -160,19 +160,14 @@ openEnvelope?.addEventListener("click",()=>{
   if (envelopeScene?.classList.contains("is-open")) return;
 
   envelopeScene?.classList.remove("is-ready-for-touch");
-  envelopeScene?.classList.add("is-pressing");
   openEnvelope.disabled = true;
   openEnvelope.setAttribute("aria-expanded","true");
+  envelopeScene?.classList.add("is-breaking");
 
   window.setTimeout(() => {
-    envelopeScene?.classList.add("is-breaking");
-  }, 280);
-
-  window.setTimeout(() => {
-    envelopeScene?.classList.remove("is-pressing");
     envelopeScene?.classList.add("is-open");
     welcomeScreen?.classList.add("auto-opening");
-  }, 820);
+  }, 620);
 
   if (navigator.vibrate) {
     navigator.vibrate(22);
@@ -204,7 +199,7 @@ openEnvelope?.addEventListener("click",()=>{
   // Un único clic: después de mostrar la carta, se entra automáticamente.
   window.setTimeout(()=>{
     document.body.classList.add("invitation-opening");
-  }, 4920);
+  }, 4550);
 
   window.setTimeout(()=>{
     window.scrollTo(0, 0);
@@ -222,7 +217,7 @@ openEnvelope?.addEventListener("click",()=>{
       document.body.classList.remove("cinematic-revealing");
       window.scrollTo(0, 0);
     },1300);
-  },5820);
+  },5450);
 });
 
 

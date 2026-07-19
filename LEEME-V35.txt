@@ -1,0 +1,19 @@
+DAVID & RAQUEL — V35 · SOBRE NATURAL
+
+CAMBIOS:
+- Eliminadas por completo las fotografías intermedias.
+- Ya no se cambia entre un sobre fotográfico y otro animado.
+- Un único sobre construido por capas abre de principio a fin.
+- Sello de lacre único con relieve, brillo y monograma D&R.
+- Indicador de toque vectorial y discreto.
+- El sello se inclina, se desprende y cae.
+- La misma solapa se abre y la misma carta sale del sobre.
+- Se mantienen el código privado, los fundidos, la música y la transición final.
+- No requiere SQL.
+
+INSTALACIÓN:
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. Commit to main y Push origin.
+4. Prueba en pestaña privada:
+   https://davidyraquel.es/?v=35
