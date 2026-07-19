@@ -1,0 +1,21 @@
+DAVID & RAQUEL — V32
+
+CORRECCIONES:
+- Eliminado el destello de la primera hoja desde el HTML inicial.
+- Añadido CSS crítico dentro del <head>, antes de cargar la hoja externa.
+- La invitación no puede mostrarse ni durante la descarga del CSS.
+- Añadido un fotograma negro real entre los nombres y el sobre.
+- Nuevo sobre fotorealista claramente distinto al diseño anterior.
+- El sello D&R sigue siendo interactivo.
+- Al pulsarlo, la fotografía se funde con la animación de apertura.
+- No necesita SQL.
+
+INSTALACIÓN:
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. Commit to main y Push origin.
+4. Abre una pestaña privada:
+   https://davidyraquel.es/?v=32
+5. Si todavía ves la versión anterior, comprueba que index.html contiene:
+   css/style.css?v=32
+   js/app.js?v=32

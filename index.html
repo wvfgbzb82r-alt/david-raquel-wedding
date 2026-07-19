@@ -11,9 +11,30 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=31">
+
+  <style id="critical-cinematic-css">
+    html,body{margin:0;background:#030303}
+    body.cinematic-locked{overflow:hidden;background:#030303}
+    body.cinematic-locked main,
+    body.cinematic-locked .site-header,
+    body.cinematic-locked .floating-nav,
+    body.cinematic-locked .music-control,
+    body.cinematic-locked .scroll-progress{
+      visibility:hidden!important;
+      opacity:0!important;
+      pointer-events:none!important
+    }
+    #accessGate{
+      position:fixed;inset:0;z-index:3000;
+      display:grid;place-items:center;
+      background:#030303
+    }
+    #cinematicPrelude[hidden],
+    #welcomeScreen[hidden]{display:none!important}
+  </style>
+  <link rel="stylesheet" href="css/style.css?v=32">
 </head>
-<body class="is-locked">
+<body class="is-locked cinematic-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
 
   <div class="access-gate access-gate--cinematic" id="accessGate">
@@ -59,6 +80,11 @@
       <div class="envelope-botanical envelope-botanical--left" aria-hidden="true"></div>
       <div class="envelope-botanical envelope-botanical--right" aria-hidden="true"></div>
       <div class="envelope-scene" id="envelopeScene">
+        <div class="envelope-photo-wrap" aria-hidden="true">
+          <img class="envelope-photo"
+               src="assets/intro/sobre-cerrado-realista.jpg?v=32"
+               alt="">
+        </div>
 
         <div class="envelope-letter" aria-live="polite">
           <div class="envelope-letter__inner">

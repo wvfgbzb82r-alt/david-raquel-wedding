@@ -1616,3 +1616,137 @@ body.cinematic-revealing .music-control{
 @media(max-width:700px){
   .envelope-botanical{width:100px;height:160px;opacity:.22}
 }
+
+
+/* =========================================================
+   V32 · Cero destellos + sobre fotorealista visible
+   ========================================================= */
+
+/* La imagen fotorealista sustituye visualmente al sobre CSS cerrado. */
+.envelope-photo-wrap {
+  position: absolute;
+  inset: 3% -5% -4%;
+  z-index: 11;
+  overflow: hidden;
+  border-radius: 16px;
+  opacity: 1;
+  transform: translateZ(42px) scale(1);
+  transition:
+    opacity .48s ease,
+    transform .72s cubic-bezier(.2,.7,.2,1),
+    filter .48s ease;
+  box-shadow:
+    0 42px 70px rgba(0,0,0,.58),
+    0 5px 18px rgba(201,146,73,.13);
+}
+
+.envelope-photo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(.92) sepia(.05) brightness(.96);
+  transform: scale(1.02);
+}
+
+/* Sello interactivo encima de la fotografía. */
+.envelope-scene:not(.is-open) .wax-seal {
+  z-index: 15;
+  top: 55%;
+  box-shadow:
+    0 13px 30px rgba(25,10,5,.64),
+    0 0 0 7px rgba(116,54,29,.15),
+    inset 0 0 0 3px rgba(255,224,188,.15),
+    inset 0 0 0 9px rgba(61,26,14,.22);
+}
+
+.envelope-scene:not(.is-open) .envelope-hint {
+  z-index: 16;
+  bottom: -58px;
+}
+
+/* El modelo CSS está oculto mientras el sobre está cerrado.
+   Al pulsar el sello aparece detrás de la foto y ejecuta la apertura. */
+.envelope-scene:not(.is-open) .envelope-body,
+.envelope-scene:not(.is-open) .envelope-letter {
+  opacity: 0;
+}
+
+.envelope-scene.is-open .envelope-photo-wrap {
+  opacity: 0;
+  transform: translateZ(42px) scale(1.035) translateY(8px);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.envelope-scene.is-open .envelope-body,
+.envelope-scene.is-open .envelope-letter {
+  opacity: 1;
+  transition: opacity .24s .18s ease;
+}
+
+/* Más presencia visual del escenario. */
+.envelope-stage {
+  width: min(94vw, 820px);
+}
+
+.envelope-scene {
+  width: min(88vw, 710px);
+  aspect-ratio: 1.48 / 1;
+}
+
+.envelope-intro.is-ready .envelope-scene {
+  animation:
+    envelopeSceneRevealV32 1.15s ease both,
+    envelopeFloat 5.8s 1.15s ease-in-out infinite;
+}
+
+@keyframes envelopeSceneRevealV32 {
+  0% {
+    opacity: 0;
+    transform: translateY(38px) scale(.925);
+    filter: blur(14px);
+  }
+  58% {
+    opacity: 1;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* La pantalla de nombres y el sobre nunca se solapan. */
+.cinematic-prelude {
+  will-change: opacity, visibility;
+}
+
+.envelope-intro {
+  will-change: opacity;
+}
+
+@media (max-width: 700px) {
+  .envelope-stage {
+    width: 96vw;
+  }
+
+  .envelope-scene {
+    width: 94vw;
+  }
+
+  .envelope-photo-wrap {
+    inset: 8% -2% 1%;
+    border-radius: 12px;
+  }
+
+  .envelope-scene:not(.is-open) .wax-seal {
+    top: 56%;
+  }
+
+  .envelope-scene:not(.is-open) .envelope-hint {
+    bottom: -40px;
+  }
+}

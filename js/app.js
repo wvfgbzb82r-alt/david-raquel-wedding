@@ -256,14 +256,19 @@ function startWeddingIntro() {
   }, 650);
 
   window.setTimeout(() => {
-    cinematicPrelude.hidden = true;
     cinematicPrelude.classList.remove("is-active");
     cinematicPrelude.setAttribute("aria-hidden", "true");
+    cinematicPrelude.hidden = true;
 
-    welcomeScreen.hidden = false;
-    welcomeScreen.classList.add("is-ready");
-    welcomeScreen.setAttribute("aria-hidden", "false");
-  }, 4220);
+    // Un fotograma negro entre escenas impide cualquier solapamiento visual.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        welcomeScreen.hidden = false;
+        welcomeScreen.classList.add("is-ready");
+        welcomeScreen.setAttribute("aria-hidden", "false");
+      });
+    });
+  }, 4300);
 }
 
 function grantAccess({ remember = true } = {}) {
