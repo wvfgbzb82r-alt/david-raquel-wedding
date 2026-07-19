@@ -461,12 +461,7 @@ button{font:inherit}
   }
 }
 
-@media (max-width: 430px) {
-  .floating-nav a:nth-child(2),
-  .floating-nav a:nth-child(4) {
-    display: none;
-  }
-}
+
 
 body.is-locked{overflow:hidden}
 .welcome-screen{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:32px 20px;background:radial-gradient(circle at 18% 18%,rgba(216,192,141,.20),transparent 30%),radial-gradient(circle at 82% 82%,rgba(185,152,87,.13),transparent 34%),linear-gradient(180deg,#fcfaf5,#f6efe2);transition:opacity .85s ease,visibility .85s ease}
@@ -809,5 +804,123 @@ a[x-apple-data-detectors]:visited {
 
   .gift-card {
     padding-inline: 18px;
+  }
+}
+
+
+/* =========================================================
+   V38 · D&R, sin zoom, menú completo e IBAN en una línea
+   ========================================================= */
+
+/* Monograma superior de la pantalla privada */
+.access-monogram {
+  margin: 0 0 28px;
+  color: #d4aa57;
+  font-family: var(--serif);
+  font-size: clamp(3.8rem, 17vw, 6.4rem);
+  font-weight: 500;
+  line-height: .78;
+  letter-spacing: -.08em;
+  text-shadow: 0 0 28px rgba(198,145,61,.12);
+}
+
+.access-monogram span {
+  display: inline-block;
+  margin: 0 .02em;
+  font-size: .58em;
+  font-weight: 400;
+  transform: translateY(-.08em);
+}
+
+/* iPhone no amplía la página al enfocar inputs de 16px o más */
+.access-form-cinematic input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 16px !important;
+  transform: none !important;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.access-form-cinematic,
+.access-card--dark {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Menú completo en ordenador y móvil */
+.floating-nav {
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  justify-content: center;
+  gap: 3px;
+  box-sizing: border-box;
+}
+
+.floating-nav a,
+.floating-nav a:nth-child(2),
+.floating-nav a:nth-child(4) {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 700px) {
+  .floating-nav {
+    width: calc(100vw - 24px);
+    padding: 6px 5px;
+    gap: 0;
+  }
+
+  .floating-nav a {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 9px 4px;
+    font-size: clamp(.42rem, 1.75vw, .56rem);
+    letter-spacing: .025em;
+  }
+}
+
+@media (max-width: 390px) {
+  .floating-nav a {
+    padding-inline: 2px;
+    font-size: .41rem;
+  }
+}
+
+/* IBAN: una única línea, centrado y con tamaño coherente */
+.account-number {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding-inline: 0;
+  color: var(--gold-dark) !important;
+  -webkit-text-fill-color: var(--gold-dark) !important;
+  font-family: var(--serif);
+  font-size: clamp(.91rem, 3.05vw, 1.18rem);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .012em;
+  text-align: center;
+  text-decoration: none !important;
+  white-space: nowrap;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.account-number::before {
+  content: none !important;
+}
+
+.account-number span {
+  display: inline !important;
+  white-space: inherit !important;
+}
+
+@media (max-width: 370px) {
+  .account-number {
+    font-size: .84rem;
+    letter-spacing: 0;
   }
 }

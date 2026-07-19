@@ -1,0 +1,19 @@
+DAVID & RAQUEL — V38
+
+CAMBIOS:
+- Añadido el monograma D&R en la pantalla del código privado.
+- El campo del código usa 16 px para evitar el zoom automático de iPhone.
+- Menú completo en ordenador y móvil:
+  Inicio · Historia · Programa · Lugares · Confirmar · Detalle.
+- Detalle lleva directamente a transferencia bancaria y Bizum.
+- IBAN en una sola línea.
+- Tamaño del IBAN equilibrado con el resto de la tarjeta.
+- Menor separación entre números.
+- No requiere cambios en Supabase ni SQL.
+
+INSTALACIÓN:
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. Commit to main y Push origin.
+4. Abre una pestaña privada:
+   https://davidyraquel.es/?v=38
