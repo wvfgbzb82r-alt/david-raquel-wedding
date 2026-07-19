@@ -1,0 +1,20 @@
+DAVID & RAQUEL — V34 · SOBRE LIMPIO
+
+CAMBIOS:
+- Eliminada la fotografía del storyboard que incluía los rótulos
+  «4. PULSA EL SELLO» y «5...».
+- Nuevo sobre cerrado limpio, sin textos incrustados.
+- Nuevo fotograma del dedo recortado, sin etiquetas ni duplicados.
+- El texto «Pulsa el sello para abrir» aparece una sola vez.
+- El área pulsable coincide con el sello realista.
+- Se mantiene el efecto de presión y rotura del lacre.
+- El IBAN se dibuja mediante CSS para impedir que Safari lo convierta
+  en enlace azul o subrayado.
+- No requiere SQL.
+
+INSTALACIÓN:
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. Commit to main y Push origin.
+4. Prueba en pestaña privada:
+   https://davidyraquel.es/?v=34

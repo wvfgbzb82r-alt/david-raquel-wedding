@@ -1968,3 +1968,96 @@ a[data-detected-links] {
     border-radius: 14px;
   }
 }
+
+
+/* =========================================================
+   V34 · Sobre limpio y secuencia fiel al diseño
+   ========================================================= */
+
+/* Fotografías limpias, sin rótulos del storyboard ni textos duplicados. */
+.envelope-photo-wrap {
+  inset: 2% 1% 1%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #090604;
+}
+
+.envelope-photo {
+  object-fit: cover;
+  object-position: center;
+}
+
+.envelope-photo--closed {
+  transform: scale(1.035);
+}
+
+.envelope-photo--finger {
+  transform: scale(1.035);
+}
+
+/* El texto de ayuda se muestra una sola vez, fuera de la fotografía. */
+.envelope-hint {
+  bottom: -54px;
+}
+
+.envelope-hint::before {
+  content: "☝";
+}
+
+/* El dedo solo aparece como guía una vez y sin dejar fotogramas visibles. */
+.envelope-scene.is-ready-for-touch .envelope-photo--finger {
+  animation: fingerGuideCleanV34 1.75s .8s ease both;
+}
+
+@keyframes fingerGuideCleanV34 {
+  0%, 10% { opacity: 0; transform: scale(1.045); }
+  30%, 65% { opacity: 1; transform: scale(1.035); }
+  86%, 100% { opacity: 0; transform: scale(1.025); }
+}
+
+/* Al pulsar el sello real, aparece el dedo brevemente y después rompe. */
+.envelope-scene.is-pressing .envelope-photo--finger {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.envelope-scene.is-pressing .envelope-photo--closed {
+  opacity: 0;
+}
+
+/* El hotspot coincide con el sello real de la nueva fotografía. */
+.seal-hotspot {
+  top: 56%;
+  width: clamp(84px, 15vw, 116px);
+}
+
+/* IBAN dibujado mediante CSS: Safari no puede convertirlo en enlace azul. */
+.account-number::before {
+  content: "ES54 0182 0451 4502 0164 3567";
+  color: #8b6d38;
+  -webkit-text-fill-color: #8b6d38;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.account-number {
+  color: #8b6d38 !important;
+  -webkit-text-fill-color: #8b6d38 !important;
+  text-decoration: none !important;
+  user-select: text;
+}
+
+@media (max-width: 700px) {
+  .envelope-photo-wrap {
+    inset: 5% 1% 4%;
+  }
+
+  .seal-hotspot {
+    top: 57%;
+    width: 96px;
+  }
+
+  .envelope-hint {
+    bottom: -38px;
+  }
+}
