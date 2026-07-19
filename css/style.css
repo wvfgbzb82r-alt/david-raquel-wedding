@@ -909,9 +909,7 @@ a[x-apple-data-detectors]:visited {
   box-sizing: border-box;
 }
 
-.account-number::before {
-  content: none !important;
-}
+
 
 .account-number span {
   display: inline !important;
@@ -921,6 +919,65 @@ a[x-apple-data-detectors]:visited {
 @media (max-width: 370px) {
   .account-number {
     font-size: .84rem;
+    letter-spacing: 0;
+  }
+}
+
+
+/* =========================================================
+   V39 · IBAN definitivo
+   ========================================================= */
+
+.gift-card,
+.gift-option,
+.gift-data {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.gift-data {
+  width: 100%;
+  text-align: center;
+}
+
+.account-number {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 4px;
+  box-sizing: border-box;
+
+  color: var(--gold-dark) !important;
+  -webkit-text-fill-color: var(--gold-dark) !important;
+  font-family: var(--serif);
+  font-size: clamp(1rem, 3.3vw, 1.22rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+
+  text-align: center;
+  text-decoration: none !important;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.account-number a,
+.account-number a:link,
+.account-number a:visited,
+a[x-apple-data-detectors],
+a[x-apple-data-detectors]:link,
+a[x-apple-data-detectors]:visited {
+  color: var(--gold-dark) !important;
+  -webkit-text-fill-color: var(--gold-dark) !important;
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+  font: inherit !important;
+}
+
+@media (max-width: 390px) {
+  .account-number {
+    font-size: .93rem;
     letter-spacing: 0;
   }
 }
