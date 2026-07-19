@@ -13,29 +13,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <style id="critical-cinematic-css">
+  <style id="critical-access-css">
     html,body{margin:0;background:#030303}
-    body.cinematic-locked{overflow:hidden;background:#030303}
-    body.cinematic-locked main,
-    body.cinematic-locked .site-header,
-    body.cinematic-locked .floating-nav,
-    body.cinematic-locked .music-control,
-    body.cinematic-locked .scroll-progress{
+    body.is-locked{overflow:hidden}
+    body.is-locked main,
+    body.is-locked .site-header,
+    body.is-locked .floating-nav,
+    body.is-locked .music-control,
+    body.is-locked .scroll-progress{
       visibility:hidden!important;
       opacity:0!important;
       pointer-events:none!important
     }
     #accessGate{
       position:fixed;inset:0;z-index:3000;
-      display:grid;place-items:center;
-      background:#030303
+      display:grid;place-items:center;background:#030303
     }
-    #cinematicPrelude[hidden],
-    #welcomeScreen[hidden]{display:none!important}
   </style>
-  <link rel="stylesheet" href="css/style.css?v=35">
+  <link rel="stylesheet" href="css/style.css?v=37">
 </head>
-<body class="is-locked cinematic-locked">
+<body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
 
   <div class="access-gate access-gate--cinematic" id="accessGate">
@@ -65,60 +62,6 @@
 
       <div class="access-ornament" aria-hidden="true">
         <span></span><i>♡</i><span></span>
-      </div>
-    </div>
-  </div>
-
-  <div class="cinematic-prelude" id="cinematicPrelude" aria-hidden="true" hidden>
-    <div class="cinematic-prelude__names">David <span>&amp;</span> Raquel</div>
-  </div>
-
-  <div class="welcome-screen envelope-intro" id="welcomeScreen" hidden
-       role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
-
-    <div class="envelope-stage">
-      <div class="envelope-table-glow" aria-hidden="true"></div>
-      <div class="envelope-botanical envelope-botanical--left" aria-hidden="true"></div>
-      <div class="envelope-botanical envelope-botanical--right" aria-hidden="true"></div>
-      <div class="envelope-scene" id="envelopeScene">
-        </div>
-
-        <div class="envelope-letter" aria-live="polite">
-          <div class="envelope-letter__inner">
-            <p class="welcome-screen__kicker">Nos casamos</p>
-
-            <h1 id="welcomeTitle" class="welcome-screen__names">
-              <span>David</span><em>&amp;</em><span>Raquel</span>
-            </h1>
-
-            <div class="welcome-screen__divider" aria-hidden="true"></div>
-
-            <p class="welcome-screen__date">22 · noviembre · 2026</p>
-            <p class="welcome-screen__phrase">
-              El comienzo de nuestro para siempre
-            </p>
-          </div>
-        </div>
-
-        <div class="envelope-body" aria-hidden="true">
-          <div class="envelope-body__back"></div>
-          <div class="envelope-body__left"></div>
-          <div class="envelope-body__right"></div>
-          <div class="envelope-body__bottom"></div>
-          <div class="envelope-flap"></div>
-        </div>
-
-        <button class="wax-seal wax-seal--natural" id="openEnvelope" type="button"
-                aria-label="Abrir el sobre">
-          <span class="wax-seal__monogram">D&amp;R</span>
-          <span class="wax-seal__shine" aria-hidden="true"></span>
-        </button>
-
-        <span class="seal-touch-indicator" aria-hidden="true">
-          <span class="seal-touch-indicator__ring"></span>
-          <span class="seal-touch-indicator__dot"></span>
-        </span>
-        <p class="envelope-hint">Pulsa el sello para abrir</p>
       </div>
     </div>
   </div>
@@ -416,7 +359,11 @@
             <p class="gift-card__title">Transferencia bancaria</p>
             <div class="gift-data">
               <span class="gift-data__label">IBAN</span>
-              <span class="account-number" dir="ltr" aria-label="ES54 0182 0451 4502 0164 3567"></span>
+              <span class="account-number" dir="ltr"
+                    aria-label="ES54 0182 0451 4502 0164 3567">
+                <span>ES54 0182 0451 4502</span>
+                <span>0164 3567</span>
+              </span>
               <button class="copy-button" type="button"
                       data-copy="ES5401820451450201643567"
                       data-success="IBAN copiado">

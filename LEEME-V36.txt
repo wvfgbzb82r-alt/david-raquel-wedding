@@ -1,0 +1,18 @@
+DAVID & RAQUEL — V36 · ACCESO DIRECTO
+
+CAMBIOS:
+- Eliminada por completo la idea del sobre.
+- Eliminada la pantalla con nombres en fundido.
+- El flujo ahora es:
+  1. Código privado.
+  2. Acceso directo a la primera página de la invitación.
+- Se mantiene la música de fondo.
+- La invitación aparece desde arriba y con un fundido suave.
+- No requiere SQL.
+
+INSTALACIÓN:
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. Commit to main y Push origin.
+4. Prueba en pestaña privada:
+   https://davidyraquel.es/?v=36

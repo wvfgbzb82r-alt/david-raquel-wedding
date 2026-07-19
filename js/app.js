@@ -148,77 +148,11 @@ rsvpForm.addEventListener("submit", async event => {
   }
 });
 
-const welcomeScreen=document.getElementById("welcomeScreen");
-const openEnvelope=document.getElementById("openEnvelope");
-const envelopeScene=document.getElementById("envelopeScene");
-const cinematicPrelude=document.getElementById("cinematicPrelude");
 const musicControl=document.getElementById("musicControl");
 const backgroundMusic=document.getElementById("backgroundMusic");
 const scrollProgress=document.getElementById("scrollProgress");
 
-openEnvelope?.addEventListener("click",()=>{
-  if (envelopeScene?.classList.contains("is-open")) return;
 
-  envelopeScene?.classList.remove("is-ready-for-touch");
-  openEnvelope.disabled = true;
-  openEnvelope.setAttribute("aria-expanded","true");
-  envelopeScene?.classList.add("is-breaking");
-
-  window.setTimeout(() => {
-    envelopeScene?.classList.add("is-open");
-    welcomeScreen?.classList.add("auto-opening");
-  }, 620);
-
-  if (navigator.vibrate) {
-    navigator.vibrate(22);
-  }
-
-  if (backgroundMusic) {
-    backgroundMusic.volume = 0;
-    backgroundMusic.play().then(()=>{
-      musicControl?.classList.add("is-playing");
-      musicControl?.setAttribute("aria-pressed","true");
-
-      const fadeDuration = 2600;
-      const targetVolume = 0.24;
-      const startedAt = performance.now();
-
-      function fadeIn(now) {
-        const progress = Math.min(1, (now - startedAt) / fadeDuration);
-        backgroundMusic.volume = targetVolume * progress;
-
-        if (progress < 1) {
-          requestAnimationFrame(fadeIn);
-        }
-      }
-
-      requestAnimationFrame(fadeIn);
-    }).catch(()=>{});
-  }
-
-  // Un único clic: después de mostrar la carta, se entra automáticamente.
-  window.setTimeout(()=>{
-    document.body.classList.add("invitation-opening");
-  }, 4550);
-
-  window.setTimeout(()=>{
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
-    document.body.classList.add("cinematic-revealing");
-    document.body.classList.remove("cinematic-locked");
-    welcomeScreen?.classList.add("is-hidden");
-    document.body.classList.remove("is-locked");
-    document.body.classList.remove("invitation-opening");
-    welcomeScreen?.setAttribute("aria-hidden","true");
-
-    window.setTimeout(()=>{
-      document.body.classList.remove("cinematic-revealing");
-      window.scrollTo(0, 0);
-    },1300);
-  },5450);
-});
 
 
 musicControl.addEventListener("click",async()=>{
@@ -250,41 +184,53 @@ const accessForm=document.getElementById("accessForm");
 const accessCode=document.getElementById("accessCode");
 const accessMessage=document.getElementById("accessMessage");
 
-let introStarted = false;
+let accessStarted = false;
 
 function startWeddingIntro() {
-  if (introStarted) return;
-  introStarted = true;
+  if (accessStarted) return;
+  accessStarted = true;
 
-  document.body.classList.add("is-locked");
   accessGate.classList.add("is-leaving");
+
+  // La interacción del código permite iniciar la música sin bloqueo del navegador.
+  if (backgroundMusic) {
+    backgroundMusic.volume = 0;
+    backgroundMusic.play().then(() => {
+      musicControl?.classList.add("is-playing");
+      musicControl?.setAttribute("aria-pressed", "true");
+
+      const fadeDuration = 1800;
+      const targetVolume = 0.24;
+      const startedAt = performance.now();
+
+      function fadeIn(now) {
+        const progress = Math.min(1, (now - startedAt) / fadeDuration);
+        backgroundMusic.volume = targetVolume * progress;
+        if (progress < 1) requestAnimationFrame(fadeIn);
+      }
+
+      requestAnimationFrame(fadeIn);
+    }).catch(() => {});
+  }
 
   window.setTimeout(() => {
     accessGate.hidden = true;
 
-    cinematicPrelude.hidden = false;
-    cinematicPrelude.classList.add("is-active");
-    cinematicPrelude.setAttribute("aria-hidden", "false");
-  }, 650);
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
 
-  window.setTimeout(() => {
-    cinematicPrelude.classList.remove("is-active");
-    cinematicPrelude.setAttribute("aria-hidden", "true");
-    cinematicPrelude.hidden = true;
+        window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
 
-    // Un fotograma negro entre escenas impide cualquier solapamiento visual.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        welcomeScreen.hidden = false;
-        welcomeScreen.classList.add("is-ready");
-        welcomeScreen.setAttribute("aria-hidden", "false");
+    document.body.classList.remove("is-locked");
+    document.body.classList.add("access-granted");
 
-        window.setTimeout(() => {
-          envelopeScene?.classList.add("is-ready-for-touch");
-        }, 800);
-      });
-    });
-  }, 4300);
+    window.setTimeout(() => {
+      document.body.classList.remove("access-granted");
+    }, 1000);
+  }, 700);
 }
 
 function grantAccess({ remember = true } = {}) {
@@ -296,8 +242,7 @@ function grantAccess({ remember = true } = {}) {
 }
 
 if (sessionStorage.getItem("wedding_access_granted") === "true") {
-  // Conservamos el acceso durante la pestaña, pero repetimos la experiencia.
-  window.setTimeout(() => grantAccess({ remember: false }), 120);
+  window.setTimeout(() => grantAccess({ remember: false }), 100);
 }
 
 accessForm.addEventListener("submit", event => {
