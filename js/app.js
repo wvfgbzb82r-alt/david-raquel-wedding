@@ -195,11 +195,17 @@ openEnvelope?.addEventListener("click",()=>{
   }, 4100);
 
   window.setTimeout(()=>{
+    document.body.classList.add("cinematic-revealing");
+    document.body.classList.remove("cinematic-locked");
     welcomeScreen?.classList.add("is-hidden");
     document.body.classList.remove("is-locked");
     document.body.classList.remove("invitation-opening");
     welcomeScreen?.setAttribute("aria-hidden","true");
-  }, 4850);
+
+    window.setTimeout(()=>{
+      document.body.classList.remove("cinematic-revealing");
+    },1300);
+  },5000);
 });
 
 
@@ -257,7 +263,7 @@ function startWeddingIntro() {
     welcomeScreen.hidden = false;
     welcomeScreen.classList.add("is-ready");
     welcomeScreen.setAttribute("aria-hidden", "false");
-  }, 4050);
+  }, 4220);
 }
 
 function grantAccess({ remember = true } = {}) {

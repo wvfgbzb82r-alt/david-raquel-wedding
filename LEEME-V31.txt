@@ -1,0 +1,16 @@
+V31 — FUNDIDOS Y SOBRE REALISTA
+
+- Corregido el destello de la primera hoja entre escenas.
+- La invitación permanece oculta hasta el final.
+- Fundidos más limpios entre código, nombres y sobre.
+- Sobre con más volumen, textura y sombras.
+- Carta con acabado artesanal.
+- Sello D&R con más relieve.
+- No requiere SQL.
+
+Instalación:
+1. Sustituye los archivos por los del ZIP.
+2. Conserva CNAME.
+3. Commit to main y Push origin.
+4. Prueba en pestaña privada:
+   https://davidyraquel.es/?v=31
