@@ -1,0 +1,19 @@
+DAVID & RAQUEL — V40 · CÓDIGOS PERSONALIZADOS
+
+CAMBIOS:
+- Los códigos personales ya producen una experiencia visible.
+- Al entrar mediante un enlace ?i=CODIGO:
+  - se valida el código en Supabase;
+  - se accede sin introducir el código general;
+  - aparece en la portada «Esta invitación es para [nombre]»;
+  - el nombre queda completado y bloqueado en el formulario.
+- También se puede escribir el código personal directamente en la pantalla inicial.
+- El código general DR221126 sigue funcionando.
+- Se registra la primera apertura en Supabase.
+- No requiere SQL nuevo si ya ejecutaste INSTALACION-V26-INVITACIONES.sql.
+
+PRUEBA:
+1. Crea una invitación en /admin/.
+2. Pulsa «Copiar enlace».
+3. Abre el enlace en una pestaña privada.
+4. Debes ver el nombre de la familia en la portada.

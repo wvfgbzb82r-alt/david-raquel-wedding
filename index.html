@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#030303
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=38">
+  <link rel="stylesheet" href="css/style.css?v=40">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -52,7 +52,7 @@
                maxlength="20"
                autocomplete="off"
                inputmode="text"
-               placeholder="Código">
+               placeholder="Código privado o personal">
         <button type="submit">Continuar</button>
         <p id="accessMessage"
            class="access-message"
@@ -80,6 +80,14 @@
           <span>22</span><span>noviembre</span><span>2026</span>
         </p>
         <p class="hero__time">17:00 horas</p>
+
+        <div class="personalized-welcome" id="personalizedWelcome" hidden>
+          <p class="personalized-welcome__eyebrow">Esta invitación es para</p>
+          <p class="personalized-welcome__name" id="personalizedGuestName"></p>
+          <p class="personalized-welcome__message">
+            Nos hace muchísima ilusión compartir este día con vosotros.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -359,8 +367,7 @@
             <p class="gift-card__title">Transferencia bancaria</p>
             <div class="gift-data">
               <span class="gift-data__label">IBAN</span>
-              <span class="account-number" dir="ltr"
-                    aria-label="ES54 0182 0451 4502 0164 3567">ES54 0182 0451 4502 0164 3567</span>
+              <span class="account-number" dir="ltr" aria-label="ES54 0182 0451 4502 0164 3567">ES54 0182 0451 4502 0164 3567</span>
                 <span>0164 3567</span>
               </span>
               <button class="copy-button" type="button"
@@ -439,6 +446,6 @@
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=38"></script>
+  <script src="js/app.js?v=40"></script>
 </body>
 </html>
