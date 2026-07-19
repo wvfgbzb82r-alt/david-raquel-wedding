@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f7f2e8">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="description" content="Invitación de boda de David y Raquel">
+  <meta name="format-detection" content="telephone=no,email=no,address=no,date=no">
   <title>David & Raquel · Nuestra boda</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +33,7 @@
     #cinematicPrelude[hidden],
     #welcomeScreen[hidden]{display:none!important}
   </style>
-  <link rel="stylesheet" href="css/style.css?v=32">
+  <link rel="stylesheet" href="css/style.css?v=33">
 </head>
 <body class="is-locked cinematic-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -81,9 +82,15 @@
       <div class="envelope-botanical envelope-botanical--right" aria-hidden="true"></div>
       <div class="envelope-scene" id="envelopeScene">
         <div class="envelope-photo-wrap" aria-hidden="true">
-          <img class="envelope-photo"
-               src="assets/intro/sobre-cerrado-realista.jpg?v=32"
+          <img class="envelope-photo envelope-photo--closed"
+               src="assets/intro/sobre-cerrado-v33.jpg"
                alt="">
+          <img class="envelope-photo envelope-photo--finger"
+               src="assets/intro/sobre-dedo-v33.jpg"
+               alt="">
+          <div class="seal-crack" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
         </div>
 
         <div class="envelope-letter" aria-live="polite">
@@ -111,10 +118,8 @@
           <div class="envelope-flap"></div>
         </div>
 
-        <button class="wax-seal" id="openEnvelope" type="button"
-                aria-label="Abrir el sobre">
-          <span>D&amp;R</span>
-        </button>
+        <button class="seal-hotspot" id="openEnvelope" type="button"
+                aria-label="Abrir el sobre pulsando el sello"></button>
 
         <p class="envelope-hint">Pulsa el sello para abrir</p>
       </div>
@@ -414,7 +419,7 @@
             <p class="gift-card__title">Transferencia bancaria</p>
             <div class="gift-data">
               <span class="gift-data__label">IBAN</span>
-              <strong class="account-number" dir="ltr">ES54 0182 0451 4502 0164 3567</strong>
+              <span class="account-number" dir="ltr" data-no-detect="true">ES54 0182 0451 4502 0164 3567</span>
               <button class="copy-button" type="button"
                       data-copy="ES5401820451450201643567"
                       data-success="IBAN copiado">

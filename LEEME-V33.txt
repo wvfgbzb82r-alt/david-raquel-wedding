@@ -1,0 +1,20 @@
+DAVID & RAQUEL — V33 · SECUENCIA PERFECTA
+
+CORRECCIONES:
+- Eliminado completamente el sello artificial sobre la fotografía.
+- El sello realista de la imagen es ahora el punto de interacción.
+- Aparece brevemente un dedo indicando dónde pulsar.
+- Al pulsar, se muestra el dedo, se rompe el lacre y saltan fragmentos.
+- Después toma el relevo la animación del sobre y sale la carta.
+- La invitación final aparece desde arriba, sin bajar ni quedarse a media pantalla.
+- Se fuerza el scroll al inicio antes y después de la transición.
+- Corregido el IBAN azul/subrayado en Safari con CSS, meta y limpieza JS.
+- Se mantiene la música y el resto de funcionalidades.
+
+INSTALACIÓN:
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. No hace falta ejecutar SQL.
+4. Commit to main y Push origin.
+5. Prueba en una pestaña privada:
+   https://davidyraquel.es/?v=33

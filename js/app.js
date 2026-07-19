@@ -1,3 +1,4 @@
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 const WEDDING_DATE = new Date("2026-11-22T17:00:00+01:00");
 const els = {
   days: document.getElementById("days"),
@@ -158,9 +159,20 @@ const scrollProgress=document.getElementById("scrollProgress");
 openEnvelope?.addEventListener("click",()=>{
   if (envelopeScene?.classList.contains("is-open")) return;
 
-  envelopeScene?.classList.add("is-open");
-  welcomeScreen?.classList.add("auto-opening");
+  envelopeScene?.classList.remove("is-ready-for-touch");
+  envelopeScene?.classList.add("is-pressing");
+  openEnvelope.disabled = true;
   openEnvelope.setAttribute("aria-expanded","true");
+
+  window.setTimeout(() => {
+    envelopeScene?.classList.add("is-breaking");
+  }, 280);
+
+  window.setTimeout(() => {
+    envelopeScene?.classList.remove("is-pressing");
+    envelopeScene?.classList.add("is-open");
+    welcomeScreen?.classList.add("auto-opening");
+  }, 820);
 
   if (navigator.vibrate) {
     navigator.vibrate(22);
@@ -192,9 +204,13 @@ openEnvelope?.addEventListener("click",()=>{
   // Un único clic: después de mostrar la carta, se entra automáticamente.
   window.setTimeout(()=>{
     document.body.classList.add("invitation-opening");
-  }, 4100);
+  }, 4920);
 
   window.setTimeout(()=>{
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     document.body.classList.add("cinematic-revealing");
     document.body.classList.remove("cinematic-locked");
     welcomeScreen?.classList.add("is-hidden");
@@ -204,8 +220,9 @@ openEnvelope?.addEventListener("click",()=>{
 
     window.setTimeout(()=>{
       document.body.classList.remove("cinematic-revealing");
+      window.scrollTo(0, 0);
     },1300);
-  },5000);
+  },5820);
 });
 
 
@@ -266,6 +283,10 @@ function startWeddingIntro() {
         welcomeScreen.hidden = false;
         welcomeScreen.classList.add("is-ready");
         welcomeScreen.setAttribute("aria-hidden", "false");
+
+        window.setTimeout(() => {
+          envelopeScene?.classList.add("is-ready-for-touch");
+        }, 800);
       });
     });
   }, 4300);
@@ -428,4 +449,29 @@ loadPersonalizedInvitation();
 
 if (backgroundMusic) {
   backgroundMusic.volume = 0.24;
+}
+
+
+function normalizeIbanDataDetectors() {
+  const iban = document.querySelector(".account-number");
+  if (!iban) return;
+
+  const detectedLinks = iban.querySelectorAll("a");
+  detectedLinks.forEach(link => {
+    link.replaceWith(document.createTextNode(link.textContent || ""));
+  });
+
+  iban.style.color = "#8b6d38";
+  iban.style.webkitTextFillColor = "#8b6d38";
+  iban.style.textDecoration = "none";
+}
+
+normalizeIbanDataDetectors();
+
+const ibanNode = document.querySelector(".account-number");
+if (ibanNode && "MutationObserver" in window) {
+  new MutationObserver(normalizeIbanDataDetectors).observe(ibanNode, {
+    childList: true,
+    subtree: true
+  });
 }
