@@ -1073,3 +1073,121 @@ html[data-personalized-invitation="true"] .access-copy::after {
     font-size: .95rem;
   }
 }
+
+
+/* =========================================================
+   V41 · Adultos, niños, alergias por persona y mapas claros
+   ========================================================= */
+
+.field-hint {
+  display: block;
+  margin-top: 7px;
+  color: rgba(91,72,43,.72);
+  font-family: var(--sans);
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+.dietary-field {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.dietary-field > legend {
+  margin-bottom: 2px;
+}
+
+.dietary-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.dietary-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1.25fr auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px;
+  border: 1px solid rgba(174,139,75,.22);
+  border-radius: 18px;
+  background: rgba(255,255,255,.34);
+}
+
+.dietary-row label {
+  display: grid;
+  gap: 7px;
+}
+
+.dietary-row label span {
+  color: var(--gold-dark);
+  font-family: var(--sans);
+  font-size: .68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.dietary-remove {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(148,85,70,.34);
+  border-radius: 50%;
+  background: transparent;
+  color: #9f6153;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.dietary-add {
+  margin-top: 14px;
+}
+
+.location-card__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 46px;
+  margin-top: 20px;
+  padding: 11px 18px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: rgba(188,148,75,.10);
+  color: var(--gold-dark);
+  font-family: var(--sans);
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 8px 22px rgba(123,92,43,.08);
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.location-card__link:hover,
+.location-card__link:focus-visible {
+  background: var(--gold);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(123,92,43,.16);
+}
+
+@media (max-width: 650px) {
+  .dietary-row {
+    grid-template-columns: 1fr;
+    padding-right: 54px;
+  }
+
+  .dietary-remove {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+  }
+
+  .location-card__link {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

@@ -75,7 +75,37 @@ function validateRsvpForm() {
     valid = false;
   }
 
+  const adults = Number(document.getElementById("adults")?.value);
+  const children = Number(document.getElementById("children")?.value);
+
+  if (!Number.isInteger(adults) || adults < 0 || adults > 20) {
+    document.querySelector('[data-error-for="adults"]').textContent =
+      "Indica un número de adultos entre 0 y 20.";
+    valid = false;
+  }
+
+  if (!Number.isInteger(children) || children < 0 || children > 20) {
+    document.querySelector('[data-error-for="children"]').textContent =
+      "Indica un número de niños entre 0 y 20.";
+    valid = false;
+  }
+
+  if (attendance?.value === "Sí" && adults + children < 1) {
+    document.querySelector('[data-error-for="adults"]').textContent =
+      "Si vais a asistir, indica al menos una persona.";
+    valid = false;
+  }
+
   return valid;
+}
+
+function collectDietaryRequirements() {
+  return Array.from(document.querySelectorAll(".dietary-row"))
+    .map(row => ({
+      nombre: row.querySelector(".dietary-name")?.value.trim() || "",
+      detalle: row.querySelector(".dietary-detail")?.value.trim() || ""
+    }))
+    .filter(item => item.nombre || item.detalle);
 }
 
 function getRsvpPayload() {
@@ -85,11 +115,53 @@ function getRsvpPayload() {
     nombre: String(formData.get("nombre") || "").trim(),
     telefono: String(formData.get("telefono") || "").trim(),
     asistencia: String(formData.get("asistencia") || "").trim(),
-    acompanante: String(formData.get("acompanante") || "").trim(),
-    alergias: String(formData.get("alergias") || "").trim(),
+    adultos: Number(formData.get("adultos") || 0),
+    ninos: Number(formData.get("ninos") || 0),
+    alergias: JSON.stringify(collectDietaryRequirements()),
     comentarios: String(formData.get("comentarios") || "").trim()
   };
 }
+
+
+const dietaryList = document.getElementById("dietaryList");
+const addDietaryRowButton = document.getElementById("addDietaryRow");
+
+function updateDietaryRemoveButtons() {
+  const rows = dietaryList?.querySelectorAll(".dietary-row") || [];
+  rows.forEach((row, index) => {
+    const button = row.querySelector(".dietary-remove");
+    if (button) button.hidden = rows.length === 1 && index === 0;
+  });
+}
+
+function addDietaryRow() {
+  if (!dietaryList) return;
+  const row = document.createElement("div");
+  row.className = "dietary-row";
+  row.innerHTML = `
+    <label>
+      <span>Nombre de la persona</span>
+      <input type="text" class="dietary-name" placeholder="Ej.: María Gómez">
+    </label>
+    <label>
+      <span>Alergia o preferencia</span>
+      <input type="text" class="dietary-detail" placeholder="Ej.: Celíaca">
+    </label>
+    <button type="button" class="dietary-remove" aria-label="Eliminar esta persona">×</button>
+  `;
+  dietaryList.appendChild(row);
+  updateDietaryRemoveButtons();
+  row.querySelector(".dietary-name")?.focus();
+}
+
+addDietaryRowButton?.addEventListener("click", addDietaryRow);
+dietaryList?.addEventListener("click", event => {
+  const button = event.target.closest(".dietary-remove");
+  if (!button) return;
+  button.closest(".dietary-row")?.remove();
+  updateDietaryRemoveButtons();
+});
+updateDietaryRemoveButtons();
 
 rsvpForm.addEventListener("submit", async event => {
   event.preventDefault();
@@ -131,6 +203,17 @@ rsvpForm.addEventListener("submit", async event => {
     }
 
     rsvpForm.reset();
+    if (dietaryList) {
+      dietaryList.innerHTML = `
+        <div class="dietary-row">
+          <label><span>Nombre de la persona</span><input type="text" class="dietary-name" placeholder="Ej.: María Gómez"></label>
+          <label><span>Alergia o preferencia</span><input type="text" class="dietary-detail" placeholder="Ej.: Celíaca"></label>
+          <button type="button" class="dietary-remove" aria-label="Eliminar esta persona" hidden>×</button>
+        </div>`;
+      updateDietaryRemoveButtons();
+    }
+    document.getElementById("adults").value = "1";
+    document.getElementById("children").value = "0";
     formStatus.textContent =
       "¡Muchas gracias! Hemos recibido tu confirmación. " +
       "Estamos deseando celebrar este día contigo.";

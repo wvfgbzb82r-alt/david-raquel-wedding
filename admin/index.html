@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=26">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=41">
 </head>
 <body>
   <main>
@@ -49,8 +49,10 @@
         <article><span>Respuestas</span><strong id="statTotal">0</strong></article>
         <article><span>Asistirán</span><strong id="statYes">0</strong></article>
         <article><span>No asistirán</span><strong id="statNo">0</strong></article>
-        <article><span>Personas estimadas</span><strong id="statPeople">0</strong></article>
-        <article><span>Alergias</span><strong id="statAllergies">0</strong></article>
+        <article><span>Adultos confirmados</span><strong id="statAdults">0</strong></article>
+        <article><span>Niños confirmados</span><strong id="statChildren">0</strong></article>
+        <article><span>Total asistentes</span><strong id="statPeople">0</strong></article>
+        <article><span>Menús especiales</span><strong id="statAllergies">0</strong></article>
       </section>
 
       <section class="toolbar">
@@ -73,7 +75,7 @@
 
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Asistencia</th><th>Acompañante</th><th>Alergias</th><th>Comentarios</th><th>Acciones</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Asistencia</th><th>Adultos</th><th>Niños</th><th>Total</th><th>Alergias / preferencias</th><th>Comentarios</th><th>Acciones</th></tr></thead>
           <tbody id="guestTableBody"></tbody>
         </table>
       </div>
@@ -138,6 +140,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=26"></script>
+  <script src="../js/admin-v21.js?v=41"></script>
 </body>
 </html>

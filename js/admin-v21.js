@@ -111,22 +111,48 @@ async function refreshSession() {
   } catch { return false; }
 }
 
+
+function dietaryItems(value) {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.filter(item => item && (item.nombre || item.detalle));
+    }
+  } catch {}
+  return [{ nombre: "", detalle: String(value) }];
+}
+
+function dietaryHtml(value) {
+  const items = dietaryItems(value);
+  if (!items.length) return "—";
+  return `<ul class="dietary-admin-list">${items.map(item =>
+    `<li><strong>${escapeHtml(item.nombre || "Sin nombre")}:</strong> ${escapeHtml(item.detalle || "Sin detalle")}</li>`
+  ).join("")}</ul>`;
+}
+
 function filteredGuests() {
   const query = normalize(searchInput.value);
   const filter = attendanceFilter.value;
   return guests.filter(guest => {
-    const searchable = normalize([guest.nombre, guest.telefono, guest.asistencia, guest.acompanante, guest.alergias, guest.comentarios].join(" "));
+    const searchable = normalize([guest.nombre, guest.telefono, guest.asistencia, guest.adultos, guest.ninos, guest.alergias, guest.comentarios].join(" "));
     return (!query || searchable.includes(query)) && (!filter || attendanceCategory(guest.asistencia) === filter);
   });
 }
 
 function updateStats() {
   const attending = guests.filter(g => attendanceCategory(g.asistencia) === "yes");
+  const adults = attending.reduce((sum, guest) => sum + Number(guest.adultos || 0), 0);
+  const children = attending.reduce((sum, guest) => sum + Number(guest.ninos || 0), 0);
+  const specialMenus = attending.reduce((sum, guest) => sum + dietaryItems(guest.alergias).length, 0);
+
   byId("statTotal").textContent = guests.length;
   byId("statYes").textContent = attending.length;
   byId("statNo").textContent = guests.filter(g => attendanceCategory(g.asistencia) === "no").length;
-  byId("statPeople").textContent = attending.reduce((sum, guest) => sum + 1 + (normalize(guest.acompanante) ? 1 : 0), 0);
-  byId("statAllergies").textContent = guests.filter(g => normalize(g.alergias)).length;
+  byId("statAdults").textContent = adults;
+  byId("statChildren").textContent = children;
+  byId("statPeople").textContent = adults + children;
+  byId("statAllergies").textContent = specialMenus;
 }
 
 function statusPill(value) {
@@ -144,9 +170,45 @@ function confirmationActions(guest) {
 
 function renderGuests() {
   const rows = filteredGuests();
-  tableBody.innerHTML = rows.map(g => `<tr><td>${formatDate(g.created_at)}</td><td>${escapeHtml(g.nombre || "—")}</td><td>${escapeHtml(g.telefono || "—")}</td><td>${statusPill(g.asistencia)}</td><td>${escapeHtml(g.acompanante || "—")}</td><td>${escapeHtml(g.alergias || "—")}</td><td>${escapeHtml(g.comentarios || "—")}</td><td>${confirmationActions(g)}</td></tr>`).join("");
-  cards.innerHTML = rows.map(g => `<article class="guest-card"><h2>${escapeHtml(g.nombre || "Sin nombre")}</h2>${statusPill(g.asistencia)}<dl><dt>Fecha</dt><dd>${formatDate(g.created_at)}</dd><dt>Teléfono</dt><dd>${escapeHtml(g.telefono || "—")}</dd><dt>Acompañante</dt><dd>${escapeHtml(g.acompanante || "—")}</dd><dt>Alergias</dt><dd>${escapeHtml(g.alergias || "—")}</dd><dt>Comentarios</dt><dd>${escapeHtml(g.comentarios || "—")}</dd></dl>${confirmationActions(g)}</article>`).join("");
-  dashboardMessage.textContent = rows.length ? `${rows.length} respuesta${rows.length === 1 ? "" : "s"} mostrada${rows.length === 1 ? "" : "s"}.` : "No hay resultados.";
+  tableBody.innerHTML = rows.map(g => {
+    const adults = Number(g.adultos || 0);
+    const children = Number(g.ninos || 0);
+    return `<tr>
+      <td>${formatDate(g.created_at)}</td>
+      <td>${escapeHtml(g.nombre || "—")}</td>
+      <td>${escapeHtml(g.telefono || "—")}</td>
+      <td>${statusPill(g.asistencia)}</td>
+      <td>${adults}</td>
+      <td>${children}</td>
+      <td><strong>${adults + children}</strong></td>
+      <td>${dietaryHtml(g.alergias)}</td>
+      <td>${escapeHtml(g.comentarios || "—")}</td>
+      <td>${confirmationActions(g)}</td>
+    </tr>`;
+  }).join("");
+
+  cards.innerHTML = rows.map(g => {
+    const adults = Number(g.adultos || 0);
+    const children = Number(g.ninos || 0);
+    return `<article class="guest-card">
+      <h2>${escapeHtml(g.nombre || "Sin nombre")}</h2>
+      ${statusPill(g.asistencia)}
+      <dl>
+        <dt>Fecha</dt><dd>${formatDate(g.created_at)}</dd>
+        <dt>Teléfono</dt><dd>${escapeHtml(g.telefono || "—")}</dd>
+        <dt>Adultos</dt><dd>${adults}</dd>
+        <dt>Niños</dt><dd>${children}</dd>
+        <dt>Total</dt><dd>${adults + children}</dd>
+        <dt>Alergias / preferencias</dt><dd>${dietaryHtml(g.alergias)}</dd>
+        <dt>Comentarios</dt><dd>${escapeHtml(g.comentarios || "—")}</dd>
+      </dl>
+      ${confirmationActions(g)}
+    </article>`;
+  }).join("");
+
+  dashboardMessage.textContent = rows.length
+    ? `${rows.length} respuesta${rows.length === 1 ? "" : "s"} mostrada${rows.length === 1 ? "" : "s"}.`
+    : "No hay resultados.";
 }
 
 async function clearComment(id) {
@@ -240,7 +302,7 @@ byId("refreshButton").addEventListener("click", () => loadGuests());
 searchInput.addEventListener("input", renderGuests);
 attendanceFilter.addEventListener("change", renderGuests);
 byId("exportButton").addEventListener("click", () => {
-  const headers = ["Fecha", "Nombre", "Teléfono", "Asistencia", "Acompañante", "Alergias", "Comentarios"];
+  const headers = ["Fecha", "Nombre", "Teléfono", "Asistencia", "Adultos", "Niños", "Total", "Alergias", "Comentarios"];
   const rows = filteredGuests().map(g => [formatDate(g.created_at), g.nombre || "", g.telefono || "", g.asistencia || "", g.acompanante || "", g.alergias || "", g.comentarios || ""]);
   const csv = [headers, ...rows].map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(";")).join("\n");
   const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });

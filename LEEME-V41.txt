@@ -1,0 +1,30 @@
+DAVID & RAQUEL — V41
+
+CAMBIOS EN LA INVITACIÓN
+- Eliminado «Nuestro primer viaje» de Nuestra historia.
+- Cambiado el texto final del programa por:
+  «El momento de darlo todo en la pista de baile».
+- Los enlaces de los lugares ahora parecen botones claros:
+  «Abrir ubicación en Google Maps».
+- Sustituido «Nombre del acompañante» por:
+  - Número de adultos.
+  - Número de niños.
+- Alergias y preferencias asociadas al nombre de cada persona.
+- Botón para añadir tantas personas con menú especial como sea necesario.
+
+CAMBIOS EN EL PANEL PRIVADO
+- Recuento total de adultos confirmados.
+- Recuento total de niños confirmados.
+- Total de asistentes.
+- Número de menús especiales.
+- Tabla y tarjetas con adultos, niños, total y alergias por persona.
+
+IMPORTANTE: SUPABASE
+Antes de probar las confirmaciones nuevas:
+1. Abre Supabase.
+2. Ve a SQL Editor > New query.
+3. Copia TODO el contenido de SUPABASE-V41-ADULTOS-NINOS.sql.
+4. Pulsa RUN.
+5. Después publica los archivos de la V41.
+
+El SQL puede ejecutarse de nuevo sin duplicar columnas.

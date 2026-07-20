@@ -168,3 +168,29 @@ td .row-actions { margin-top: 0; }
     grid-template-columns: 1fr;
   }
 }
+
+
+/* V41 · Recuentos y alergias por persona */
+.dietary-admin-list {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dietary-admin-list li {
+  line-height: 1.35;
+}
+
+.stats {
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+}
+
+.table-wrap table {
+  min-width: 1220px;
+}
+
+.guest-card dd .dietary-admin-list {
+  margin-top: 4px;
+}

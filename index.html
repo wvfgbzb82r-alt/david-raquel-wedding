@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#030303
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=40.1">
+  <link rel="stylesheet" href="css/style.css?v=41">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -133,20 +133,6 @@
         <article class="timeline__item reveal">
           <span class="timeline__number">02</span>
           <div class="timeline__content">
-            <span class="timeline__icon">✦</span>
-            <p class="timeline__eyebrow">Nuestro primer viaje</p>
-            <h3>Empezamos a soñar</h3>
-            <p>
-              Apenas un mes y medio después emprendimos nuestro primer viaje juntos.
-              Desde entonces, no hemos dejado de soñar, descubrir lugares y construir
-              una vida compartida.
-            </p>
-          </div>
-        </article>
-
-        <article class="timeline__item reveal">
-          <span class="timeline__number">03</span>
-          <div class="timeline__content">
             <span class="timeline__icon">◇</span>
             <p class="timeline__eyebrow">La pedida</p>
             <h3>Un atardecer inolvidable</h3>
@@ -159,7 +145,7 @@
         </article>
 
         <article class="timeline__item reveal">
-          <span class="timeline__number">04</span>
+          <span class="timeline__number">03</span>
           <div class="timeline__content">
             <span class="timeline__icon">♡</span>
             <p class="timeline__eyebrow">22 de noviembre de 2026</p>
@@ -232,7 +218,7 @@
           <div class="program__content">
             <span class="program__icon" aria-hidden="true">★</span>
             <h3>¡Empieza la fiesta!</h3>
-            <p>Baile, música, sorpresas… y muchas ganas de celebrar.</p>
+            <p>El momento de darlo todo en la pista de baile.</p>
           </div>
         </article>
       </div>
@@ -260,7 +246,7 @@
              href="https://www.google.com/maps/search/?api=1&query=Iglesia%20Nuestra%20Se%C3%B1ora%20de%20los%20Dolores%2C%20Calle%20Gran%20V%C3%ADa%2016%2C%2021410%20Isla%20Cristina%2C%20Huelva"
              target="_blank"
              rel="noopener noreferrer">
-            Cómo llegar <span aria-hidden="true">→</span>
+            <span aria-hidden="true">📍</span> Abrir ubicación en Google Maps <span aria-hidden="true">→</span>
           </a>
         </article>
 
@@ -277,7 +263,7 @@
              href="https://www.google.com/maps/search/?api=1&query=Espacio%20Capitana%2C%20Plaza%20de%20la%20Ribera%207%2C%20Planta%202%2C%2021410%20Isla%20Cristina%2C%20Huelva"
              target="_blank"
              rel="noopener noreferrer">
-            Cómo llegar <span aria-hidden="true">→</span>
+            <span aria-hidden="true">📍</span> Abrir ubicación en Google Maps <span aria-hidden="true">→</span>
           </a>
         </article>
       </div>
@@ -321,14 +307,42 @@
         </fieldset>
 
         <div class="form-field">
-          <label for="companion">Nombre del acompañante</label>
-          <input id="companion" name="acompanante" type="text" autocomplete="name">
+          <label for="adults">Número de adultos</label>
+          <input id="adults" name="adultos" type="number"
+                 min="0" max="20" value="1" inputmode="numeric" required>
+          <small class="field-hint">Incluye en el total a la persona que realiza la confirmación.</small>
+          <small class="field-error" data-error-for="adults"></small>
         </div>
 
         <div class="form-field">
-          <label for="allergies">Alergias o preferencias alimentarias</label>
-          <input id="allergies" name="alergias" type="text">
+          <label for="children">Número de niños</label>
+          <input id="children" name="ninos" type="number"
+                 min="0" max="20" value="0" inputmode="numeric" required>
+          <small class="field-error" data-error-for="children"></small>
         </div>
+
+        <fieldset class="form-field form-field--full dietary-field">
+          <legend>Alergias o preferencias alimentarias</legend>
+          <p class="field-hint">
+            Indica el nombre de cada persona y su alergia o preferencia para que podamos asignarle el menú correcto.
+          </p>
+          <div class="dietary-list" id="dietaryList">
+            <div class="dietary-row">
+              <label>
+                <span>Nombre de la persona</span>
+                <input type="text" class="dietary-name" placeholder="Ej.: María Gómez">
+              </label>
+              <label>
+                <span>Alergia o preferencia</span>
+                <input type="text" class="dietary-detail" placeholder="Ej.: Celíaca">
+              </label>
+              <button type="button" class="dietary-remove" aria-label="Eliminar esta persona" hidden>×</button>
+            </div>
+          </div>
+          <button type="button" class="secondary-button dietary-add" id="addDietaryRow">
+            + Añadir otra persona
+          </button>
+        </fieldset>
 
         <div class="form-field form-field--full">
           <label for="comments">¿Quieres decirnos algo?</label>
@@ -445,6 +459,6 @@
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=40.1"></script>
+  <script src="js/app.js?v=41"></script>
 </body>
 </html>
