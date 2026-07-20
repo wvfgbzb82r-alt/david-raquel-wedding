@@ -1,0 +1,9 @@
+V40.1 — IBAN CORREGIDO
+
+- Eliminada la segunda línea repetida «0164 3567».
+- Eliminada una etiqueta </span> sobrante.
+- El IBAN queda una sola vez y en una sola línea.
+- Tamaño ligeramente mayor.
+- Se mantienen los códigos personalizados.
+
+No requiere SQL.
