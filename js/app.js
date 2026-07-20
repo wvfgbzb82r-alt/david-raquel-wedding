@@ -241,112 +241,24 @@ function grantAccess({ remember = true } = {}) {
   startWeddingIntro();
 }
 
-if (
-  sessionStorage.getItem("wedding_access_granted") === "true" &&
-  !new URLSearchParams(window.location.search).get("i")
-) {
+if (sessionStorage.getItem("wedding_access_granted") === "true") {
   window.setTimeout(() => grantAccess({ remember: false }), 100);
 }
 
-let currentPersonalizedInvitation = null;
-
-function applyPersonalizedInvitation(invitation, code) {
-  if (!invitation?.nombre_mostrado) return false;
-
-  currentPersonalizedInvitation = invitation;
-  document.documentElement.dataset.personalizedInvitation = "true";
-  document.documentElement.dataset.invitationCode = code;
-
-  const welcome = document.getElementById("personalizedWelcome");
-  const guestName = document.getElementById("personalizedGuestName");
-  const guestNameInput = document.getElementById("guestName");
-
-  if (welcome && guestName) {
-    guestName.textContent = invitation.nombre_mostrado;
-    welcome.hidden = false;
-  }
-
-  if (guestNameInput) {
-    guestNameInput.value = invitation.nombre_mostrado;
-    guestNameInput.readOnly = true;
-  }
-
-  sessionStorage.setItem(
-    "wedding_personalized_invitation",
-    JSON.stringify({
-      codigo: code,
-      nombre_mostrado: invitation.nombre_mostrado,
-      max_personas: invitation.max_personas || 1
-    })
-  );
-
-  return true;
-}
-
-async function resolvePersonalizedCode(code) {
-  const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/rpc/abrir_invitacion_personalizada`,
-    {
-      method: "POST",
-      headers: {
-        "apikey": SUPABASE_PUBLISHABLE_KEY,
-        "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ codigo_recibido: code })
-    }
-  );
-
-  let data = null;
-  try {
-    data = await response.json();
-  } catch {}
-
-  if (!response.ok) {
-    throw new Error(data?.message || "Código personal no válido");
-  }
-
-  const invitation = Array.isArray(data) ? data[0] : data;
-  return invitation?.nombre_mostrado ? invitation : null;
-}
-
-accessForm.addEventListener("submit", async event => {
+accessForm.addEventListener("submit", event => {
   event.preventDefault();
 
   const submitButton = accessForm.querySelector('button[type="submit"]');
   const code = accessCode.value.trim().toUpperCase();
 
-  if (!code) {
-    accessMessage.textContent = "Introduce el código.";
-    return;
-  }
-
-  accessMessage.textContent = "";
-  submitButton.disabled = true;
-  submitButton.textContent = "Accediendo…";
-
-  try {
-    if (code === TEMPORARY_ACCESS_CODE) {
-      grantAccess();
-      return;
-    }
-
-    const invitation = await resolvePersonalizedCode(code);
-
-    if (!invitation) {
-      throw new Error("Código incorrecto.");
-    }
-
-    applyPersonalizedInvitation(invitation, code);
+  if (code === TEMPORARY_ACCESS_CODE) {
+    accessMessage.textContent = "";
+    submitButton.disabled = true;
+    submitButton.textContent = "Accediendo…";
     grantAccess();
-  } catch (error) {
-    accessMessage.textContent =
-      error.message === "Código personal no válido"
-        ? "Código incorrecto."
-        : error.message;
+  } else {
+    accessMessage.textContent = "Código incorrecto.";
     accessCode.select();
-    submitButton.disabled = false;
-    submitButton.textContent = "Continuar";
   }
 });
 
@@ -412,40 +324,62 @@ document.querySelectorAll("[data-copy]").forEach(button => {
 
 
 // =========================================================
-// V40 · Acceso personalizado por enlace ?i=CODIGO
+// V26 · Apertura personalizada mediante ?i=CODIGO
 // =========================================================
 
 async function loadPersonalizedInvitation() {
   const params = new URLSearchParams(window.location.search);
-  const queryCode = String(params.get("i") || "").trim().toUpperCase();
+  const code = String(params.get("i") || "").trim().toUpperCase();
 
-  if (queryCode) {
-    try {
-      const invitation = await resolvePersonalizedCode(queryCode);
+  if (!code) return;
 
-      if (invitation) {
-        applyPersonalizedInvitation(invitation, queryCode);
-        grantAccess();
-      }
-    } catch (error) {
-      console.warn("Invitación personalizada no válida:", error);
-      accessMessage.textContent =
-        "El enlace personalizado no es válido o ya no está activo.";
-    }
-
-    return;
-  }
-
-  // Restaurar la personalización si se recarga la misma pestaña.
   try {
-    const saved = JSON.parse(
-      sessionStorage.getItem("wedding_personalized_invitation") || "null"
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/rpc/abrir_invitacion_personalizada`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_PUBLISHABLE_KEY,
+          "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ codigo_recibido: code })
+      }
     );
 
-    if (saved?.nombre_mostrado && saved?.codigo) {
-      applyPersonalizedInvitation(saved, saved.codigo);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Código no válido");
     }
-  } catch {}
+
+    const invitation = Array.isArray(data) ? data[0] : data;
+    if (!invitation?.nombre_mostrado) return;
+
+    // Los enlaces personalizados sustituyen la contraseña temporal general.
+    if (typeof grantAccess === "function") {
+      grantAccess();
+    }
+
+    const kicker = document.querySelector(".welcome-screen__kicker");
+    const phrase = document.querySelector(".welcome-screen__phrase");
+    const guestNameInput = document.getElementById("guestName");
+
+    if (kicker) kicker.textContent = "Bienvenidos";
+    if (phrase) {
+      phrase.textContent =
+        `${invitation.nombre_mostrado}, nos hace muchísima ilusión ` +
+        "compartir este día con vosotros.";
+    }
+
+    if (guestNameInput && !guestNameInput.value) {
+      guestNameInput.value = invitation.nombre_mostrado;
+    }
+
+    document.documentElement.dataset.invitationCode = code;
+  } catch (error) {
+    console.warn("Invitación personalizada no válida:", error);
+  }
 }
 
 loadPersonalizedInvitation();
