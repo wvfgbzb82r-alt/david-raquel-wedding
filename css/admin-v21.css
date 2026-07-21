@@ -254,3 +254,60 @@ td .row-actions { margin-top: 0; }
 .music-rankings{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
 .music-card-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 @media(max-width:760px){.music-rankings{grid-template-columns:1fr}}
+
+/* V45 · Edición de límites por invitado */
+.invitation-actions [data-edit-invitation]{
+  border-color:rgba(161,120,48,.35);
+  background:#fff6df;
+  color:#725619;
+}
+
+
+/* V46 · Edición visible de límites por invitación */
+.invitation-inline-editor {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(120px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  width: 100%;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(181,145,79,.18);
+}
+.invitation-inline-editor label { display: grid; gap: 6px; }
+.invitation-inline-editor label span {
+  color: #765d30;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.invitation-inline-editor select {
+  min-height: 42px;
+  padding: 8px 36px 8px 11px;
+  border: 1px solid rgba(171,135,70,.30);
+  border-radius: 11px;
+  background: #fffaf2;
+  color: inherit;
+  font: inherit;
+}
+.save-limits-button {
+  min-height: 42px;
+  padding-inline: 16px;
+  border: 1px solid rgba(151,112,42,.42);
+  border-radius: 11px;
+  background: #f6e6bd;
+  color: #6d531d;
+  font-weight: 700;
+  cursor: pointer;
+}
+.save-limits-button:hover,
+.save-limits-button:focus-visible { background: #edd49a; }
+@media (max-width: 760px) {
+  .invitation-inline-editor { grid-template-columns: 1fr 1fr; }
+  .save-limits-button { grid-column: 1 / -1; }
+}
+@media (max-width: 480px) {
+  .invitation-inline-editor { grid-template-columns: 1fr; }
+  .save-limits-button { grid-column: auto; }
+}

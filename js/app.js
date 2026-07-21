@@ -260,6 +260,36 @@ musicControl.addEventListener("click",async()=>{
   }
 });
 
+
+
+let accessMusicPrimed = false;
+
+function primeBackgroundMusicFromGesture() {
+  if (!backgroundMusic || !backgroundMusic.paused) return;
+
+  backgroundMusic.volume = 0.55;
+  const playAttempt = backgroundMusic.play();
+
+  if (playAttempt && typeof playAttempt.then === "function") {
+    playAttempt.then(() => {
+      accessMusicPrimed = true;
+      musicControl.classList.add("is-playing");
+      musicControl.setAttribute("aria-pressed", "true");
+    }).catch(() => {
+      accessMusicPrimed = false;
+    });
+  }
+}
+
+function stopPrimedAccessMusic() {
+  if (!accessMusicPrimed || !backgroundMusic) return;
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+  accessMusicPrimed = false;
+  musicControl.classList.remove("is-playing");
+  musicControl.setAttribute("aria-pressed", "false");
+}
+
 function updateScrollProgress(){
   const max=document.documentElement.scrollHeight-window.innerHeight;
   const value=max>0?(window.scrollY/max)*100:0;
@@ -492,6 +522,11 @@ accessForm.addEventListener("submit", async event => {
   }
 
   accessMessage.textContent = "";
+
+  // El intento de reproducción se hace dentro del gesto del usuario.
+  // Esto evita el bloqueo de autoplay tras validar un código personalizado.
+  primeBackgroundMusicFromGesture();
+
   submitButton.disabled = true;
   submitButton.textContent = "Accediendo…";
 
@@ -510,6 +545,7 @@ accessForm.addEventListener("submit", async event => {
     applyPersonalizedInvitation(invitation, code);
     grantAccess();
   } catch (error) {
+    stopPrimedAccessMusic();
     accessMessage.textContent =
       error.message === "Código personal no válido"
         ? "Código incorrecto."

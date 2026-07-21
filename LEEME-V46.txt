@@ -1,0 +1,10 @@
+DAVID & RAQUEL — V46 · EDITAR LÍMITES DESDE EL PANEL
+
+- Cada invitación existente muestra dos desplegables:
+  - Adultos máximos.
+  - Niños máximos.
+- Botón «Guardar límites» dentro de cada tarjeta.
+- No hace falta eliminar ni volver a crear la invitación.
+- El código y el enlace se mantienen.
+- Requiere haber ejecutado SUPABASE-V45-EDITAR-LIMITES.sql.
+- No necesita SQL nuevo si ya ejecutaste V45.
