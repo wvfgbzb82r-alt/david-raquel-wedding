@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#030303
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=47">
+  <link rel="stylesheet" href="css/style.css?v=48">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -320,28 +320,38 @@
           <small class="field-error" data-error-for="children"></small>
         </div>
 
+        
+        <fieldset class="form-field form-field--full catering-field" id="adultMenusField">
+          <legend>Preferencia del menú de los adultos</legend>
+          <p class="field-hint">
+            Al elegir el número de adultos aparecerá un bloque para cada persona.
+          </p>
+          <div class="adult-menu-list" id="adultMenuList"></div>
+          <small class="field-error" data-error-for="adultMenus"></small>
+        </fieldset>
+
         <fieldset class="form-field form-field--full dietary-field">
           <legend>Alergias o preferencias alimentarias</legend>
           <p class="field-hint">
-            Indica el nombre de cada persona y su alergia o preferencia para que podamos asignarle el menú correcto.
+            Indica si alguna persona necesita un menú especial, por ejemplo vegano, sin gluten o sin lactosa.
           </p>
-          <div class="dietary-list" id="dietaryList">
-            <div class="dietary-row">
-              <label>
-                <span>Nombre de la persona</span>
-                <input type="text" class="dietary-name" placeholder="Ej.: María Gómez">
-              </label>
-              <label>
-                <span>Alergia o preferencia</span>
-                <input type="text" class="dietary-detail" placeholder="Ej.: Celíaca">
-              </label>
-              <button type="button" class="dietary-remove" aria-label="Eliminar esta persona" hidden>×</button>
-            </div>
-          </div>
-          <button type="button" class="secondary-button dietary-add" id="addDietaryRow">
+
+          <label class="special-menu-toggle">
+            <span>¿Algún asistente necesita un menú especial?</span>
+            <select id="hasSpecialMenu">
+              <option value="no" selected>No</option>
+              <option value="yes">Sí</option>
+            </select>
+          </label>
+
+          <div class="dietary-list" id="dietaryList" hidden></div>
+
+          <button type="button" class="secondary-button dietary-add"
+                  id="addDietaryRow" hidden>
             + Añadir otra persona
           </button>
         </fieldset>
+
 
         <div class="form-field form-field--full">
           <label for="comments">¿Quieres decirnos algo?</label>
@@ -493,6 +503,6 @@
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=47"></script>
+  <script src="js/app.js?v=48"></script>
 </body>
 </html>

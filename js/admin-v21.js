@@ -112,8 +112,28 @@ async function refreshSession() {
 }
 
 
+function adultMenuItems(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function adultMenuHtml(value) {
+  const items = adultMenuItems(value);
+  if (!items.length) return "—";
+  return `<ul class="dietary-admin-list">${items.map(item =>
+    `<li><strong>${escapeHtml(item.nombre || "Sin nombre")}:</strong> ${escapeHtml(item.menu || "Sin elegir")}</li>`
+  ).join("")}</ul>`;
+}
+
 function dietaryItems(value) {
   if (!value) return [];
+  if (Array.isArray(value)) return value;
   try {
     const parsed = JSON.parse(value);
     if (Array.isArray(parsed)) {
@@ -181,6 +201,7 @@ function renderGuests() {
       <td>${adults}</td>
       <td>${children}</td>
       <td><strong>${adults + children}</strong></td>
+      <td>${adultMenuHtml(g.menus_adultos)}</td>
       <td>${dietaryHtml(g.alergias)}</td>
       <td>${escapeHtml(g.comentarios || "—")}</td>
       <td>${confirmationActions(g)}</td>
@@ -199,12 +220,15 @@ function renderGuests() {
         <dt>Adultos</dt><dd>${adults}</dd>
         <dt>Niños</dt><dd>${children}</dd>
         <dt>Total</dt><dd>${adults + children}</dd>
+        <dt>Menús adultos</dt><dd>${adultMenuHtml(g.menus_adultos)}</dd>
         <dt>Alergias / preferencias</dt><dd>${dietaryHtml(g.alergias)}</dd>
         <dt>Comentarios</dt><dd>${escapeHtml(g.comentarios || "—")}</dd>
       </dl>
       ${confirmationActions(g)}
     </article>`;
   }).join("");
+
+  updateCateringDashboard();
 
   dashboardMessage.textContent = rows.length
     ? `${rows.length} respuesta${rows.length === 1 ? "" : "s"} mostrada${rows.length === 1 ? "" : "s"}.`
@@ -317,6 +341,94 @@ byId("exportButton").addEventListener("click", () => {
 
 try { session = JSON.parse(sessionStorage.getItem(CONFIG.sessionKey) || "null"); } catch { session = null; }
 if (session?.access_token) showDashboard(); else showLogin();
+
+// V48 · Catering
+const exportCateringButton = byId("exportCateringButton");
+const specialMenuBreakdown = byId("specialMenuBreakdown");
+const menuPeopleBreakdown = byId("menuPeopleBreakdown");
+
+function cateringRows() {
+  const rows = [];
+  guests
+    .filter(g => attendanceCategory(g.asistencia) === "yes")
+    .forEach(g => {
+      adultMenuItems(g.menus_adultos).forEach(item => {
+        const special = dietaryItems(g.alergias)
+          .filter(d => normalize(d.nombre) === normalize(item.nombre))
+          .map(d => d.detalle)
+          .join(", ");
+        rows.push({
+          invitation: g.nombre || "",
+          person: item.nombre || "",
+          menu: item.menu || "",
+          special
+        });
+      });
+
+      for (let i = 0; i < Number(g.ninos || 0); i += 1) {
+        rows.push({
+          invitation: g.nombre || "",
+          person: `Niño ${i + 1}`,
+          menu: "Infantil",
+          special: ""
+        });
+      }
+    });
+  return rows;
+}
+
+function updateCateringDashboard() {
+  const rows = cateringRows();
+  const meat = rows.filter(r => normalize(r.menu) === "carne");
+  const fish = rows.filter(r => normalize(r.menu) === "pescado");
+  const children = rows.filter(r => normalize(r.menu) === "infantil");
+  const specials = rows.filter(r => r.special);
+
+  byId("cateringMeat").textContent = meat.length;
+  byId("cateringFish").textContent = fish.length;
+  byId("cateringChildren").textContent = children.length;
+  byId("cateringSpecial").textContent = specials.length;
+
+  const specialGroups = new Map();
+  guests.forEach(g => dietaryItems(g.alergias).forEach(item => {
+    const key = item.detalle || "Otra";
+    if (!specialGroups.has(key)) specialGroups.set(key, []);
+    specialGroups.get(key).push(item.nombre || g.nombre || "Sin nombre");
+  }));
+
+  specialMenuBreakdown.innerHTML = specialGroups.size
+    ? `<ul class="catering-list">${Array.from(specialGroups.entries()).map(([type, names]) =>
+        `<li><strong>${escapeHtml(type)} (${names.length})</strong><br>${names.map(escapeHtml).join(", ")}</li>`
+      ).join("")}</ul>`
+    : "<p>No hay menús especiales.</p>";
+
+  menuPeopleBreakdown.innerHTML = `
+    <ul class="catering-list">
+      <li><strong>Carne (${meat.length})</strong><br>${meat.map(r => escapeHtml(r.person)).join(", ") || "—"}</li>
+      <li><strong>Pescado (${fish.length})</strong><br>${fish.map(r => escapeHtml(r.person)).join(", ") || "—"}</li>
+      <li><strong>Infantil (${children.length})</strong><br>${children.map(r => escapeHtml(r.invitation)).join(", ") || "—"}</li>
+    </ul>`;
+}
+
+function exportCateringCsv() {
+  const rows = cateringRows();
+  const data = [
+    ["Invitación", "Persona", "Menú", "Necesidad especial"],
+    ...rows.map(r => [r.invitation, r.person, r.menu, r.special])
+  ];
+  const csv = data.map(row =>
+    row.map(value => `"${String(value ?? "").replaceAll('"', '""')}"`).join(";")
+  ).join("\n");
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "catering-david-raquel.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+exportCateringButton?.addEventListener("click", exportCateringCsv);
 
 // V22 · Álbum privado
 const MEDIA_BUCKET = "wedding-media-v24";

@@ -311,3 +311,14 @@ td .row-actions { margin-top: 0; }
   .invitation-inline-editor { grid-template-columns: 1fr; }
   .save-limits-button { grid-column: auto; }
 }
+
+.catering-admin-section{margin-top:32px;padding:28px;border:1px solid rgba(185,152,87,.22);border-radius:24px;background:rgba(255,255,255,.66)}
+.catering-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin:20px 0}
+.catering-stats article{padding:18px;border:1px solid rgba(185,152,87,.2);border-radius:18px;background:#fffaf2}
+.catering-stats span{display:block;margin-bottom:8px;color:#806532;font-size:.72rem;text-transform:uppercase}
+.catering-stats strong{font-family:var(--serif);font-size:1.8rem;color:#9b7937}
+.catering-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.catering-columns>section{padding:18px;border:1px solid rgba(185,152,87,.18);border-radius:18px;background:#fbf7ef}
+.catering-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.catering-list li{padding:9px 10px;border-radius:10px;background:white}
+@media(max-width:760px){.catering-columns{grid-template-columns:1fr}}

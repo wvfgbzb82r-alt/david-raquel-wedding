@@ -1,0 +1,15 @@
+DAVID & RAQUEL — V48 · CATERING
+
+INCLUYE
+- Bloques automáticos según el número de adultos.
+- Nombre de cada adulto.
+- Elección Carne/Pescado.
+- Menús especiales mediante desplegable.
+- Opción «Otra» con texto libre.
+- Panel Catering con recuentos.
+- Clasificación de necesidades especiales.
+- Exportación CSV para el restaurante.
+
+SUPABASE
+Ejecuta SUPABASE-V48-CATERING.sql antes de probar.
+No elimina datos anteriores.

@@ -1244,3 +1244,22 @@ html[data-personalized-invitation="true"] .access-copy::after {
 #childrenField[hidden] {
   display: none !important;
 }
+
+
+/* =========================================================
+   V48 · Catering
+   ========================================================= */
+.catering-field,.dietary-field{min-width:0;padding:0;border:0}
+.adult-menu-list,.dietary-list{display:grid;gap:14px;margin-top:16px}
+.adult-menu-card,.dietary-row{padding:16px;border:1px solid rgba(174,139,75,.22);border-radius:18px;background:rgba(255,255,255,.38)}
+.adult-menu-card__title{margin:0 0 12px;color:var(--gold-dark);font-family:var(--serif);font-size:1.12rem}
+.adult-menu-grid,.dietary-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+.menu-choice{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.menu-choice label{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid rgba(174,139,75,.26);border-radius:999px;background:#fffaf2}
+.special-menu-toggle{display:grid;gap:8px;margin-top:14px}
+.special-menu-toggle select,.dietary-row select{min-height:48px;padding:10px 38px 10px 12px;border:1px solid rgba(174,139,75,.28);border-radius:12px;background:#fffaf2;font:inherit}
+.dietary-other[hidden]{display:none!important}
+@media(max-width:650px){
+  .adult-menu-grid,.dietary-row{grid-template-columns:1fr}
+  .dietary-remove{position:static}
+}

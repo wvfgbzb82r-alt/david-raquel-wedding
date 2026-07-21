@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=46">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=48">
 </head>
 <body>
   <main>
@@ -75,12 +75,30 @@
 
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Asistencia</th><th>Adultos</th><th>Niños</th><th>Total</th><th>Alergias / preferencias</th><th>Comentarios</th><th>Acciones</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Asistencia</th><th>Adultos</th><th>Niños</th><th>Total</th><th>Menús adultos</th><th>Alergias / preferencias</th><th>Comentarios</th><th>Acciones</th></tr></thead>
           <tbody id="guestTableBody"></tbody>
         </table>
       </div>
       <div class="guest-cards" id="guestCards"></div>
 
+
+
+      <section class="catering-admin-section" aria-labelledby="cateringTitle">
+        <div class="media-section__header">
+          <div><p class="kicker">Organización del banquete</p><h2 id="cateringTitle">Catering</h2></div>
+          <button id="exportCateringButton" type="button">Exportar catering</button>
+        </div>
+        <section class="catering-stats">
+          <article><span>Carne</span><strong id="cateringMeat">0</strong></article>
+          <article><span>Pescado</span><strong id="cateringFish">0</strong></article>
+          <article><span>Infantiles</span><strong id="cateringChildren">0</strong></article>
+          <article><span>Especiales</span><strong id="cateringSpecial">0</strong></article>
+        </section>
+        <div class="catering-columns">
+          <section><h3>Clasificación de menús especiales</h3><div id="specialMenuBreakdown"></div></section>
+          <section><h3>Personas por menú</h3><div id="menuPeopleBreakdown"></div></section>
+        </div>
+      </section>
 
       <section class="invitation-manager" aria-labelledby="invitationManagerTitle">
         <div class="media-section__header">
@@ -178,6 +196,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=46"></script>
+  <script src="../js/admin-v21.js?v=48"></script>
 </body>
 </html>

@@ -92,6 +92,19 @@ function validateRsvpForm() {
     valid = false;
   }
 
+  const adultMenus = collectAdultMenus();
+  if (attendance?.value === "Sí" && adultMenus.length !== adults) {
+    document.querySelector('[data-error-for="adultMenus"]').textContent =
+      "Revisa la preferencia de menú de todos los adultos.";
+    valid = false;
+  }
+
+  if (attendance?.value === "Sí" && adultMenus.some(item => !item.nombre || !item.menu)) {
+    document.querySelector('[data-error-for="adultMenus"]').textContent =
+      "Indica el nombre y si prefiere carne o pescado para cada adulto.";
+    valid = false;
+  }
+
   if (attendance?.value === "Sí" && adults + children < 1) {
     document.querySelector('[data-error-for="adults"]').textContent =
       "Si vais a asistir, indica al menos una persona.";
@@ -101,18 +114,29 @@ function validateRsvpForm() {
   return valid;
 }
 
+function collectAdultMenus() {
+  return Array.from(document.querySelectorAll(".adult-menu-card"))
+    .map(card => ({
+      nombre: card.querySelector(".adult-menu-name")?.value.trim() || "",
+      menu: card.querySelector('input[type="radio"]:checked')?.value || ""
+    }));
+}
+
 function collectDietaryRequirements() {
   return Array.from(document.querySelectorAll(".dietary-row"))
-    .map(row => ({
-      nombre: row.querySelector(".dietary-name")?.value.trim() || "",
-      detalle: row.querySelector(".dietary-detail")?.value.trim() || ""
-    }))
+    .map(row => {
+      const type = row.querySelector(".dietary-type")?.value || "";
+      const other = row.querySelector(".dietary-other")?.value.trim() || "";
+      return {
+        nombre: row.querySelector(".dietary-person")?.value || "",
+        detalle: type === "Otra" ? other : type
+      };
+    })
     .filter(item => item.nombre || item.detalle);
 }
 
 function getRsvpPayload() {
   const formData = new FormData(rsvpForm);
-
   return {
     nombre: String(formData.get("nombre") || "").trim(),
     telefono: String(formData.get("telefono") || "").trim(),
@@ -120,14 +144,66 @@ function getRsvpPayload() {
     codigo_invitacion: document.documentElement.dataset.invitationCode || null,
     adultos: Number(formData.get("adultos") || 0),
     ninos: Number(formData.get("ninos") || 0),
-    alergias: JSON.stringify(collectDietaryRequirements()),
+    menus_adultos: collectAdultMenus(),
+    alergias: collectDietaryRequirements(),
     comentarios: String(formData.get("comentarios") || "").trim()
   };
 }
 
-
+const adultMenuList = document.getElementById("adultMenuList");
 const dietaryList = document.getElementById("dietaryList");
 const addDietaryRowButton = document.getElementById("addDietaryRow");
+const hasSpecialMenu = document.getElementById("hasSpecialMenu");
+
+function adultNames() {
+  return Array.from(document.querySelectorAll(".adult-menu-name"))
+    .map((input, index) => ({
+      value: input.value.trim(),
+      label: input.value.trim() || `Adulto ${index + 1}`
+    }));
+}
+
+function refreshDietaryPersonOptions() {
+  const names = adultNames();
+  document.querySelectorAll(".dietary-person").forEach(select => {
+    const current = select.value;
+    select.innerHTML = names.map(item =>
+      `<option value="${item.value || item.label}">${item.label}</option>`
+    ).join("");
+    if ([...select.options].some(o => o.value === current)) select.value = current;
+  });
+}
+
+function renderAdultMenus() {
+  const count = Number(adultsSelect?.value || 0);
+  const previous = collectAdultMenus();
+
+  adultMenuList.innerHTML = Array.from({ length: count }, (_, index) => {
+    const saved = previous[index] || {};
+    const group = `adult-menu-${index}`;
+    return `
+      <article class="adult-menu-card">
+        <h3 class="adult-menu-card__title">Adulto ${index + 1}</h3>
+        <div class="adult-menu-grid">
+          <label>
+            <span>Nombre</span>
+            <input class="adult-menu-name" type="text"
+                   value="${saved.nombre || ""}"
+                   placeholder="Nombre del adulto">
+          </label>
+          <div>
+            <span>Preferencia</span>
+            <div class="menu-choice">
+              <label><input type="radio" name="${group}" value="Carne" ${saved.menu === "Carne" ? "checked" : ""}> Carne</label>
+              <label><input type="radio" name="${group}" value="Pescado" ${saved.menu === "Pescado" ? "checked" : ""}> Pescado</label>
+            </div>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+
+  refreshDietaryPersonOptions();
+}
 
 function updateDietaryRemoveButtons() {
   const rows = dietaryList?.querySelectorAll(".dietary-row") || [];
@@ -137,25 +213,52 @@ function updateDietaryRemoveButtons() {
   });
 }
 
+function dietaryTypeOptions() {
+  return [
+    "Sin gluten (celiaquía)",
+    "Sin lactosa",
+    "Vegetariano",
+    "Vegano",
+    "Alergia a frutos secos",
+    "Alergia al marisco",
+    "Alergia al pescado",
+    "Alergia al huevo",
+    "Embarazada",
+    "Otra"
+  ].map(value => `<option value="${value}">${value}</option>`).join("");
+}
+
 function addDietaryRow() {
   if (!dietaryList) return;
   const row = document.createElement("div");
   row.className = "dietary-row";
   row.innerHTML = `
     <label>
-      <span>Nombre de la persona</span>
-      <input type="text" class="dietary-name" placeholder="Ej.: María Gómez">
+      <span>Persona</span>
+      <select class="dietary-person"></select>
     </label>
     <label>
-      <span>Alergia o preferencia</span>
-      <input type="text" class="dietary-detail" placeholder="Ej.: Celíaca">
+      <span>Necesidad alimentaria</span>
+      <select class="dietary-type">${dietaryTypeOptions()}</select>
     </label>
     <button type="button" class="dietary-remove" aria-label="Eliminar esta persona">×</button>
+    <label class="dietary-other" hidden>
+      <span>Especificar</span>
+      <input type="text" placeholder="Indica la necesidad">
+    </label>
   `;
   dietaryList.appendChild(row);
+  refreshDietaryPersonOptions();
   updateDietaryRemoveButtons();
-  row.querySelector(".dietary-name")?.focus();
 }
+
+hasSpecialMenu?.addEventListener("change", () => {
+  const enabled = hasSpecialMenu.value === "yes";
+  dietaryList.hidden = !enabled;
+  addDietaryRowButton.hidden = !enabled;
+  if (enabled && !dietaryList.children.length) addDietaryRow();
+  if (!enabled) dietaryList.innerHTML = "";
+});
 
 addDietaryRowButton?.addEventListener("click", addDietaryRow);
 dietaryList?.addEventListener("click", event => {
@@ -164,7 +267,14 @@ dietaryList?.addEventListener("click", event => {
   button.closest(".dietary-row")?.remove();
   updateDietaryRemoveButtons();
 });
-updateDietaryRemoveButtons();
+dietaryList?.addEventListener("change", event => {
+  if (!event.target.matches(".dietary-type")) return;
+  const row = event.target.closest(".dietary-row");
+  row.querySelector(".dietary-other").hidden = event.target.value !== "Otra";
+});
+adultMenuList?.addEventListener("input", refreshDietaryPersonOptions);
+adultsSelect?.addEventListener("change", renderAdultMenus);
+renderAdultMenus();
 
 rsvpForm.addEventListener("submit", async event => {
   event.preventDefault();
@@ -206,6 +316,8 @@ rsvpForm.addEventListener("submit", async event => {
     }
 
     rsvpForm.reset();
+    if (adultMenuList) renderAdultMenus();
+    if (hasSpecialMenu) hasSpecialMenu.value = "no";
     if (dietaryList) {
       dietaryList.innerHTML = `
         <div class="dietary-row">
