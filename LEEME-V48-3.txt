@@ -1,0 +1,22 @@
+DAVID & RAQUEL — V48.3 · ACCESO CORREGIDO
+
+FALLO REAL
+La V48 llamaba a renderAdultMenus() antes de inicializar adultsSelect.
+Eso provocaba un ReferenceError al cargar app.js y detenía todo el archivo.
+Por ese motivo no funcionaba ni DR221126 ni los códigos personalizados.
+
+CORRECCIONES
+- adultsSelect, childrenSelect y childrenField se inicializan antes de usarse.
+- Se elimina cualquier declaración duplicada.
+- renderAdultMenus incluye una protección adicional.
+- El evento del formulario de acceso también queda protegido.
+- app.js usa la versión 48.3 para evitar la caché del navegador.
+
+SUPABASE
+No necesita SQL nuevo.
+
+PUBLICACIÓN
+1. Sustituye todos los archivos por los del ZIP.
+2. Conserva CNAME.
+3. Haz Commit y Push.
+4. Abre la web en incógnito o pulsa Ctrl + F5.

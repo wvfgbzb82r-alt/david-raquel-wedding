@@ -45,6 +45,9 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_TN0nnQZ_g6l1RNTuE4f9qg_iaI_USWV
 
 const rsvpForm = document.getElementById("rsvpForm");
 const formStatus = document.getElementById("formStatus");
+const adultsSelect = document.getElementById("adults");
+const childrenSelect = document.getElementById("children");
+const childrenField = document.getElementById("childrenField");
 
 function clearRsvpErrors() {
   document.querySelectorAll(".field-error").forEach(element => {
@@ -175,6 +178,8 @@ function refreshDietaryPersonOptions() {
 }
 
 function renderAdultMenus() {
+  if (!adultMenuList) return;
+
   const count = Number(adultsSelect?.value || 0);
   const previous = collectAdultMenus();
 
@@ -319,11 +324,13 @@ rsvpForm.addEventListener("submit", async event => {
     if (adultMenuList) renderAdultMenus();
     if (hasSpecialMenu) hasSpecialMenu.value = "no";
     if (dietaryList) {
-      dietaryList.innerHTML = "";
-      dietaryList.hidden = true;
-    }
-    if (addDietaryRowButton) {
-      addDietaryRowButton.hidden = true;
+      dietaryList.innerHTML = `
+        <div class="dietary-row">
+          <label><span>Nombre de la persona</span><input type="text" class="dietary-name" placeholder="Ej.: María Gómez"></label>
+          <label><span>Alergia o preferencia</span><input type="text" class="dietary-detail" placeholder="Ej.: Celíaca"></label>
+          <button type="button" class="dietary-remove" aria-label="Eliminar esta persona" hidden>×</button>
+        </div>`;
+      updateDietaryRemoveButtons();
     }
     const currentAdultsMax = Number(document.documentElement.dataset.adultsMax || 20);
     buildNumberOptions(adultsSelect, currentAdultsMax, currentAdultsMax > 0 ? 1 : 0);
@@ -512,9 +519,6 @@ if (
 }
 
 
-const adultsSelect = document.getElementById("adults");
-const childrenSelect = document.getElementById("children");
-const childrenField = document.getElementById("childrenField");
 
 function buildNumberOptions(select, maximum, preferredValue = 0) {
   if (!select) return;
@@ -635,7 +639,7 @@ async function resolvePersonalizedCode(code) {
   return invitation?.nombre_mostrado ? invitation : null;
 }
 
-accessForm.addEventListener("submit", async event => {
+accessForm?.addEventListener("submit", async event => {
   event.preventDefault();
 
   const submitButton = accessForm.querySelector('button[type="submit"]');
