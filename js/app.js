@@ -319,13 +319,11 @@ rsvpForm.addEventListener("submit", async event => {
     if (adultMenuList) renderAdultMenus();
     if (hasSpecialMenu) hasSpecialMenu.value = "no";
     if (dietaryList) {
-      dietaryList.innerHTML = `
-        <div class="dietary-row">
-          <label><span>Nombre de la persona</span><input type="text" class="dietary-name" placeholder="Ej.: María Gómez"></label>
-          <label><span>Alergia o preferencia</span><input type="text" class="dietary-detail" placeholder="Ej.: Celíaca"></label>
-          <button type="button" class="dietary-remove" aria-label="Eliminar esta persona" hidden>×</button>
-        </div>`;
-      updateDietaryRemoveButtons();
+      dietaryList.innerHTML = "";
+      dietaryList.hidden = true;
+    }
+    if (addDietaryRowButton) {
+      addDietaryRowButton.hidden = true;
     }
     const currentAdultsMax = Number(document.documentElement.dataset.adultsMax || 20);
     buildNumberOptions(adultsSelect, currentAdultsMax, currentAdultsMax > 0 ? 1 : 0);

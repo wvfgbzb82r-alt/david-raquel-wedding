@@ -1,0 +1,22 @@
+DAVID & RAQUEL — V48.2 · CÓDIGOS PRIVADOS CORREGIDOS
+
+PROBLEMA ENCONTRADO
+La V48 ejecutaba renderAdultMenus() antes de declarar adultsSelect.
+Eso provocaba un error de JavaScript al cargar la página y detenía app.js.
+Como consecuencia, nunca se activaba el formulario de acceso por códigos privados.
+
+CORRECCIONES
+- adultsSelect, childrenSelect y childrenField se declaran antes de usarse.
+- Se eliminan las declaraciones duplicadas posteriores.
+- Se corrige el reinicio del apartado de menús especiales.
+- Se cambia la versión de app.js a 48.2 para evitar caché del navegador.
+
+SUPABASE
+No necesita SQL nuevo.
+La tabla y la función de códigos privados ya están funcionando correctamente.
+
+PUBLICACIÓN
+1. Sustituye todos los archivos por los de este ZIP.
+2. Conserva CNAME.
+3. Haz Commit y Push.
+4. Prueba en ventana privada o recarga con Ctrl + F5.
