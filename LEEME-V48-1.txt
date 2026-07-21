@@ -1,0 +1,11 @@
+DAVID & RAQUEL — V48.1 · REPARAR CÓDIGOS PRIVADOS
+
+1. Abre Supabase.
+2. Ve a SQL Editor > New query.
+3. Copia TODO el archivo:
+   SUPABASE-V48-1-REPARAR-CODIGOS.sql
+4. Pulsa RUN.
+5. No hace falta volver a crear los invitados.
+6. Los códigos y enlaces existentes se conservan.
+
+Después prueba un código en una ventana privada.
