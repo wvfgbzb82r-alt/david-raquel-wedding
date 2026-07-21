@@ -1,0 +1,10 @@
+DAVID & RAQUEL — V47
+
+CAMBIOS
+- Ya no se muestra al invitado el texto con el límite máximo de personas.
+- Los desplegables siguen respetando los máximos configurados en el panel.
+- La música se desbloquea al tocar el botón Continuar, antes de validar el código.
+- Se añadió compatibilidad playsinline para Safari/iPhone.
+- Al aceptar el código, la música sube progresivamente de volumen.
+- Si el código es incorrecto, la música se detiene y vuelve al inicio.
+- No necesita SQL nuevo.

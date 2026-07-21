@@ -263,31 +263,59 @@ musicControl.addEventListener("click",async()=>{
 
 
 let accessMusicPrimed = false;
+let accessMusicUnlockAttempted = false;
+
+function markMusicAsPlaying() {
+  accessMusicPrimed = true;
+  musicControl?.classList.add("is-playing");
+  musicControl?.setAttribute("aria-pressed", "true");
+}
 
 function primeBackgroundMusicFromGesture() {
-  if (!backgroundMusic || !backgroundMusic.paused) return;
+  if (!backgroundMusic) return;
 
-  backgroundMusic.volume = 0.55;
+  accessMusicUnlockAttempted = true;
+  backgroundMusic.muted = false;
+  backgroundMusic.volume = 0.02;
+
+  // En iPhone el play debe ejecutarse directamente dentro del gesto.
   const playAttempt = backgroundMusic.play();
 
   if (playAttempt && typeof playAttempt.then === "function") {
-    playAttempt.then(() => {
-      accessMusicPrimed = true;
-      musicControl.classList.add("is-playing");
-      musicControl.setAttribute("aria-pressed", "true");
-    }).catch(() => {
+    playAttempt.then(markMusicAsPlaying).catch(() => {
       accessMusicPrimed = false;
     });
+  } else if (!backgroundMusic.paused) {
+    markMusicAsPlaying();
   }
 }
 
 function stopPrimedAccessMusic() {
-  if (!accessMusicPrimed || !backgroundMusic) return;
+  if (!backgroundMusic) return;
+
   backgroundMusic.pause();
   backgroundMusic.currentTime = 0;
+  backgroundMusic.volume = 0.24;
   accessMusicPrimed = false;
-  musicControl.classList.remove("is-playing");
-  musicControl.setAttribute("aria-pressed", "false");
+  musicControl?.classList.remove("is-playing");
+  musicControl?.setAttribute("aria-pressed", "false");
+}
+
+function fadeBackgroundMusicTo(targetVolume = 0.24, duration = 1500) {
+  if (!backgroundMusic || backgroundMusic.paused) return;
+
+  const initialVolume = Math.max(0, backgroundMusic.volume);
+  const startedAt = performance.now();
+
+  function step(now) {
+    const progress = Math.min(1, (now - startedAt) / duration);
+    backgroundMusic.volume =
+      initialVolume + (targetVolume - initialVolume) * progress;
+
+    if (progress < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
 }
 
 function updateScrollProgress(){
@@ -304,6 +332,13 @@ const accessGate=document.getElementById("accessGate");
 const accessForm=document.getElementById("accessForm");
 const accessCode=document.getElementById("accessCode");
 const accessMessage=document.getElementById("accessMessage");
+const accessSubmitButton = accessForm?.querySelector('button[type="submit"]');
+
+// Safari/iPhone: pointerdown ocurre antes que la validación asíncrona del código.
+accessSubmitButton?.addEventListener("pointerdown", primeBackgroundMusicFromGesture);
+accessSubmitButton?.addEventListener("touchstart", primeBackgroundMusicFromGesture, {
+  passive: true
+});
 
 let accessStarted = false;
 
@@ -313,25 +348,22 @@ function startWeddingIntro() {
 
   accessGate.classList.add("is-leaving");
 
-  // La interacción del código permite iniciar la música sin bloqueo del navegador.
+  // Si el audio ya fue desbloqueado por el gesto, solo subimos el volumen.
   if (backgroundMusic) {
-    backgroundMusic.volume = 0;
-    backgroundMusic.play().then(() => {
-      musicControl?.classList.add("is-playing");
-      musicControl?.setAttribute("aria-pressed", "true");
-
-      const fadeDuration = 1800;
-      const targetVolume = 0.24;
-      const startedAt = performance.now();
-
-      function fadeIn(now) {
-        const progress = Math.min(1, (now - startedAt) / fadeDuration);
-        backgroundMusic.volume = targetVolume * progress;
-        if (progress < 1) requestAnimationFrame(fadeIn);
-      }
-
-      requestAnimationFrame(fadeIn);
-    }).catch(() => {});
+    if (!backgroundMusic.paused) {
+      markMusicAsPlaying();
+      fadeBackgroundMusicTo(0.24, 1500);
+    } else {
+      // Segundo intento para navegadores que permiten reproducir en submit.
+      backgroundMusic.volume = 0.02;
+      backgroundMusic.play().then(() => {
+        markMusicAsPlaying();
+        fadeBackgroundMusicTo(0.24, 1500);
+      }).catch(() => {
+        musicControl?.classList.remove("is-playing");
+        musicControl?.setAttribute("aria-pressed", "false");
+      });
+    }
   }
 
   window.setTimeout(() => {
@@ -373,7 +405,6 @@ if (
 const adultsSelect = document.getElementById("adults");
 const childrenSelect = document.getElementById("children");
 const childrenField = document.getElementById("childrenField");
-const invitationLimitMessage = document.getElementById("invitationLimitMessage");
 
 function buildNumberOptions(select, maximum, preferredValue = 0) {
   if (!select) return;
@@ -407,22 +438,6 @@ function configureGuestLimits(adultsMax = 20, childrenMax = 20, personalized = f
     childrenField.hidden = personalized && safeChildren === 0;
   }
 
-  if (invitationLimitMessage) {
-    if (personalized) {
-      const limits = [
-        pluralizeLimit(safeAdults, "adulto", "adultos"),
-        safeChildren > 0
-          ? pluralizeLimit(safeChildren, "niño", "niños")
-          : null
-      ].filter(Boolean).join(" y ");
-
-      invitationLimitMessage.innerHTML =
-        `Esta invitación está preparada para un máximo de <strong>${limits}</strong>.`;
-      invitationLimitMessage.hidden = false;
-    } else {
-      invitationLimitMessage.hidden = true;
-    }
-  }
 }
 
 configureGuestLimits(20, 20, false);
@@ -523,9 +538,10 @@ accessForm.addEventListener("submit", async event => {
 
   accessMessage.textContent = "";
 
-  // El intento de reproducción se hace dentro del gesto del usuario.
-  // Esto evita el bloqueo de autoplay tras validar un código personalizado.
-  primeBackgroundMusicFromGesture();
+  // También cubre el envío mediante la tecla Intro.
+  if (!accessMusicUnlockAttempted || backgroundMusic?.paused) {
+    primeBackgroundMusicFromGesture();
+  }
 
   submitButton.disabled = true;
   submitButton.textContent = "Accediendo…";

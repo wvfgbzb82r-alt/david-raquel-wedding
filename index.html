@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#030303
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=45">
+  <link rel="stylesheet" href="css/style.css?v=47">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -305,11 +305,7 @@
           </label>
           <small class="field-error" data-error-for="attendance"></small>
         </fieldset>
-
-        <div class="invitation-limit-message form-field--full"
-             id="invitationLimitMessage" hidden></div>
-
-        <div class="form-field">
+<div class="form-field">
           <label for="adults">Número de adultos</label>
           <select id="adults" name="adultos" required></select>
           <small class="field-hint">
@@ -483,7 +479,7 @@
           aria-label="Activar o pausar música" aria-pressed="false">
     <span aria-hidden="true">♪</span>
   </button>
-  <audio id="backgroundMusic" loop preload="auto">
+  <audio id="backgroundMusic" loop preload="auto" playsinline webkit-playsinline>
     <source src="assets/music/boda.mp3" type="audio/mpeg">
   </audio>
 
@@ -497,6 +493,6 @@
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=45"></script>
+  <script src="js/app.js?v=47"></script>
 </body>
 </html>
