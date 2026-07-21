@@ -77,16 +77,18 @@ function validateRsvpForm() {
 
   const adults = Number(document.getElementById("adults")?.value);
   const children = Number(document.getElementById("children")?.value);
+  const adultsMax = Number(document.documentElement.dataset.adultsMax || 20);
+  const childrenMax = Number(document.documentElement.dataset.childrenMax || 20);
 
-  if (!Number.isInteger(adults) || adults < 0 || adults > 20) {
+  if (!Number.isInteger(adults) || adults < 0 || adults > adultsMax) {
     document.querySelector('[data-error-for="adults"]').textContent =
-      "Indica un número de adultos entre 0 y 20.";
+      `Indica un número de adultos entre 0 y ${adultsMax}.`;
     valid = false;
   }
 
-  if (!Number.isInteger(children) || children < 0 || children > 20) {
+  if (!Number.isInteger(children) || children < 0 || children > childrenMax) {
     document.querySelector('[data-error-for="children"]').textContent =
-      "Indica un número de niños entre 0 y 20.";
+      `Indica un número de niños entre 0 y ${childrenMax}.`;
     valid = false;
   }
 
@@ -115,6 +117,7 @@ function getRsvpPayload() {
     nombre: String(formData.get("nombre") || "").trim(),
     telefono: String(formData.get("telefono") || "").trim(),
     asistencia: String(formData.get("asistencia") || "").trim(),
+    codigo_invitacion: document.documentElement.dataset.invitationCode || null,
     adultos: Number(formData.get("adultos") || 0),
     ninos: Number(formData.get("ninos") || 0),
     alergias: JSON.stringify(collectDietaryRequirements()),
@@ -212,8 +215,13 @@ rsvpForm.addEventListener("submit", async event => {
         </div>`;
       updateDietaryRemoveButtons();
     }
-    document.getElementById("adults").value = "1";
-    document.getElementById("children").value = "0";
+    const currentAdultsMax = Number(document.documentElement.dataset.adultsMax || 20);
+    buildNumberOptions(adultsSelect, currentAdultsMax, currentAdultsMax > 0 ? 1 : 0);
+    buildNumberOptions(
+      childrenSelect,
+      Number(document.documentElement.dataset.childrenMax || 20),
+      0
+    );
     formStatus.textContent =
       "¡Muchas gracias! Hemos recibido tu confirmación. " +
       "Estamos deseando celebrar este día contigo.";
@@ -331,18 +339,89 @@ if (
   window.setTimeout(() => grantAccess({ remember: false }), 100);
 }
 
+
+const adultsSelect = document.getElementById("adults");
+const childrenSelect = document.getElementById("children");
+const childrenField = document.getElementById("childrenField");
+const invitationLimitMessage = document.getElementById("invitationLimitMessage");
+
+function buildNumberOptions(select, maximum, preferredValue = 0) {
+  if (!select) return;
+
+  const safeMaximum = Math.max(0, Math.min(20, Number(maximum) || 0));
+  const safePreferred = Math.max(0, Math.min(safeMaximum, Number(preferredValue) || 0));
+
+  select.innerHTML = Array.from(
+    { length: safeMaximum + 1 },
+    (_, value) => `<option value="${value}">${value}</option>`
+  ).join("");
+
+  select.value = String(safePreferred);
+}
+
+function pluralizeLimit(value, singular, plural) {
+  return `${value} ${value === 1 ? singular : plural}`;
+}
+
+function configureGuestLimits(adultsMax = 20, childrenMax = 20, personalized = false) {
+  const safeAdults = Math.max(0, Math.min(20, Number(adultsMax) || 0));
+  const safeChildren = Math.max(0, Math.min(20, Number(childrenMax) || 0));
+
+  document.documentElement.dataset.adultsMax = String(safeAdults);
+  document.documentElement.dataset.childrenMax = String(safeChildren);
+
+  buildNumberOptions(adultsSelect, safeAdults, safeAdults > 0 ? 1 : 0);
+  buildNumberOptions(childrenSelect, safeChildren, 0);
+
+  if (childrenField) {
+    childrenField.hidden = personalized && safeChildren === 0;
+  }
+
+  if (invitationLimitMessage) {
+    if (personalized) {
+      const limits = [
+        pluralizeLimit(safeAdults, "adulto", "adultos"),
+        safeChildren > 0
+          ? pluralizeLimit(safeChildren, "niño", "niños")
+          : null
+      ].filter(Boolean).join(" y ");
+
+      invitationLimitMessage.innerHTML =
+        `Esta invitación está preparada para un máximo de <strong>${limits}</strong>.`;
+      invitationLimitMessage.hidden = false;
+    } else {
+      invitationLimitMessage.hidden = true;
+    }
+  }
+}
+
+configureGuestLimits(20, 20, false);
+
 let currentPersonalizedInvitation = null;
 
 function applyPersonalizedInvitation(invitation, code) {
   if (!invitation?.nombre_mostrado) return false;
 
-  currentPersonalizedInvitation = invitation;
+  const adultsMax = Number(
+    invitation.adultos_max ??
+    invitation.max_personas ??
+    1
+  );
+  const childrenMax = Number(invitation.ninos_max ?? 0);
+
+  currentPersonalizedInvitation = {
+    ...invitation,
+    adultos_max: adultsMax,
+    ninos_max: childrenMax
+  };
+
   document.documentElement.dataset.personalizedInvitation = "true";
   document.documentElement.dataset.invitationCode = code;
 
   const welcome = document.getElementById("personalizedWelcome");
   const guestName = document.getElementById("personalizedGuestName");
   const guestNameInput = document.getElementById("guestName");
+  const musicGuestName = document.getElementById("musicGuestName");
 
   if (welcome && guestName) {
     guestName.textContent = invitation.nombre_mostrado;
@@ -354,12 +433,20 @@ function applyPersonalizedInvitation(invitation, code) {
     guestNameInput.readOnly = true;
   }
 
+  if (musicGuestName) {
+    musicGuestName.value = invitation.nombre_mostrado;
+    musicGuestName.readOnly = true;
+  }
+
+  configureGuestLimits(adultsMax, childrenMax, true);
+
   sessionStorage.setItem(
     "wedding_personalized_invitation",
     JSON.stringify({
       codigo: code,
       nombre_mostrado: invitation.nombre_mostrado,
-      max_personas: invitation.max_personas || 1
+      adultos_max: adultsMax,
+      ninos_max: childrenMax
     })
   );
 

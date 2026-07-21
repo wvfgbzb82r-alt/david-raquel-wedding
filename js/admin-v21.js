@@ -261,6 +261,7 @@ async function loadGuests(allowRetry = true) {
     guests = await api("/rest/v1/confirmaciones_v24?select=*&order=created_at.desc");
     updateStats();
     renderGuests();
+    if (personalizedInvitations.length) renderInvitations();
     byId("lastUpdate").textContent = `Actualizado: ${new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}`;
   } catch (error) {
     if (allowRetry && /jwt|token|401/i.test(error.message) && await refreshSession()) return loadGuests(false);
@@ -424,7 +425,8 @@ mediaGrid?.addEventListener("click", event => {
 const invitationForm = byId("invitationForm");
 const invitationName = byId("invitationName");
 const invitationPhone = byId("invitationPhone");
-const invitationPeople = byId("invitationPeople");
+const invitationAdults = byId("invitationAdults");
+const invitationChildren = byId("invitationChildren");
 const invitationList = byId("invitationList");
 const invitationMessage = byId("invitationMessage");
 const refreshInvitationsButton = byId("refreshInvitationsButton");
@@ -459,6 +461,52 @@ async function copyInvitationLink(code) {
   }
 }
 
+
+function latestConfirmationForInvitation(code) {
+  return guests
+    .filter(guest => normalize(guest.codigo_invitacion) === normalize(code))
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0] || null;
+}
+
+function invitationResponseState(item) {
+  const response = latestConfirmationForInvitation(item.codigo);
+
+  if (!response) {
+    return {
+      className: "pending",
+      label: "Pendiente",
+      adults: 0,
+      children: 0,
+      total: 0
+    };
+  }
+
+  const adults = Number(response.adultos || 0);
+  const children = Number(response.ninos || 0);
+  const total = adults + children;
+  const capacity =
+    Number(item.adultos_max ?? item.max_personas ?? 1) +
+    Number(item.ninos_max ?? 0);
+
+  if (attendanceCategory(response.asistencia) === "no") {
+    return {
+      className: "complete",
+      label: "No asistirán",
+      adults: 0,
+      children: 0,
+      total: 0
+    };
+  }
+
+  return {
+    className: total >= capacity ? "complete" : "partial",
+    label: total >= capacity ? "Completa" : "Parcial",
+    adults,
+    children,
+    total
+  };
+}
+
 function renderInvitations() {
   if (!personalizedInvitations.length) {
     invitationList.innerHTML = "";
@@ -472,20 +520,34 @@ function renderInvitations() {
       ? `Abierta: ${formatDate(item.opened_at)}`
       : "Todavía no abierta";
 
+    const adultsMax = Number(item.adultos_max ?? item.max_personas ?? 1);
+    const childrenMax = Number(item.ninos_max ?? 0);
+    const state = invitationResponseState(item);
+
     return `
       <article class="invitation-item">
         <div>
           <h3>${escapeHtml(item.nombre_mostrado)}</h3>
           <p><span class="invitation-code">${escapeHtml(item.codigo)}</span></p>
+          <div class="invitation-capacity">
+            <span class="capacity-pill">👨 ${adultsMax} adultos máx.</span>
+            <span class="capacity-pill">👧 ${childrenMax} niños máx.</span>
+          </div>
         </div>
 
         <div>
           <p>${escapeHtml(item.telefono || "Sin teléfono")}</p>
-          <p>${Number(item.max_personas || 1)} persona(s)</p>
+          <p>
+            Confirmados:
+            <strong>${state.adults} adultos y ${state.children} niños</strong>
+          </p>
         </div>
 
         <div class="invitation-state">
-          ${opened}
+          <span class="invitation-status-pill ${state.className}">
+            ${state.label}
+          </span>
+          <p>${opened}</p>
         </div>
 
         <div class="invitation-actions">
@@ -553,12 +615,17 @@ async function createInvitation(event) {
       body: JSON.stringify({
         nombre_mostrado: name,
         telefono: invitationPhone.value.trim() || null,
-        max_personas: Number(invitationPeople.value || 1)
+        adultos_max: Number(invitationAdults.value || 0),
+        ninos_max: Number(invitationChildren.value || 0),
+        max_personas:
+          Number(invitationAdults.value || 0) +
+          Number(invitationChildren.value || 0)
       })
     });
 
     invitationForm.reset();
-    invitationPeople.value = "1";
+    invitationAdults.value = "1";
+    invitationChildren.value = "0";
     await loadInvitations();
     invitationMessage.textContent = "Invitación creada correctamente.";
   } catch (error) {
@@ -617,15 +684,20 @@ showDashboard = function () {
 
 // V42 · Gestión de música
 let musicSuggestions=[];const refreshMusicButton=byId("refreshMusicButton"),exportMusicButton=byId("exportMusicButton"),musicTableBody=byId("musicTableBody"),musicCards=byId("musicCards"),musicAdminMessage=byId("musicAdminMessage"),musicRanking=byId("musicRanking");
+function spotifySearchUrl(song,artist){const q=[song,artist].filter(Boolean).join(" ").trim();return q?`https://open.spotify.com/search/${encodeURIComponent(q)}`:"";}
+function spotifyLinkHtml(song,artist,label="Abrir en Spotify"){const u=spotifySearchUrl(song,artist);return u?`<a class="spotify-link" href="${u}" target="_blank" rel="noopener noreferrer">🎧 ${label}</a>`:"—";}
+function openSpotifySearches(moment){const seen=new Set(),searches=musicSuggestions.map(i=>moment==="dinner"?[i.cancion_cena,i.artista_cena]:[i.cancion_baile,i.artista_baile]).filter(([s])=>normalize(s)).filter(([s,a])=>{const k=normalizedSong(s,a);if(seen.has(k))return false;seen.add(k);return true;});if(!searches.length){musicAdminMessage.textContent=moment==="dinner"?"Todavía no hay canciones para la cena.":"Todavía no hay canciones para el baile.";return;}const urls=searches.map(([s,a])=>spotifySearchUrl(s,a));window.open(urls[0],"_blank","noopener");if(urls.length>1){navigator.clipboard?.writeText(urls.slice(1).join("\n")).then(()=>musicAdminMessage.textContent=`Se abrió la primera búsqueda y se copiaron ${urls.length-1} enlaces más al portapapeles.`).catch(()=>musicAdminMessage.textContent="Se abrió la primera búsqueda. Usa los botones de cada canción para abrir el resto.");}}
+function artistRankingData(){const counts=new Map();musicSuggestions.forEach(i=>[i.artista_cena,i.artista_baile].forEach(a=>{const clean=String(a||"").trim();if(!clean)return;const k=normalize(clean),c=counts.get(k)||{artist:clean,count:0};c.count++;counts.set(k,c);}));return Array.from(counts.values()).sort((a,b)=>b.count-a.count||a.artist.localeCompare(b.artist));}
+function renderArtistRanking(){const r=artistRankingData().slice(0,10);artistRanking.innerHTML=r.length?`<ol class="music-ranking-list">${r.map((i,x)=>`<li><div><strong>${x+1}. ${escapeHtml(i.artist)}</strong></div><span>${i.count} ${i.count===1?"petición":"peticiones"}</span></li>`).join("")}</ol>`:"<p>Todavía no hay artistas registrados.</p>";}
 function normalizedSong(song,artist){return normalize(`${song||""} — ${artist||""}`)}
 function musicRankingData(){const counts=new Map();musicSuggestions.forEach(i=>[[i.cancion_cena,i.artista_cena,"Cena"],[i.cancion_baile,i.artista_baile,"Baile"]].forEach(([s,a,m])=>{if(!normalize(s))return;const k=normalizedSong(s,a),c=counts.get(k)||{song:s,artist:a,count:0,moments:new Set()};c.count++;c.moments.add(m);counts.set(k,c);}));return Array.from(counts.values()).sort((a,b)=>b.count-a.count||String(a.song).localeCompare(String(b.song)));}
 function updateMusicStats(){const d=musicSuggestions.filter(i=>normalize(i.cancion_cena)).length,b=musicSuggestions.filter(i=>normalize(i.cancion_baile)).length,r=musicRankingData();byId("musicTotal").textContent=musicSuggestions.length;byId("musicDinner").textContent=d;byId("musicDance").textContent=b;byId("musicTop").textContent=r[0]?`${r[0].song} (${r[0].count})`:"—";}
 function renderMusicRanking(){const r=musicRankingData().slice(0,10);musicRanking.innerHTML=r.length?`<ol class="music-ranking-list">${r.map((i,x)=>`<li><div><strong>${x+1}. ${escapeHtml(i.song||"Sin título")}</strong>${i.artist?`<small> — ${escapeHtml(i.artist)}</small>`:""}</div><span>${i.count} ${i.count===1?"voto":"votos"}</span></li>`).join("")}</ol>`:"<p>Todavía no hay canciones sugeridas.</p>";}
-function renderMusicSuggestions(){musicTableBody.innerHTML=musicSuggestions.map(i=>`<tr><td>${formatDate(i.created_at)}</td><td>${escapeHtml(i.nombre||"—")}</td><td>${escapeHtml(i.cancion_cena||"—")}</td><td>${escapeHtml(i.artista_cena||"—")}</td><td>${escapeHtml(i.cancion_baile||"—")}</td><td>${escapeHtml(i.artista_baile||"—")}</td><td><button type="button" class="danger-link" data-delete-music="${i.id}">Eliminar</button></td></tr>`).join("");musicCards.innerHTML=musicSuggestions.map(i=>`<article class="guest-card"><h2>${escapeHtml(i.nombre||"Sin nombre")}</h2><dl><dt>Fecha</dt><dd>${formatDate(i.created_at)}</dd><dt>Cena</dt><dd>${escapeHtml(i.cancion_cena||"—")}${i.artista_cena?` — ${escapeHtml(i.artista_cena)}`:""}</dd><dt>Baile</dt><dd>${escapeHtml(i.cancion_baile||"—")}${i.artista_baile?` — ${escapeHtml(i.artista_baile)}`:""}</dd></dl><button type="button" class="danger-link" data-delete-music="${i.id}">Eliminar sugerencia</button></article>`).join("");musicAdminMessage.textContent=musicSuggestions.length?`${musicSuggestions.length} sugerencia${musicSuggestions.length===1?"":"s"} musical${musicSuggestions.length===1?"":"es"}.`:"Todavía no hay sugerencias musicales.";updateMusicStats();renderMusicRanking();}
+function renderMusicSuggestions(){musicTableBody.innerHTML=musicSuggestions.map(i=>`<tr><td>${formatDate(i.created_at)}</td><td>${escapeHtml(i.nombre||"—")}</td><td>${escapeHtml(i.cancion_cena||"—")}</td><td>${escapeHtml(i.artista_cena||"—")}</td><td>${spotifyLinkHtml(i.cancion_cena,i.artista_cena,"Spotify cena")}</td><td>${escapeHtml(i.cancion_baile||"—")}</td><td>${escapeHtml(i.artista_baile||"—")}</td><td>${spotifyLinkHtml(i.cancion_baile,i.artista_baile,"Spotify baile")}</td><td><button type="button" class="danger-link" data-delete-music="${i.id}">Eliminar</button></td></tr>`).join("");musicCards.innerHTML=musicSuggestions.map(i=>`<article class="guest-card"><h2>${escapeHtml(i.nombre||"Sin nombre")}</h2><dl><dt>Fecha</dt><dd>${formatDate(i.created_at)}</dd><dt>Cena</dt><dd>${escapeHtml(i.cancion_cena||"—")}${i.artista_cena?` — ${escapeHtml(i.artista_cena)}`:""}</dd><dt>Baile</dt><dd>${escapeHtml(i.cancion_baile||"—")}${i.artista_baile?` — ${escapeHtml(i.artista_baile)}`:""}</dd></dl><div class="music-card-links">${i.cancion_cena?spotifyLinkHtml(i.cancion_cena,i.artista_cena,"Cena en Spotify"):""}${i.cancion_baile?spotifyLinkHtml(i.cancion_baile,i.artista_baile,"Baile en Spotify"):""}</div><button type="button" class="danger-link" data-delete-music="${i.id}">Eliminar sugerencia</button></article>`).join("");musicAdminMessage.textContent=musicSuggestions.length?`${musicSuggestions.length} sugerencia${musicSuggestions.length===1?"":"s"} musical${musicSuggestions.length===1?"":"es"}.`:"Todavía no hay sugerencias musicales.";updateMusicStats();renderMusicRanking();renderArtistRanking();}
 async function loadMusicSuggestions(){musicAdminMessage.textContent="Cargando canciones…";try{musicSuggestions=await api("/rest/v1/sugerencias_musicales_v42?select=*&order=created_at.desc");renderMusicSuggestions();}catch(e){musicAdminMessage.textContent=`No se pudieron cargar las canciones: ${e.message}`;}}
 async function deleteMusicSuggestion(id){if(!confirm("¿Quieres eliminar esta sugerencia musical?"))return;try{await api(`/rest/v1/sugerencias_musicales_v42?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});await loadMusicSuggestions();}catch(e){musicAdminMessage.textContent=`No se pudo eliminar la sugerencia: ${e.message}`;}}
 function handleMusicAction(e){const b=e.target.closest("[data-delete-music]");if(b)deleteMusicSuggestion(b.dataset.deleteMusic);}
 function csvEscapeMusic(v){const t=String(v??"");return `"${t.replaceAll('"','""')}"`;}
-function exportMusicCsv(){const h=["Fecha","Invitado","Canción cena","Artista cena","Canción baile","Artista baile"],lines=[h.map(csvEscapeMusic).join(","),...musicSuggestions.map(i=>[i.created_at,i.nombre,i.cancion_cena,i.artista_cena,i.cancion_baile,i.artista_baile].map(csvEscapeMusic).join(","))],blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="banda-sonora-david-raquel.csv";a.click();URL.revokeObjectURL(url);}
-refreshMusicButton?.addEventListener("click",loadMusicSuggestions);exportMusicButton?.addEventListener("click",exportMusicCsv);musicTableBody?.addEventListener("click",handleMusicAction);musicCards?.addEventListener("click",handleMusicAction);
+function exportMusicCsv(){const h=["Fecha","Invitado","Canción cena","Artista cena","Spotify cena","Canción baile","Artista baile","Spotify baile"],lines=[h.map(csvEscapeMusic).join(","),...musicSuggestions.map(i=>[i.created_at,i.nombre,i.cancion_cena,i.artista_cena,spotifySearchUrl(i.cancion_cena,i.artista_cena),i.cancion_baile,i.artista_baile,spotifySearchUrl(i.cancion_baile,i.artista_baile)].map(csvEscapeMusic).join(","))],blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="banda-sonora-david-raquel-con-spotify.csv";a.click();URL.revokeObjectURL(url);}
+refreshMusicButton?.addEventListener("click",loadMusicSuggestions);openDinnerSpotifyButton?.addEventListener("click",()=>openSpotifySearches("dinner"));openDanceSpotifyButton?.addEventListener("click",()=>openSpotifySearches("dance"));exportMusicButton?.addEventListener("click",exportMusicCsv);musicTableBody?.addEventListener("click",handleMusicAction);musicCards?.addEventListener("click",handleMusicAction);
 window.addEventListener("load",()=>window.setTimeout(()=>{if(!byId("dashboard")?.hidden)loadMusicSuggestions();},900));

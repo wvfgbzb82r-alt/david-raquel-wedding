@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#030303
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=42">
+  <link rel="stylesheet" href="css/style.css?v=43">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -306,18 +306,21 @@
           <small class="field-error" data-error-for="attendance"></small>
         </fieldset>
 
+        <div class="invitation-limit-message form-field--full"
+             id="invitationLimitMessage" hidden></div>
+
         <div class="form-field">
           <label for="adults">Número de adultos</label>
-          <input id="adults" name="adultos" type="number"
-                 min="0" max="20" value="1" inputmode="numeric" required>
-          <small class="field-hint">Incluye en el total a la persona que realiza la confirmación.</small>
+          <select id="adults" name="adultos" required></select>
+          <small class="field-hint">
+            Incluye en el total a la persona que realiza la confirmación.
+          </small>
           <small class="field-error" data-error-for="adults"></small>
         </div>
 
-        <div class="form-field">
+        <div class="form-field" id="childrenField">
           <label for="children">Número de niños</label>
-          <input id="children" name="ninos" type="number"
-                 min="0" max="20" value="0" inputmode="numeric" required>
+          <select id="children" name="ninos" required></select>
           <small class="field-error" data-error-for="children"></small>
         </div>
 
@@ -494,6 +497,6 @@
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=42"></script>
+  <script src="js/app.js?v=43"></script>
 </body>
 </html>

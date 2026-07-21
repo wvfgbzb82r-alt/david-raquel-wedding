@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=42">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=44">
 </head>
 <body>
   <main>
@@ -105,9 +105,37 @@
           </label>
 
           <label>
-            <span>Número máximo de personas</span>
-            <input id="invitationPeople" type="number"
-                   min="1" max="20" value="1" required>
+            <span>Adultos permitidos</span>
+            <select id="invitationAdults" required>
+              <option value="0">0</option>
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Niños permitidos</span>
+            <select id="invitationChildren" required>
+              <option value="0" selected>0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
           </label>
 
           <button class="primary-button" type="submit">
@@ -123,12 +151,12 @@
 
 
       <section class="music-admin-section" aria-labelledby="musicAdminTitle">
-        <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
+        <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="openDinnerSpotifyButton" type="button">Abrir cena en Spotify</button><button id="openDanceSpotifyButton" type="button">Abrir baile en Spotify</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
         <section class="music-stats"><article><span>Sugerencias</span><strong id="musicTotal">0</strong></article><article><span>Para la cena</span><strong id="musicDinner">0</strong></article><article><span>Para el baile</span><strong id="musicDance">0</strong></article><article><span>Canción más pedida</span><strong id="musicTop">—</strong></article></section>
         <p id="musicAdminMessage" class="dashboard-message" role="status" aria-live="polite"></p>
-        <div class="table-wrap"><table class="music-table"><thead><tr><th>Fecha</th><th>Invitado</th><th>Canción cena</th><th>Artista cena</th><th>Canción baile</th><th>Artista baile</th><th>Acciones</th></tr></thead><tbody id="musicTableBody"></tbody></table></div>
+        <div class="table-wrap"><table class="music-table"><thead><tr><th>Fecha</th><th>Invitado</th><th>Canción cena</th><th>Artista cena</th><th>Spotify cena</th><th>Canción baile</th><th>Artista baile</th><th>Spotify baile</th><th>Acciones</th></tr></thead><tbody id="musicTableBody"></tbody></table></div>
         <div class="guest-cards" id="musicCards"></div>
-        <section class="music-ranking"><h3>Más pedidas</h3><div id="musicRanking"></div></section>
+        <div class="music-rankings"><section class="music-ranking"><h3>Canciones más pedidas</h3><div id="musicRanking"></div></section><section class="music-ranking"><h3>Artistas más pedidos</h3><div id="artistRanking"></div></section></div>
       </section>
 
       <section class="media-section" aria-labelledby="mediaTitle">
@@ -150,6 +178,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=42"></script>
+  <script src="../js/admin-v21.js?v=44"></script>
 </body>
 </html>

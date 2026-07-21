@@ -197,3 +197,60 @@ td .row-actions { margin-top: 0; }
 
 /* V42 · Panel de música */
 .music-admin-section{margin-top:38px;padding:28px;border:1px solid rgba(185,152,87,.22);border-radius:24px;background:rgba(255,255,255,.66);box-shadow:0 20px 50px rgba(92,67,30,.08)}.music-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:14px;margin:22px 0}.music-stats article{padding:18px;border:1px solid rgba(185,152,87,.20);border-radius:18px;background:#fffaf2}.music-stats span{display:block;margin-bottom:8px;color:#806532;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}.music-stats strong{color:#9b7937;font-family:var(--serif);font-size:1.75rem}.music-table{min-width:1080px}.music-ranking{margin-top:24px;padding:20px;border:1px solid rgba(185,152,87,.18);border-radius:18px;background:#fbf7ef}.music-ranking-list{display:grid;gap:9px;margin:0;padding:0;list-style:none}.music-ranking-list li{display:flex;justify-content:space-between;gap:16px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.75)}
+
+
+/* =========================================================
+   V43 · Invitaciones inteligentes en el panel
+   ========================================================= */
+
+.invitation-form select {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 38px 10px 12px;
+  border: 1px solid rgba(172,137,72,.30);
+  border-radius: 12px;
+  background: #fffaf2;
+  color: inherit;
+  font: inherit;
+}
+
+.invitation-capacity {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.capacity-pill,
+.invitation-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f6efe2;
+  color: #735b2d;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.invitation-status-pill.complete {
+  background: #e7f3e9;
+  color: #3d7048;
+}
+
+.invitation-status-pill.partial {
+  background: #fff1cc;
+  color: #8a6715;
+}
+
+.invitation-status-pill.pending {
+  background: #eeeae1;
+  color: #70685b;
+}
+
+.spotify-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:7px 10px;border:1px solid rgba(36,126,73,.30);border-radius:999px;background:#edf8f0;color:#276f42;font-size:.72rem;font-weight:600;text-decoration:none;white-space:nowrap}
+.spotify-link:hover,.spotify-link:focus-visible{background:#dff1e4;color:#175b31}
+.music-rankings{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+.music-card-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+@media(max-width:760px){.music-rankings{grid-template-columns:1fr}}

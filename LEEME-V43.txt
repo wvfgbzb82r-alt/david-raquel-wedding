@@ -1,0 +1,27 @@
+DAVID & RAQUEL — V43 · INVITACIONES INTELIGENTES
+
+CAMBIOS
+- En el panel, cada invitación permite configurar:
+  - Máximo de adultos.
+  - Máximo de niños.
+- En la invitación, adultos y niños se eligen mediante desplegables.
+- Los desplegables solo muestran los valores permitidos.
+- Si una invitación no admite niños, ese selector se oculta.
+- Se muestra un mensaje con el límite concreto de cada invitación.
+- Supabase vuelve a comprobar los límites antes de guardar.
+- El panel muestra:
+  - Adultos y niños máximos.
+  - Adultos y niños confirmados.
+  - Estado Pendiente, Parcial, Completa o No asistirán.
+
+IMPORTANTE
+1. Si no ejecutaste V41, ejecuta primero:
+   SUPABASE-V41-ADULTOS-NINOS.sql
+2. Ejecuta después:
+   SUPABASE-V43-INVITACIONES-INTELIGENTES.sql
+3. La V42 de música se mantiene.
+4. Publica todos los archivos del ZIP.
+
+El código general sigue funcionando con un límite abierto de hasta 20
+adultos y 20 niños. Los límites personalizados se aplican al entrar con
+un código o enlace individual.

@@ -1,0 +1,8 @@
+DAVID & RAQUEL — V44 · SPOTIFY
+
+- Botón Spotify para cada canción de cena y baile.
+- Dos botones globales para abrir búsquedas.
+- Ranking de canciones y artistas.
+- CSV con enlaces de Spotify.
+- No necesita SQL nuevo.
+- Mantiene toda la V43.
