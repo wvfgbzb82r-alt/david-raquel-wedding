@@ -579,12 +579,21 @@ function applyPersonalizedInvitation(invitation, code) {
 
   const welcome = document.getElementById("personalizedWelcome");
   const guestName = document.getElementById("personalizedGuestName");
+  const personalizedMessage = document.getElementById("personalizedMessage");
   const guestNameInput = document.getElementById("guestName");
   const musicGuestName = document.getElementById("musicGuestName");
 
   if (welcome && guestName) {
     guestName.textContent = invitation.nombre_mostrado;
     welcome.hidden = false;
+  }
+
+  if (personalizedMessage) {
+    const totalGuests = Math.max(1, adultsMax + childrenMax);
+
+    personalizedMessage.textContent = totalGuests === 1
+      ? "Nos hace muchísima ilusión compartir este día contigo."
+      : "Nos hace muchísima ilusión compartir este día con vosotros.";
   }
 
   if (guestNameInput) {

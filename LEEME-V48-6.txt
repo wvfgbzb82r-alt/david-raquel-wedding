@@ -1,0 +1,9 @@
+DAVID & RAQUEL — V48.6 · MENSAJE INTELIGENTE
+
+- Una sola persona:
+  «Nos hace muchísima ilusión compartir este día contigo.»
+
+- Dos o más personas:
+  «Nos hace muchísima ilusión compartir este día con vosotros.»
+
+No necesita cambios en Supabase.

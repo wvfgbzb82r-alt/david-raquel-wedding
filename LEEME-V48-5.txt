@@ -1,0 +1,12 @@
+DAVID & RAQUEL — V48.5 · MENSAJE INTELIGENTE
+
+La tarjeta personalizada adapta automáticamente el texto:
+
+- Una sola persona:
+  «Nos hace muchísima ilusión que puedas acompañarnos en este día tan especial.»
+
+- Dos o más personas:
+  «Nos hace muchísima ilusión que podáis acompañarnos en este día tan especial.»
+
+El cálculo utiliza el máximo de adultos + niños configurado para cada invitación.
+No necesita cambios en Supabase.

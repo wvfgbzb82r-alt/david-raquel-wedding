@@ -1,0 +1,11 @@
+DAVID & RAQUEL — V48.4
+
+Cambio realizado en la tarjeta de invitación personalizada:
+
+Antes:
+Nos hace muchísima ilusión compartir este día con vosotros.
+
+Ahora:
+Nos hace muchísima ilusión que puedas estar este día con nosotros.
+
+No necesita cambios en Supabase.
