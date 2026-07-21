@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#030303
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=41">
+  <link rel="stylesheet" href="css/style.css?v=42">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -362,6 +362,40 @@
 
     
     
+
+    <section class="music-suggestions" id="musica" aria-labelledby="music-title">
+      <div class="music-suggestions__inner reveal">
+        <p class="section-kicker">Nuestra banda sonora</p>
+        <h2 id="music-title">Tu canción también puede sonar</h2>
+        <div class="section-divider" aria-hidden="true"></div>
+        <p class="music-suggestions__lead">
+          La música tiene el poder de convertir los momentos en recuerdos inolvidables.
+          Nos encantaría conocer las canciones que te gustaría escuchar durante nuestro gran día.
+        </p>
+        <form class="music-form" id="musicSuggestionForm" novalidate>
+          <div class="form-field form-field--full">
+            <label for="musicGuestName">Tu nombre</label>
+            <input id="musicGuestName" name="nombre" type="text" autocomplete="name" required>
+          </div>
+          <article class="music-moment">
+            <div class="music-moment__heading"><span class="music-moment__icon" aria-hidden="true">🍽️</span><div><p class="music-moment__eyebrow">Durante la cena</p><h3>¿Qué canción te gustaría escuchar mientras disfrutamos de la cena?</h3></div></div>
+            <div class="music-form__grid">
+              <div class="form-field"><label for="dinnerSong">Canción</label><input id="dinnerSong" name="cancion_cena" type="text" placeholder="Ej.: Perfect"></div>
+              <div class="form-field"><label for="dinnerArtist">Artista</label><input id="dinnerArtist" name="artista_cena" type="text" placeholder="Ej.: Ed Sheeran"></div>
+            </div>
+          </article>
+          <article class="music-moment">
+            <div class="music-moment__heading"><span class="music-moment__icon" aria-hidden="true">💃</span><div><p class="music-moment__eyebrow">Durante el baile</p><h3>¿Qué canción no puede faltar cuando llegue el momento de darlo todo?</h3></div></div>
+            <div class="music-form__grid">
+              <div class="form-field"><label for="danceSong">Canción</label><input id="danceSong" name="cancion_baile" type="text" placeholder="Ej.: Viva la Vida"></div>
+              <div class="form-field"><label for="danceArtist">Artista</label><input id="danceArtist" name="artista_baile" type="text" placeholder="Ej.: Coldplay"></div>
+            </div>
+          </article>
+          <div class="music-form__actions"><button class="primary-button" type="submit">Enviar sugerencias</button><p class="form-status" id="musicFormStatus" role="status" aria-live="polite"></p></div>
+        </form>
+      </div>
+    </section>
+
     <section class="gifts" id="regalos" aria-labelledby="gifts-title">
       <div class="gifts__inner reveal">
         <p class="section-kicker">Un detalle</p>
@@ -456,9 +490,10 @@
     <a href="#programa" aria-label="Ir al programa">Programa</a>
     <a href="#ubicaciones" aria-label="Ir a ubicaciones">Lugares</a>
     <a href="#confirmacion" aria-label="Ir a confirmación">Confirmar</a>
+    <a href="#musica" aria-label="Ir a nuestra banda sonora">Música</a>
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=41"></script>
+  <script src="js/app.js?v=42"></script>
 </body>
 </html>

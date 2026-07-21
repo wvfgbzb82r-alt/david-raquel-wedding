@@ -1,0 +1,8 @@
+DAVID & RAQUEL — V42 · NUESTRA BANDA SONORA
+
+Incluye formulario de canciones para cena y baile, panel privado, ranking y CSV.
+
+IMPORTANTE:
+1. Ejecuta primero SUPABASE-V41-ADULTOS-NINOS.sql si aún no lo hiciste.
+2. Ejecuta después SUPABASE-V42-MUSICA.sql en Supabase > SQL Editor.
+3. Publica los archivos y conserva CNAME.

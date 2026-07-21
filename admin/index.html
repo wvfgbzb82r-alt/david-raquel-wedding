@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=41">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=42">
 </head>
 <body>
   <main>
@@ -121,6 +121,16 @@
         <div class="invitation-list" id="invitationList"></div>
       </section>
 
+
+      <section class="music-admin-section" aria-labelledby="musicAdminTitle">
+        <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
+        <section class="music-stats"><article><span>Sugerencias</span><strong id="musicTotal">0</strong></article><article><span>Para la cena</span><strong id="musicDinner">0</strong></article><article><span>Para el baile</span><strong id="musicDance">0</strong></article><article><span>Canción más pedida</span><strong id="musicTop">—</strong></article></section>
+        <p id="musicAdminMessage" class="dashboard-message" role="status" aria-live="polite"></p>
+        <div class="table-wrap"><table class="music-table"><thead><tr><th>Fecha</th><th>Invitado</th><th>Canción cena</th><th>Artista cena</th><th>Canción baile</th><th>Artista baile</th><th>Acciones</th></tr></thead><tbody id="musicTableBody"></tbody></table></div>
+        <div class="guest-cards" id="musicCards"></div>
+        <section class="music-ranking"><h3>Más pedidas</h3><div id="musicRanking"></div></section>
+      </section>
+
       <section class="media-section" aria-labelledby="mediaTitle">
         <div class="media-section__header">
           <div>
@@ -140,6 +150,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=41"></script>
+  <script src="../js/admin-v21.js?v=42"></script>
 </body>
 </html>

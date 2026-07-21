@@ -564,3 +564,11 @@ if (ibanNode && "MutationObserver" in window) {
     subtree: true
   });
 }
+
+
+// V42 · Sugerencias musicales
+const musicSuggestionForm=document.getElementById("musicSuggestionForm");
+const musicFormStatus=document.getElementById("musicFormStatus");
+function fillMusicGuestName(){const t=document.getElementById("musicGuestName"),s=document.getElementById("guestName");if(t&&s?.value&&!t.value)t.value=s.value;}
+document.getElementById("guestName")?.addEventListener("input",fillMusicGuestName);fillMusicGuestName();
+musicSuggestionForm?.addEventListener("submit",async event=>{event.preventDefault();const b=musicSuggestionForm.querySelector('button[type="submit"]'),f=new FormData(musicSuggestionForm),p={nombre:String(f.get("nombre")||"").trim(),codigo_invitacion:document.documentElement.dataset.invitationCode||null,cancion_cena:String(f.get("cancion_cena")||"").trim(),artista_cena:String(f.get("artista_cena")||"").trim(),cancion_baile:String(f.get("cancion_baile")||"").trim(),artista_baile:String(f.get("artista_baile")||"").trim()};musicFormStatus.textContent="";musicFormStatus.className="form-status";if(!p.nombre){musicFormStatus.textContent="Escribe tu nombre.";musicFormStatus.classList.add("is-error");return;}if(!p.cancion_cena&&!p.cancion_baile){musicFormStatus.textContent="Escribe al menos una canción para la cena o para el baile.";musicFormStatus.classList.add("is-error");return;}b.disabled=true;const o=b.textContent;b.textContent="Enviando…";try{const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/guardar_sugerencia_musical_v42`,{method:"POST",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,"Content-Type":"application/json"},body:JSON.stringify({datos:p})});const d=await r.json().catch(()=>null);if(!r.ok)throw new Error(d?.message||"No se pudo guardar la sugerencia.");musicFormStatus.textContent="¡Muchas gracias! Tendremos en cuenta tus canciones para preparar la banda sonora de nuestro gran día.";musicFormStatus.classList.add("is-success");const n=p.nombre;musicSuggestionForm.reset();document.getElementById("musicGuestName").value=n;}catch(e){musicFormStatus.textContent=`No hemos podido guardar las canciones: ${e.message}`;musicFormStatus.classList.add("is-error");}finally{b.disabled=false;b.textContent=o;}});
