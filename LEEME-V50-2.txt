@@ -1,0 +1,14 @@
+DAVID & RAQUEL — V50.2
+
+CAMBIOS REALIZADOS
+- La pantalla para introducir el código usa ahora el mismo fondo crema de la invitación.
+- Se conserva el monograma D&R y el estilo elegante.
+- Se mantiene la ilustración botánica de amapolas.
+- Las amapolas se han integrado en todas las secciones principales:
+  portada, cuenta atrás, historia, programa, lugares, confirmación,
+  música, detalle y despedida.
+- Se conserva la eliminación de Carne/Pescado de la web y del panel.
+- Se conservan alergias, preferencias alimentarias y menús infantiles.
+
+SUPABASE
+Si ya ejecutaste el SQL de la V50.1, no necesitas ejecutar nada nuevo.

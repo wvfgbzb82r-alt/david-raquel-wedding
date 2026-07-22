@@ -1,0 +1,18 @@
+DAVID & RAQUEL — V50.1
+
+CAMBIOS
+- Fondo negro únicamente en la pantalla de introducción del código.
+- La invitación, una vez abierta, conserva su diseño claro original.
+- Amapolas botánicas más visibles dentro de la invitación, manteniendo baja opacidad.
+- Eliminada completamente la elección Carne/Pescado del formulario.
+- Eliminados Carne/Pescado del panel de administración.
+- Se conservan:
+  - número de adultos y niños;
+  - menús infantiles;
+  - alergias y preferencias alimentarias;
+  - clasificación de necesidades especiales;
+  - exportación de necesidades alimentarias.
+
+IMPORTANTE
+Ejecuta SUPABASE-V50-1-SIN-CARNE-PESCADO.sql en Supabase.
+Es necesario porque la función anterior obligaba a elegir un menú por adulto.

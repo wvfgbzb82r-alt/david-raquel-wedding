@@ -95,19 +95,6 @@ function validateRsvpForm() {
     valid = false;
   }
 
-  const adultMenus = collectAdultMenus();
-  if (attendance?.value === "Sí" && adultMenus.length !== adults) {
-    document.querySelector('[data-error-for="adultMenus"]').textContent =
-      "Revisa la preferencia de menú de todos los adultos.";
-    valid = false;
-  }
-
-  if (attendance?.value === "Sí" && adultMenus.some(item => !item.nombre || !item.menu)) {
-    document.querySelector('[data-error-for="adultMenus"]').textContent =
-      "Indica el nombre y si prefiere carne o pescado para cada adulto.";
-    valid = false;
-  }
-
   if (attendance?.value === "Sí" && adults + children < 1) {
     document.querySelector('[data-error-for="adults"]').textContent =
       "Si vais a asistir, indica al menos una persona.";
@@ -115,14 +102,6 @@ function validateRsvpForm() {
   }
 
   return valid;
-}
-
-function collectAdultMenus() {
-  return Array.from(document.querySelectorAll(".adult-menu-card"))
-    .map(card => ({
-      nombre: card.querySelector(".adult-menu-name")?.value.trim() || "",
-      menu: card.querySelector('input[type="radio"]:checked')?.value || ""
-    }));
 }
 
 function collectDietaryRequirements() {
@@ -147,67 +126,35 @@ function getRsvpPayload() {
     codigo_invitacion: document.documentElement.dataset.invitationCode || null,
     adultos: Number(formData.get("adultos") || 0),
     ninos: Number(formData.get("ninos") || 0),
-    menus_adultos: collectAdultMenus(),
     alergias: collectDietaryRequirements(),
     comentarios: String(formData.get("comentarios") || "").trim()
   };
 }
 
-const adultMenuList = document.getElementById("adultMenuList");
 const dietaryList = document.getElementById("dietaryList");
 const addDietaryRowButton = document.getElementById("addDietaryRow");
 const hasSpecialMenu = document.getElementById("hasSpecialMenu");
 
-function adultNames() {
-  return Array.from(document.querySelectorAll(".adult-menu-name"))
-    .map((input, index) => ({
-      value: input.value.trim(),
-      label: input.value.trim() || `Adulto ${index + 1}`
-    }));
+function attendeeNamesForDietary() {
+  const mainName = document.getElementById("guestName")?.value.trim();
+  const count = Number(adultsSelect?.value || 0) + Number(childrenSelect?.value || 0);
+  return Array.from({ length: Math.max(1, count) }, (_, index) => ({
+    value: index === 0 && mainName ? mainName : `Asistente ${index + 1}`,
+    label: index === 0 && mainName ? mainName : `Asistente ${index + 1}`
+  }));
 }
 
 function refreshDietaryPersonOptions() {
-  const names = adultNames();
+  const names = attendeeNamesForDietary();
   document.querySelectorAll(".dietary-person").forEach(select => {
     const current = select.value;
     select.innerHTML = names.map(item =>
-      `<option value="${item.value || item.label}">${item.label}</option>`
+      `<option value="${item.value}">${item.label}</option>`
     ).join("");
-    if ([...select.options].some(o => o.value === current)) select.value = current;
+    if ([...select.options].some(option => option.value === current)) {
+      select.value = current;
+    }
   });
-}
-
-function renderAdultMenus() {
-  if (!adultMenuList) return;
-
-  const count = Number(adultsSelect?.value || 0);
-  const previous = collectAdultMenus();
-
-  adultMenuList.innerHTML = Array.from({ length: count }, (_, index) => {
-    const saved = previous[index] || {};
-    const group = `adult-menu-${index}`;
-    return `
-      <article class="adult-menu-card">
-        <h3 class="adult-menu-card__title">Adulto ${index + 1}</h3>
-        <div class="adult-menu-grid">
-          <label>
-            <span>Nombre</span>
-            <input class="adult-menu-name" type="text"
-                   value="${saved.nombre || ""}"
-                   placeholder="Nombre del adulto">
-          </label>
-          <div>
-            <span>Preferencia</span>
-            <div class="menu-choice">
-              <label><input type="radio" name="${group}" value="Carne" ${saved.menu === "Carne" ? "checked" : ""}> Carne</label>
-              <label><input type="radio" name="${group}" value="Pescado" ${saved.menu === "Pescado" ? "checked" : ""}> Pescado</label>
-            </div>
-          </div>
-        </div>
-      </article>`;
-  }).join("");
-
-  refreshDietaryPersonOptions();
 }
 
 function updateDietaryRemoveButtons() {
@@ -277,9 +224,10 @@ dietaryList?.addEventListener("change", event => {
   const row = event.target.closest(".dietary-row");
   row.querySelector(".dietary-other").hidden = event.target.value !== "Otra";
 });
-adultMenuList?.addEventListener("input", refreshDietaryPersonOptions);
-adultsSelect?.addEventListener("change", renderAdultMenus);
-renderAdultMenus();
+adultsSelect?.addEventListener("change", refreshDietaryPersonOptions);
+childrenSelect?.addEventListener("change", refreshDietaryPersonOptions);
+document.getElementById("guestName")?.addEventListener("input", refreshDietaryPersonOptions);
+refreshDietaryPersonOptions();
 
 rsvpForm.addEventListener("submit", async event => {
   event.preventDefault();
@@ -321,7 +269,6 @@ rsvpForm.addEventListener("submit", async event => {
     }
 
     rsvpForm.reset();
-    if (adultMenuList) renderAdultMenus();
     if (hasSpecialMenu) hasSpecialMenu.value = "no";
     if (dietaryList) {
       dietaryList.innerHTML = `

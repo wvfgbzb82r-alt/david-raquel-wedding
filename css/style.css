@@ -1404,3 +1404,29 @@ html[data-personalized-invitation="true"] .access-copy::after {
     margin-bottom: -28px;
   }
 }
+
+
+/* =========================================================
+   V50.1 · Ajustes finales
+   ========================================================= */
+
+/* El negro se reserva exclusivamente para la pantalla del código. */
+body:not(.is-locked) {
+  background: var(--ivory, #f7f2e9);
+}
+
+/* Las amapolas de la invitación clara son visibles pero discretas. */
+body:not(.is-locked) .poppy-line--hero,
+body:not(.is-locked) .poppy-line--program,
+body:not(.is-locked) .poppy-line--confirmation {
+  color: rgba(151, 116, 61, .17);
+  opacity: 1;
+}
+
+/* Ya no existe elección Carne/Pescado. */
+.adult-menu-list,
+.adult-menu-card,
+.menu-choice,
+.catering-field {
+  display: none !important;
+}
