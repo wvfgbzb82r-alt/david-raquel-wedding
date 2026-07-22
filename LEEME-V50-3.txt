@@ -1,0 +1,8 @@
+DAVID & RAQUEL — V50.3
+
+ÚNICOS CAMBIOS:
+- Pantalla del código con el mismo fondo crema y estilo del resto.
+- Sustitución de las flores anteriores por amapolas botánicas lineales en todo el proyecto.
+
+No se ha modificado nada más.
+No requiere SQL nuevo.

@@ -1523,3 +1523,22 @@ body:not(.is-locked) .poppy-line--confirmation {
     margin-top: 24px;
   }
 }
+
+/* V50.3: solo fondo claro de acceso y amapolas botánicas */
+.access-gate--cinematic{
+  background:radial-gradient(circle at 50% 22%,rgba(185,145,73,.08),transparent 34%),#f7f2e9!important;
+  color:#6f552e
+}
+.access-card--dark{
+  background:rgba(255,252,246,.80)!important;
+  border:1px solid rgba(169,131,68,.20)!important;
+  border-radius:24px!important;
+  box-shadow:0 18px 55px rgba(100,74,35,.09)!important
+}
+.access-monogram,.access-card--dark .access-kicker{color:#a77f3f!important;text-shadow:none!important}
+.access-copy,.access-card--dark label{color:#745b36!important}
+.access-form-cinematic input{background:rgba(255,255,255,.82)!important;border-color:rgba(169,131,68,.38)!important;color:#433321!important}
+.access-form-cinematic input::placeholder{color:rgba(91,69,36,.44)!important}
+.access-form-cinematic button{background:linear-gradient(135deg,#d9c29e,#cdb285)!important;border-color:rgba(169,131,68,.42)!important;color:#3d2e1d!important}
+.poppy-line{color:rgba(171,130,65,.18)!important}
+.poppy-line--access{color:rgba(171,130,65,.23)!important}
