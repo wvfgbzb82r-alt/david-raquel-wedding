@@ -1,0 +1,25 @@
+DAVID & RAQUEL — V50 · VERSIÓN FINAL
+
+CAMBIOS PRINCIPALES
+- Pantalla de código mantenida en negro.
+- Monograma D&R conservado en dorado.
+- Nueva ilustración botánica lineal de amapolas:
+  - sin relleno;
+  - sin color rojo;
+  - estilo grabado fino;
+  - integrada con baja opacidad.
+- Amapolas presentes en:
+  - pantalla de acceso;
+  - portada;
+  - programa;
+  - confirmación.
+- Se mantienen:
+  - mensaje inteligente contigo / con vosotros;
+  - llegada de los invitados a la iglesia;
+  - pictogramas del programa;
+  - cóctel, cena y fiesta separados;
+  - texto del sobrecito;
+  - catering y panel de administración.
+
+SUPABASE
+No necesita SQL nuevo.

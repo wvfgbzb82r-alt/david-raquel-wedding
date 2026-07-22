@@ -1351,3 +1351,56 @@ html[data-personalized-invitation="true"] .access-copy::after {
     font-size: 1.02rem;
   }
 }
+
+
+/* =========================================================
+   V50 · Amapolas botánicas definitivas
+   ========================================================= */
+
+.access-gate--cinematic {
+  background:
+    radial-gradient(circle at 50% 26%, rgba(182,145,80,.08), transparent 32%),
+    #030303;
+}
+
+.access-card--dark {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.018), rgba(255,255,255,.006)),
+    #070707;
+  border-color: rgba(201,164,99,.22);
+}
+
+.access-monogram {
+  color: #c9a463;
+  text-shadow: 0 0 24px rgba(201,164,99,.12);
+}
+
+.poppy-line {
+  color: rgba(145, 111, 58, .10);
+}
+
+.poppy-line--access {
+  height: 150px;
+  margin-top: 14px;
+  margin-bottom: -38px;
+  color: rgba(201,164,99,.20);
+}
+
+.poppy-line--hero {
+  color: rgba(151,116,61,.075);
+}
+
+.poppy-line--program {
+  color: rgba(151,116,61,.085);
+}
+
+.poppy-line--confirmation {
+  color: rgba(151,116,61,.075);
+}
+
+@media (max-width: 600px) {
+  .poppy-line--access {
+    height: 118px;
+    margin-bottom: -28px;
+  }
+}
