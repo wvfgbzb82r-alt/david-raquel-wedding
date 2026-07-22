@@ -1430,3 +1430,96 @@ body:not(.is-locked) .poppy-line--confirmation {
 .catering-field {
   display: none !important;
 }
+
+
+/* =========================================================
+   V50.2 · Fondo claro unificado y amapolas en toda la web
+   ========================================================= */
+
+.access-gate--cinematic {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(185,145,73,.09), transparent 34%),
+    #f7f2e9 !important;
+  color: #73582f;
+}
+
+.access-card--dark {
+  width: min(92vw, 500px);
+  padding: 34px 26px 18px;
+  border: 1px solid rgba(168,130,69,.20);
+  border-radius: 24px;
+  background: rgba(255,252,246,.78) !important;
+  box-shadow: 0 18px 55px rgba(100,74,35,.10);
+  color: #4c3b24;
+}
+
+.access-monogram {
+  color: #ad8441 !important;
+  text-shadow: none !important;
+}
+
+.access-card--dark .access-kicker,
+.access-copy,
+.access-form-cinematic label {
+  color: #6d5531 !important;
+}
+
+.access-form-cinematic input {
+  border-color: rgba(173,132,65,.42) !important;
+  background: rgba(255,255,255,.78) !important;
+  color: #3d3020 !important;
+}
+
+.access-form-cinematic input::placeholder {
+  color: rgba(92,70,37,.45) !important;
+}
+
+.access-form-cinematic button {
+  border-color: rgba(173,132,65,.48) !important;
+  background: linear-gradient(135deg, #d8c09a, #cdb184) !important;
+  color: #3f301e !important;
+}
+
+.access-message {
+  color: #7b5d2d !important;
+}
+
+.access-ornament {
+  color: rgba(155,116,56,.72) !important;
+}
+
+.poppy-line--access {
+  color: rgba(170,127,61,.28) !important;
+}
+
+.poppy-line--countdown,
+.poppy-line--story,
+.poppy-line--locations,
+.poppy-line--music,
+.poppy-line--gifts,
+.poppy-line--farewell {
+  color: rgba(151,116,61,.15);
+  margin-top: 36px;
+}
+
+.poppy-line--story,
+.poppy-line--music,
+.poppy-line--farewell {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 600px) {
+  .access-card--dark {
+    width: min(92vw, 430px);
+    padding: 28px 18px 12px;
+  }
+
+  .poppy-line--countdown,
+  .poppy-line--story,
+  .poppy-line--locations,
+  .poppy-line--music,
+  .poppy-line--gifts,
+  .poppy-line--farewell {
+    margin-top: 24px;
+  }
+}
