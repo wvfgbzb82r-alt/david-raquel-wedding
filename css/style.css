@@ -1263,3 +1263,91 @@ html[data-personalized-invitation="true"] .access-copy::after {
   .adult-menu-grid,.dietary-row{grid-template-columns:1fr}
   .dietary-remove{position:static}
 }
+
+
+/* =========================================================
+   V49 · Programa, Detalle y silueta de amapolas
+   ========================================================= */
+
+.program__icon {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.7em;
+  font-size: 1.15rem;
+  line-height: 1;
+  filter: grayscale(1) sepia(.35) saturate(.7);
+}
+
+.program__icon--church {
+  font-size: 1.1rem;
+}
+
+.poppy-line {
+  position: relative;
+  width: min(92%, 760px);
+  height: clamp(68px, 10vw, 115px);
+  margin: 28px auto -6px;
+  overflow: hidden;
+  color: rgba(121, 92, 49, .11);
+  pointer-events: none;
+  user-select: none;
+}
+
+.poppy-line__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.poppy-line--access {
+  width: min(112%, 520px);
+  height: 88px;
+  margin: 8px auto -28px;
+  color: rgba(205, 171, 102, .16);
+}
+
+.poppy-line--hero {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  margin: 0;
+  color: rgba(165, 131, 73, .09);
+}
+
+.poppy-line--program {
+  margin-top: 44px;
+  transform: scaleX(-1);
+}
+
+.poppy-line--confirmation {
+  margin-top: 36px;
+  color: rgba(117, 89, 48, .09);
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.access-card--dark {
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .poppy-line {
+    width: 108%;
+    height: 72px;
+    margin-left: -4%;
+  }
+
+  .poppy-line--access {
+    width: 120%;
+    margin-left: -10%;
+  }
+
+  .program__icon {
+    font-size: 1.02rem;
+  }
+}

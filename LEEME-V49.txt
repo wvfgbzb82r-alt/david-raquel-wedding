@@ -1,0 +1,17 @@
+DAVID & RAQUEL — V49
+
+CAMBIOS
+- 16:30: «Llegada de los invitados a la iglesia».
+- Se mantiene el texto descriptivo original.
+- Pictograma distinto en cada momento:
+  iglesia, ceremonia, cóctel, cena y fiesta.
+- Cóctel, cena y fiesta siguen separados.
+- Apartado Detalle:
+  se añade la opción del sobrecito para los más clásicos y tradicionales.
+- Silueta lineal de amapolas, sin color:
+  pantalla del código, portada, programa y confirmación.
+- SVG vectorial ligero y nítido.
+- Se mantiene el mensaje inteligente contigo / con vosotros.
+
+SUPABASE
+No necesita SQL nuevo.
