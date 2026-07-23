@@ -1,0 +1,10 @@
+DAVID & RAQUEL — V50.5
+
+CAMBIOS
+- Se mantienen «David & Raquel» en la pantalla del código.
+- Todas las amapolas usan ahora imágenes PNG con fondo transparente real.
+- Las composiciones florales se muestran más grandes y con mayor presencia.
+- Se añaden composiciones verticales en portada, historia, confirmación y detalle.
+- Se conserva todo el contenido y funcionamiento de la versión anterior.
+
+No necesita cambios en Supabase.
