@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=52.1">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=52.3">
 </head>
 <body>
   <main>
@@ -112,6 +112,25 @@
           <button id="refreshInvitationsButton" type="button">Actualizar invitaciones</button>
         </div>
 
+        <section class="invitation-summary" aria-label="Resumen de invitados">
+          <article>
+            <span>Invitaciones creadas</span>
+            <strong id="statInvitationsCreated">0</strong>
+          </article>
+          <article class="invitation-summary__highlight">
+            <span>Invitados totales</span>
+            <strong id="statInvitedPeople">0</strong>
+          </article>
+          <article>
+            <span>Adultos invitados</span>
+            <strong id="statInvitedAdults">0</strong>
+          </article>
+          <article>
+            <span>Niños invitados</span>
+            <strong id="statInvitedChildren">0</strong>
+          </article>
+        </section>
+
         <form id="invitationForm" class="invitation-form">
           <label>
             <span>Nombre que verá el invitado</span>
@@ -199,6 +218,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=52.2"></script>
+  <script src="../js/admin-v21.js?v=52.3"></script>
 </body>
 </html>

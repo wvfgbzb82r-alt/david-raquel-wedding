@@ -679,7 +679,28 @@ function invitationResponseState(item) {
   };
 }
 
+function updateInvitationSummary() {
+  const invitationsCreated = personalizedInvitations.length;
+  const invitedAdults = personalizedInvitations.reduce(
+    (sum, item) =>
+      sum + Number(item.adultos_max ?? item.max_personas ?? 1),
+    0
+  );
+  const invitedChildren = personalizedInvitations.reduce(
+    (sum, item) => sum + Number(item.ninos_max ?? 0),
+    0
+  );
+
+  byId("statInvitationsCreated").textContent = invitationsCreated;
+  byId("statInvitedAdults").textContent = invitedAdults;
+  byId("statInvitedChildren").textContent = invitedChildren;
+  byId("statInvitedPeople").textContent =
+    invitedAdults + invitedChildren;
+}
+
 function renderInvitations() {
+  updateInvitationSummary();
+
   if (!personalizedInvitations.length) {
     invitationList.innerHTML = "";
     invitationMessage.textContent =
@@ -704,6 +725,9 @@ function renderInvitations() {
           <div class="invitation-capacity">
             <span class="capacity-pill">👨 ${adultsMax} adultos máx.</span>
             <span class="capacity-pill">👧 ${childrenMax} niños máx.</span>
+            <span class="capacity-pill capacity-pill--total">
+              👥 ${adultsMax + childrenMax} invitados
+            </span>
           </div>
         </div>
 

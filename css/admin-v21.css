@@ -353,3 +353,64 @@ td .row-actions { margin-top: 0; }
     text-align: center;
   }
 }
+
+
+/* =========================================================
+   V52.3 · Total de invitados
+   ========================================================= */
+
+.invitation-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 18px 0 24px;
+}
+
+.invitation-summary article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(171, 128, 62, .20);
+  border-radius: 16px;
+  background: rgba(255, 252, 246, .70);
+}
+
+.invitation-summary span {
+  color: #7a6545;
+  font-size: .74rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.invitation-summary strong {
+  color: #7f5b28;
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.55rem);
+  line-height: 1;
+}
+
+.invitation-summary__highlight {
+  background:
+    linear-gradient(135deg, rgba(226, 205, 168, .44), rgba(255, 252, 246, .88)) !important;
+  border-color: rgba(171, 128, 62, .38) !important;
+}
+
+.capacity-pill--total {
+  border-color: rgba(171, 128, 62, .42);
+  background: rgba(226, 205, 168, .46);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .invitation-summary {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .invitation-summary {
+    grid-template-columns: 1fr;
+  }
+}

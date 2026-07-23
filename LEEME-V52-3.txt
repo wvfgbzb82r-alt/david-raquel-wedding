@@ -1,0 +1,13 @@
+DAVID & RAQUEL — V52.3 · TOTAL DE INVITADOS
+
+MEJORA DEL PANEL
+- Resumen de invitaciones creadas.
+- Total de invitados asignados.
+- Total de adultos invitados.
+- Total de niños invitados.
+- Cada tarjeta muestra también el total de personas de esa invitación.
+
+El cálculo usa los límites de adultos y niños de todas las
+invitaciones personalizadas.
+
+No requiere cambios en Supabase.
