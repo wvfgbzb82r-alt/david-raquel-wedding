@@ -1,0 +1,10 @@
+DAVID & RAQUEL — V51.1 REVISADA
+
+Cambios:
+- Eliminadas físicamente todas las amapolas y sus archivos gráficos.
+- Corregido el centrado de «David & Raquel» en ordenador, tablet y móvil.
+- Ajustado el formulario de acceso para pantallas pequeñas y grandes.
+- Conservado el inicio de la música tras validar un código correcto.
+- Nueva versión de caché CSS/JS para evitar que el navegador muestre recursos antiguos.
+
+No necesita cambios en Supabase.
