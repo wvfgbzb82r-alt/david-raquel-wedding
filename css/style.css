@@ -1705,3 +1705,26 @@ body:not(.is-locked) .poppy-line--confirmation {
     left: -70px;
   }
 }
+
+
+
+/* V51 FINAL */
+.access-monogram--names{
+  font-family:"Allura",cursive!important;
+  font-size:clamp(3rem,11vw,5.4rem)!important;
+  font-weight:400!important;
+  line-height:.95!important;
+  letter-spacing:0!important;
+  white-space:nowrap;
+  color:#ad8441!important;
+  text-shadow:none!important
+}
+.access-monogram--names span{
+  display:inline;
+  font-family:inherit;
+  font-size:.82em;
+  vertical-align:.05em
+}
+@media(max-width:600px){
+  .access-monogram--names{font-size:clamp(2.55rem,13vw,4.2rem)!important}
+}

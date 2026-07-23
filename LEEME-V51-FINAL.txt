@@ -1,0 +1,6 @@
+DAVID & RAQUEL — V51 FINAL
+
+- Eliminadas todas las amapolas.
+- Se mantiene «David & Raquel» en la pantalla del código.
+- La música comienza después de introducir un código válido.
+- No requiere cambios en Supabase.

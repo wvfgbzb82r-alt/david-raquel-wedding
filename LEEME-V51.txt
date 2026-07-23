@@ -1,0 +1,18 @@
+DAVID & RAQUEL — V51 · AMAPOLAS VECTORIALES
+
+Esta versión modifica únicamente la integración artística de las amapolas:
+
+- Eliminadas todas las imágenes PNG florales.
+- Nuevas ilustraciones SVG con fondo totalmente transparente.
+- Composiciones distintas según la sección:
+  - acceso y portada: cenefa horizontal;
+  - historia: composición lateral;
+  - programa: cenefa inferior;
+  - confirmación: composición lateral izquierda;
+  - detalle: composición lateral derecha;
+  - despedida: cenefa inferior.
+- No se añaden amapolas a Ubicaciones ni Música para evitar saturación.
+- Opacidad reducida para que parezcan impresas sobre el fondo.
+
+No se ha modificado ningún texto, formulario, función, panel ni dato.
+No requiere cambios en Supabase.
