@@ -719,9 +719,27 @@ function renderInvitations() {
 
     return `
       <article class="invitation-item">
-        <div>
-          <h3>${escapeHtml(item.nombre_mostrado)}</h3>
-          <p><span class="invitation-code">${escapeHtml(item.codigo)}</span></p>
+        <div class="invitation-edit-main">
+          <label class="invitation-edit-field">
+            <span>Nombre</span>
+            <input type="text"
+                   value="${escapeHtml(item.nombre_mostrado || "")}"
+                   data-invitation-name-input="${item.id}">
+          </label>
+
+          <label class="invitation-edit-field">
+            <span>Teléfono</span>
+            <input type="tel"
+                   value="${escapeHtml(item.telefono || "")}"
+                   placeholder="Sin teléfono"
+                   data-invitation-phone-input="${item.id}">
+          </label>
+
+          <p class="invitation-code-row">
+            Código:
+            <span class="invitation-code">${escapeHtml(item.codigo)}</span>
+          </p>
+
           <div class="invitation-capacity">
             <span class="capacity-pill">👨 ${adultsMax} adultos máx.</span>
             <span class="capacity-pill">👧 ${childrenMax} niños máx.</span>
@@ -766,10 +784,9 @@ function renderInvitations() {
           </label>
 
           <button type="button"
-                  class="save-limits-button"
-                  data-save-invitation-limits="${item.id}"
-                  data-invitation-name="${escapeHtml(item.nombre_mostrado)}">
-            Guardar límites
+                  class="save-limits-button save-invitation-button"
+                  data-save-invitation="${item.id}">
+            Guardar cambios
           </button>
         </div>
 
@@ -868,10 +885,15 @@ async function createInvitation(event) {
   }
 }
 
-async function saveInvitationLimits(button) {
-  const id = button.dataset.saveInvitationLimits;
-  const name = button.dataset.invitationName || "esta invitación";
+async function saveInvitation(button) {
+  const id = button.dataset.saveInvitation;
 
+  const nameInput = invitationList.querySelector(
+    `[data-invitation-name-input="${CSS.escape(id)}"]`
+  );
+  const phoneInput = invitationList.querySelector(
+    `[data-invitation-phone-input="${CSS.escape(id)}"]`
+  );
   const adultsSelect = invitationList.querySelector(
     `[data-invitation-adults="${CSS.escape(id)}"]`
   );
@@ -879,23 +901,21 @@ async function saveInvitationLimits(button) {
     `[data-invitation-children="${CSS.escape(id)}"]`
   );
 
-  const adults = Number(adultsSelect?.value ?? 0);
-  const children = Number(childrenSelect?.value ?? 0);
+  const name = nameInput?.value.trim() || "";
+  const phone = phoneInput?.value.trim() || null;
+  const adults = Number(adultsSelect?.value || 0);
+  const children = Number(childrenSelect?.value || 0);
 
-  if (
-    !Number.isInteger(adults) || adults < 0 || adults > 20 ||
-    !Number.isInteger(children) || children < 0 || children > 20 ||
-    adults + children < 1
-  ) {
-    invitationMessage.textContent =
-      "Debes permitir al menos una persona entre adultos y niños.";
+  if (!name) {
+    invitationMessage.textContent = "El nombre del invitado no puede estar vacío.";
+    nameInput?.focus();
     return;
   }
 
-  const originalText = button.textContent;
   button.disabled = true;
+  const originalText = button.textContent;
   button.textContent = "Guardando…";
-  invitationMessage.textContent = `Actualizando límites de ${name}…`;
+  invitationMessage.textContent = "Guardando cambios…";
 
   try {
     await api(
@@ -904,6 +924,8 @@ async function saveInvitationLimits(button) {
         method: "PATCH",
         headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
+          nombre_mostrado: name,
+          telefono: phone,
           adultos_max: adults,
           ninos_max: children,
           max_personas: adults + children
@@ -912,11 +934,11 @@ async function saveInvitationLimits(button) {
     );
 
     await loadInvitations();
-    invitationMessage.textContent =
-      `Límites de ${name} actualizados: ${adults} adultos y ${children} niños.`;
+    invitationMessage.textContent = `Cambios guardados para ${name}.`;
   } catch (error) {
     invitationMessage.textContent =
-      `No se pudieron actualizar los límites: ${error.message}`;
+      `No se pudieron guardar los cambios: ${error.message}`;
+  } finally {
     button.disabled = false;
     button.textContent = originalText;
   }
@@ -949,10 +971,25 @@ async function deleteInvitation(id) {
 invitationForm?.addEventListener("submit", createInvitation);
 refreshInvitationsButton?.addEventListener("click", loadInvitations);
 
+
+invitationList?.addEventListener("keydown", event => {
+  if (event.key !== "Enter") return;
+
+  const input = event.target.closest(
+    "[data-invitation-name-input], [data-invitation-phone-input]"
+  );
+  if (!input) return;
+
+  event.preventDefault();
+  const item = input.closest(".invitation-item");
+  const button = item?.querySelector("[data-save-invitation]");
+  if (button) saveInvitation(button);
+});
+
 invitationList?.addEventListener("click", event => {
-  const saveLimitsButton = event.target.closest("[data-save-invitation-limits]");
-  if (saveLimitsButton) {
-    saveInvitationLimits(saveLimitsButton);
+  const saveInvitationButton = event.target.closest("[data-save-invitation]");
+  if (saveInvitationButton) {
+    saveInvitation(saveInvitationButton);
     return;
   }
 

@@ -414,3 +414,78 @@ td .row-actions { margin-top: 0; }
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   V53 · Edición completa de invitados
+   ========================================================= */
+
+.invitation-edit-main {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.invitation-edit-field {
+  display: grid;
+  gap: 6px;
+}
+
+.invitation-edit-field span {
+  color: #7a6545;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.invitation-edit-field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid rgba(171, 128, 62, .28);
+  border-radius: 12px;
+  background: rgba(255, 252, 246, .88);
+  color: #3f3324;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.invitation-edit-field input:focus {
+  border-color: rgba(171, 128, 62, .72);
+  outline: 3px solid rgba(171, 128, 62, .10);
+}
+
+.invitation-code-row {
+  margin: 2px 0 0;
+  color: #6f5a3a;
+  font-size: .88rem;
+}
+
+.save-invitation-button {
+  border-color: rgba(171, 128, 62, .48) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(226, 205, 168, .94),
+    rgba(207, 178, 128, .94)
+  ) !important;
+  color: #47351e !important;
+  font-weight: 700 !important;
+}
+
+.save-invitation-button:disabled {
+  opacity: .66;
+  cursor: wait;
+}
+
+@media (max-width: 700px) {
+  .invitation-item {
+    grid-template-columns: 1fr !important;
+  }
+
+  .invitation-edit-main,
+  .invitation-limits,
+  .invitation-actions {
+    width: 100%;
+  }
+}

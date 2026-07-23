@@ -1,0 +1,14 @@
+DAVID & RAQUEL — V53 · EDICIÓN DE INVITADOS
+
+MEJORA DEL PANEL
+- Editar el nombre de cada invitación.
+- Editar el teléfono.
+- Editar adultos permitidos.
+- Editar niños permitidos.
+- Guardar todos los cambios desde la propia tarjeta.
+- Actualización inmediata del total de invitados.
+- Copiar mensaje y WhatsApp utilizan los datos actualizados.
+- Pulsar Enter en nombre o teléfono también guarda.
+
+No se ha añadido regeneración de códigos ni desactivación.
+No requiere cambios en Supabase.
