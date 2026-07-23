@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#f7f2e9
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=51.2">
+  <link rel="stylesheet" href="css/style.css?v=52">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -178,7 +178,7 @@
           <div class="program__content">
             <span class="program__icon program__icon--church" aria-hidden="true">⛪</span>
             <h3>Llegada de los invitados a la iglesia</h3>
-            <p>Comenzaremos a recibiros para dar inicio a un día muy especial.</p>
+            <p>Los invitados esperan nuestra llegada y el comienzo de nuestro gran día.</p>
           </div>
         </article>
 
@@ -186,7 +186,13 @@
           <time datetime="2026-11-22T17:00:00+01:00">17:00</time>
           <div class="program__dot" aria-hidden="true"></div>
           <div class="program__content">
-            <span class="program__icon" aria-hidden="true">💍</span>
+            <span class="program__icon program__icon--rings" aria-hidden="true">
+              <svg viewBox="0 0 64 42" focusable="false">
+                <circle cx="24" cy="23" r="13"></circle>
+                <circle cx="40" cy="23" r="13"></circle>
+                <path d="M18 9l3-5h6l3 5M34 9l3-5h6l3 5"></path>
+              </svg>
+            </span>
             <h3>Ceremonia</h3>
             <p>El momento en el que diremos «sí, quiero».</p>
           </div>
@@ -251,7 +257,9 @@
         </article>
 
         <article class="location-card reveal">
-          <span class="location-card__symbol" aria-hidden="true">✦</span>
+          <span class="location-card__symbol location-card__symbol--stars" aria-hidden="true">
+            <span>✦</span><span>✧</span><span>✦</span>
+          </span>
           <p class="location-card__eyebrow">Celebración</p>
           <h3>Espacio Capitana</h3>
           <p class="location-card__time">19:30 h</p>
@@ -354,6 +362,7 @@
             Confirmar asistencia
           </button>
           <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          <section class="rsvp-result" id="rsvpResult" hidden aria-live="polite"></section>
         </div>
       </form>
 </section>
@@ -383,7 +392,14 @@
             </div>
           </article>
           <article class="music-moment">
-            <div class="music-moment__heading"><span class="music-moment__icon" aria-hidden="true">💃</span><div><p class="music-moment__eyebrow">Durante el baile</p><h3>¿Qué canción no puede faltar cuando llegue el momento de darlo todo?</h3></div></div>
+            <div class="music-moment__heading"><span class="music-moment__icon music-moment__icon--vinyl" aria-hidden="true">
+              <svg viewBox="0 0 56 56" focusable="false">
+                <circle cx="28" cy="28" r="20"></circle>
+                <circle cx="28" cy="28" r="9"></circle>
+                <circle cx="28" cy="28" r="2.6"></circle>
+                <path d="M17 18c3.5-3.1 7.3-4.7 11.7-4.8M38.5 38.8c-3.2 2.8-6.8 4.2-10.8 4.3"></path>
+              </svg>
+            </span><div><p class="music-moment__eyebrow">Durante el baile</p><h3>¿Qué canción no puede faltar cuando llegue el momento de darlo todo?</h3></div></div>
             <div class="music-form__grid">
               <div class="form-field"><label for="danceSong">Canción</label><input id="danceSong" name="cancion_baile" type="text" placeholder="Ej.: Viva la Vida"></div>
               <div class="form-field"><label for="danceArtist">Artista</label><input id="danceArtist" name="artista_baile" type="text" placeholder="Ej.: Coldplay"></div>
@@ -493,6 +509,6 @@
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=51.2"></script>
+  <script src="js/app.js?v=52"></script>
 </body>
 </html>

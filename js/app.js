@@ -45,6 +45,7 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_TN0nnQZ_g6l1RNTuE4f9qg_iaI_USWV
 
 const rsvpForm = document.getElementById("rsvpForm");
 const formStatus = document.getElementById("formStatus");
+const rsvpResult = document.getElementById("rsvpResult");
 const adultsSelect = document.getElementById("adults");
 const childrenSelect = document.getElementById("children");
 const childrenField = document.getElementById("childrenField");
@@ -55,6 +56,11 @@ function clearRsvpErrors() {
   });
   formStatus.textContent = "";
   formStatus.className = "form-status";
+  if (rsvpResult) {
+    rsvpResult.hidden = true;
+    rsvpResult.innerHTML = "";
+    rsvpResult.className = "rsvp-result";
+  }
 }
 
 function validateRsvpForm() {
@@ -229,6 +235,148 @@ childrenSelect?.addEventListener("change", refreshDietaryPersonOptions);
 document.getElementById("guestName")?.addEventListener("input", refreshDietaryPersonOptions);
 refreshDietaryPersonOptions();
 
+
+const WEDDING_CALENDAR = {
+  title: "Boda de David & Raquel",
+  start: "20261122T160000",
+  end: "20261123T020000",
+  location: "Iglesia Nuestra Señora de los Dolores y Espacio Capitana, Isla Cristina, Huelva",
+  description: "Ceremonia a las 17:00 y celebración posterior. Estamos deseando compartir este día contigo."
+};
+
+function invitationUsesPlural(payload) {
+  const confirmedTotal = Number(payload.adultos || 0) + Number(payload.ninos || 0);
+  if (payload.asistencia === "Sí" && confirmedTotal > 0) {
+    return confirmedTotal > 1;
+  }
+
+  const invitedTotal =
+    Number(document.documentElement.dataset.adultsMax || 1) +
+    Number(document.documentElement.dataset.childrenMax || 0);
+
+  return invitedTotal > 1;
+}
+
+function googleCalendarUrl() {
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: WEDDING_CALENDAR.title,
+    dates: `${WEDDING_CALENDAR.start}/${WEDDING_CALENDAR.end}`,
+    details: WEDDING_CALENDAR.description,
+    location: WEDDING_CALENDAR.location
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function downloadAppleCalendar() {
+  const escapeIcs = value =>
+    String(value)
+      .replaceAll("\\", "\\\\")
+      .replaceAll(",", "\\,")
+      .replaceAll(";", "\\;")
+      .replaceAll("\n", "\\n");
+
+  const now = new Date()
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}Z$/, "Z");
+
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//David y Raquel//Invitación de boda//ES",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:boda-david-raquel-20261122@davidyraquel.es`,
+    `DTSTAMP:${now}`,
+    `DTSTART;TZID=Europe/Madrid:${WEDDING_CALENDAR.start}`,
+    `DTEND;TZID=Europe/Madrid:${WEDDING_CALENDAR.end}`,
+    `SUMMARY:${escapeIcs(WEDDING_CALENDAR.title)}`,
+    `DESCRIPTION:${escapeIcs(WEDDING_CALENDAR.description)}`,
+    `LOCATION:${escapeIcs(WEDDING_CALENDAR.location)}`,
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "boda-david-raquel.ics";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function showSmartRsvpResult(payload) {
+  if (!rsvpResult) return;
+
+  const attends = payload.asistencia === "Sí";
+  const plural = invitationUsesPlural(payload);
+
+  if (attends) {
+    const title = plural
+      ? "¡Nos encanta que vengáis!"
+      : "¡Nos encanta que vengas!";
+    const intro = plural
+      ? "Gracias por confirmar vuestra asistencia."
+      : "Gracias por confirmar tu asistencia.";
+    const sharing = plural
+      ? "Será un día inolvidable y nos hace muy felices compartirlo con vosotros."
+      : "Será un día inolvidable y nos hace muy felices compartirlo contigo.";
+    const waiting = plural
+      ? "¡Os esperamos con muchísima ilusión!"
+      : "¡Te esperamos con muchísima ilusión!";
+
+    rsvpResult.className = "rsvp-result rsvp-result--yes";
+    rsvpResult.innerHTML = `
+      <div class="rsvp-result__heart" aria-hidden="true">♡</div>
+      <h3>${title}</h3>
+      <p>${intro}</p>
+      <p>${sharing}</p>
+      <p class="rsvp-result__closing">${waiting}</p>
+      <div class="calendar-actions">
+        <a class="calendar-button calendar-button--google"
+           href="${googleCalendarUrl()}"
+           target="_blank"
+           rel="noopener noreferrer">
+          <span aria-hidden="true">G</span>
+          Añadir a Google Calendar
+        </a>
+        <button class="calendar-button calendar-button--apple"
+                id="appleCalendarButton"
+                type="button">
+          <span aria-hidden="true">◷</span>
+          Añadir a Apple Calendar
+        </button>
+      </div>`;
+    rsvpResult.querySelector("#appleCalendarButton")
+      ?.addEventListener("click", downloadAppleCalendar);
+  } else {
+    const title = plural
+      ? "Sentimos que no podáis venir"
+      : "Sentimos que no puedas venir";
+    const thanks = plural
+      ? "Gracias por hacérnoslo saber."
+      : "Gracias por hacérnoslo saber.";
+    const farewell = plural
+      ? "Os echaremos mucho de menos, pero os llevaremos en el corazón durante todo nuestro gran día."
+      : "Te echaremos mucho de menos, pero te llevaremos en el corazón durante todo nuestro gran día.";
+
+    rsvpResult.className = "rsvp-result rsvp-result--no";
+    rsvpResult.innerHTML = `
+      <div class="rsvp-result__heart rsvp-result__heart--soft" aria-hidden="true">♡</div>
+      <h3>${title}</h3>
+      <p>${thanks}</p>
+      <p>${farewell}</p>`;
+  }
+
+  rsvpResult.hidden = false;
+  rsvpResult.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 rsvpForm.addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -243,6 +391,8 @@ rsvpForm.addEventListener("submit", async event => {
   submitButton.textContent = "Enviando…";
   formStatus.textContent = "Estamos guardando tu confirmación…";
 
+  const confirmationPayload = getRsvpPayload();
+
   try {
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/rpc/guardar_confirmacion_v24`,
@@ -254,7 +404,7 @@ rsvpForm.addEventListener("submit", async event => {
           "Content-Type": "application/json",
           "Prefer": "return=representation"
         },
-        body: JSON.stringify({ datos: getRsvpPayload() })
+        body: JSON.stringify({ datos: confirmationPayload })
       }
     );
 
@@ -286,10 +436,9 @@ rsvpForm.addEventListener("submit", async event => {
       Number(document.documentElement.dataset.childrenMax || 20),
       0
     );
-    formStatus.textContent =
-      "¡Muchas gracias! Hemos recibido tu confirmación. " +
-      "Estamos deseando celebrar este día contigo.";
-    formStatus.className = "form-status is-success";
+    formStatus.textContent = "Confirmación recibida correctamente.";
+    formStatus.className = "form-status is-success form-status--compact";
+    showSmartRsvpResult(confirmationPayload);
   } catch (error) {
     console.error("Error al enviar la confirmación:", error);
     const configurationProblem = /column|policy|permission|row-level|schema|relation|function|rpc/i.test(error.message);

@@ -1,0 +1,15 @@
+DAVID & RAQUEL — V52 · CIERRE FUNCIONAL
+
+CAMBIOS
+- Nuevo texto de llegada de los invitados.
+- Alianzas entrelazadas en la ceremonia.
+- Estrellas elegantes para la celebración.
+- Vinilo lineal para las canciones del baile.
+- Mensaje inteligente tras confirmar:
+  singular/plural y asiste/no asiste.
+- Botón para Google Calendar.
+- Descarga .ics compatible con Apple Calendar.
+- Se conserva el acceso responsive, sin zoom y con música.
+
+SUPABASE
+No necesita cambios.
