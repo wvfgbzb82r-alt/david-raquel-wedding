@@ -1,0 +1,9 @@
+DAVID & RAQUEL — V50.4
+
+ÚNICOS CAMBIOS REALIZADOS
+- La pantalla del código muestra «David & Raquel».
+- Todas las amapolas anteriores han sido sustituidas por la composición botánica
+  del diseño aprobado.
+
+No se ha modificado ningún texto, horario, formulario, función, panel ni dato.
+No necesita cambios en Supabase.
