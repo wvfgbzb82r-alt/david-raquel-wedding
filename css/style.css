@@ -1542,3 +1542,55 @@ body:not(.is-locked) .poppy-line--confirmation {
 .access-form-cinematic button{background:linear-gradient(135deg,#d9c29e,#cdb285)!important;border-color:rgba(169,131,68,.42)!important;color:#3d2e1d!important}
 .poppy-line{color:rgba(171,130,65,.18)!important}
 .poppy-line--access{color:rgba(171,130,65,.23)!important}
+
+
+/* =========================================================
+   V50.4 · Amapolas del diseño aprobado + David & Raquel
+   ========================================================= */
+
+.access-monogram--names {
+  font-family: "Allura", cursive !important;
+  font-size: clamp(3rem, 11vw, 5.4rem) !important;
+  font-weight: 400 !important;
+  line-height: .95 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap;
+  color: #ad8441 !important;
+}
+
+.access-monogram--names span {
+  display: inline;
+  font-family: inherit;
+  font-size: .82em;
+  vertical-align: .05em;
+}
+
+.poppy-line {
+  overflow: visible !important;
+}
+
+.poppy-line__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  opacity: .88;
+}
+
+.poppy-line--hero .poppy-line__image,
+.poppy-line--story .poppy-line__image,
+.poppy-line--music .poppy-line__image,
+.poppy-line--farewell .poppy-line__image {
+  transform: scaleX(-1);
+}
+
+.poppy-line--access .poppy-line__image {
+  opacity: .95;
+}
+
+@media (max-width: 600px) {
+  .access-monogram--names {
+    font-size: clamp(2.55rem, 13vw, 4.2rem) !important;
+  }
+}
