@@ -517,11 +517,71 @@ function weddingInvitationUrl(code) {
   return `${window.location.origin}/?i=${encodeURIComponent(code)}`;
 }
 
-function whatsappUrl(phone, name, code) {
+function invitationNameLooksPlural(name, adultsMax = 1, childrenMax = 0) {
+  const cleanName = String(name || "").trim();
+  const normalizedName = normalize(cleanName);
+
+  if (Number(adultsMax || 0) + Number(childrenMax || 0) > 1) {
+    return true;
+  }
+
+  return (
+    /\s(?:y|e|&|\+)\s/i.test(cleanName) ||
+    cleanName.includes(",") ||
+    /\b(familia|los|las|hermanos|hermanas|padres|amigos|primos|tíos|tias|tías)\b/i.test(normalizedName)
+  );
+}
+
+function invitationShareMessage(
+  name,
+  code,
+  adultsMax = 1,
+  childrenMax = 0
+) {
+  const guestName = String(name || "").trim();
+  const greeting = guestName ? `Hola ${guestName},` : "Hola,";
+  const link = weddingInvitationUrl(code);
+  const plural = invitationNameLooksPlural(
+    guestName,
+    adultsMax,
+    childrenMax
+  );
+  const isFamily = /\bfamilia\b/i.test(normalize(guestName));
+
+  const inviteVerb = plural ? "invitaros" : "invitarte";
+  const accessVerb = plural ? "Podéis acceder" : "Puedes acceder";
+  const invitationPossessive = plural ? "vuestra invitación" : "tu invitación";
+  const codePrompt = plural ? "se os pedirá" : "se te pedirá";
+  const instruction = plural
+    ? "Solo tenéis que introducir:"
+    : "Solo tienes que introducir:";
+  const closing = isFamily
+    ? "¡Será un placer compartir este día con toda la familia!"
+    : plural
+      ? "¡Estamos deseando compartir este día con vosotros!"
+      : "¡Estamos deseando compartir este día contigo!";
+
+  return [
+    greeting,
+    "",
+    `Nos hace muchísima ilusión ${inviteVerb} a nuestra boda.`,
+    "",
+    `${accessVerb} a ${invitationPossessive} desde el siguiente enlace:`,
+    link,
+    "",
+    `Al abrir el enlace, ${codePrompt} un código de acceso.`,
+    instruction,
+    String(code || "").trim().toUpperCase(),
+    "",
+    closing,
+    "",
+    "David & Raquel ❤️"
+  ].join("\n");
+}
+
+function whatsappUrl(phone, name, code, adultsMax = 1, childrenMax = 0) {
   const cleanPhone = String(phone || "").replace(/\D/g, "");
-  const text =
-    `Hola ${name}, nos hace muchísima ilusión invitarte a nuestra boda. ` +
-    `Puedes abrir tu invitación personalizada aquí: ${weddingInvitationUrl(code)}`;
+  const text = invitationShareMessage(name, code, adultsMax, childrenMax);
 
   const base = cleanPhone
     ? `https://wa.me/34${cleanPhone}`
@@ -530,15 +590,47 @@ function whatsappUrl(phone, name, code) {
   return `${base}?text=${encodeURIComponent(text)}`;
 }
 
+async function copyTextSafely(text, promptTitle) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {}
+
+  window.prompt(promptTitle, text);
+  return false;
+}
+
 async function copyInvitationLink(code) {
   const link = weddingInvitationUrl(code);
+  const copied = await copyTextSafely(link, "Copia este enlace:");
 
-  try {
-    await navigator.clipboard.writeText(link);
-    invitationMessage.textContent = "Enlace copiado correctamente.";
-  } catch {
-    window.prompt("Copia este enlace:", link);
-  }
+  invitationMessage.textContent = copied
+    ? "Enlace copiado correctamente."
+    : "El enlace está listo para copiar.";
+}
+
+async function copyInvitationMessage(
+  name,
+  code,
+  adultsMax = 1,
+  childrenMax = 0
+) {
+  const message = invitationShareMessage(
+    name,
+    code,
+    adultsMax,
+    childrenMax
+  );
+  const copied = await copyTextSafely(
+    message,
+    "Copia este mensaje para enviarlo al invitado:"
+  );
+
+  invitationMessage.textContent = copied
+    ? "Mensaje completo copiado. Ya puedes pegarlo en WhatsApp o donde prefieras."
+    : "El mensaje está listo para copiar.";
 }
 
 
@@ -663,13 +755,24 @@ function renderInvitations() {
             Copiar enlace
           </button>
 
+          <button type="button"
+                  class="copy-message-button"
+                  data-copy-invitation-message="${escapeHtml(item.codigo)}"
+                  data-invitation-message-name="${escapeHtml(item.nombre_mostrado)}"
+                  data-invitation-message-adults="${adultsMax}"
+                  data-invitation-message-children="${childrenMax}">
+            Copiar mensaje
+          </button>
+
           <a href="${whatsappUrl(
             item.telefono,
             item.nombre_mostrado,
-            item.codigo
+            item.codigo,
+            adultsMax,
+            childrenMax
           )}"
              target="_blank" rel="noopener">
-            WhatsApp
+            Enviar por WhatsApp
           </a>
 
           <button type="button" class="danger-link"
@@ -832,6 +935,19 @@ invitationList?.addEventListener("click", event => {
   const copyButton = event.target.closest("[data-copy-invitation]");
   if (copyButton) {
     copyInvitationLink(copyButton.dataset.copyInvitation);
+    return;
+  }
+
+  const copyMessageButton = event.target.closest(
+    "[data-copy-invitation-message]"
+  );
+  if (copyMessageButton) {
+    copyInvitationMessage(
+      copyMessageButton.dataset.invitationMessageName,
+      copyMessageButton.dataset.copyInvitationMessage,
+      Number(copyMessageButton.dataset.invitationMessageAdults || 1),
+      Number(copyMessageButton.dataset.invitationMessageChildren || 0)
+    );
     return;
   }
 

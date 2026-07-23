@@ -322,3 +322,34 @@ td .row-actions { margin-top: 0; }
 .catering-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
 .catering-list li{padding:9px 10px;border-radius:10px;background:white}
 @media(max-width:760px){.catering-columns{grid-template-columns:1fr}}
+
+
+/* =========================================================
+   V52.1 · Compartir invitación con código
+   ========================================================= */
+
+.invitation-actions .copy-message-button {
+  border-color: rgba(171, 128, 62, .50);
+  background: linear-gradient(135deg, rgba(226, 205, 168, .92), rgba(207, 178, 128, .92));
+  color: #4b3820;
+  font-weight: 600;
+}
+
+.invitation-actions .copy-message-button:hover,
+.invitation-actions .copy-message-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(91, 65, 30, .12);
+}
+
+@media (max-width: 650px) {
+  .invitation-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .invitation-actions > * {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
+}

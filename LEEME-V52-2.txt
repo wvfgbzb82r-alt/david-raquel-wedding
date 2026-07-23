@@ -1,0 +1,28 @@
+DAVID & RAQUEL — V52.2 · MENSAJE INTELIGENTE
+
+El mensaje copiado y el enviado por WhatsApp se adaptan automáticamente:
+
+SINGULAR
+- invitarte
+- tu invitación
+- se te pedirá
+- solo tienes que introducir
+- contigo
+
+PLURAL
+- invitaros
+- vuestra invitación
+- se os pedirá
+- solo tenéis que introducir
+- con vosotros
+
+FAMILIAS
+- despedida especial para toda la familia.
+
+La detección usa:
+- el nombre de la invitación;
+- conectores como «y», «&», «+» o comas;
+- palabras como «Familia», «Los» o «Las»;
+- y el límite total de adultos y niños.
+
+No requiere cambios en Supabase.

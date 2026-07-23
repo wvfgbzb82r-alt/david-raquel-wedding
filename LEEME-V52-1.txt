@@ -1,0 +1,14 @@
+DAVID & RAQUEL — V52.1 · MENSAJE PARA INVITADOS
+
+MEJORA DEL PANEL DE ADMINISTRACIÓN
+- Nuevo botón «Copiar mensaje» para cada invitación.
+- Copia en un solo paso:
+  - saludo personalizado;
+  - enlace de la invitación;
+  - código privado;
+  - instrucciones para acceder;
+  - despedida de David & Raquel.
+- El botón «Enviar por WhatsApp» utiliza exactamente el mismo mensaje.
+- Se mantiene también el botón independiente «Copiar enlace».
+
+No requiere cambios en Supabase.
