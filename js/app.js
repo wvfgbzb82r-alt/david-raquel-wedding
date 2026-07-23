@@ -410,44 +410,51 @@ function startWeddingIntro() {
   if (accessStarted) return;
   accessStarted = true;
 
-  accessGate.classList.add("is-leaving");
-
-  // Si el audio ya fue desbloqueado por el gesto, solo subimos el volumen.
-  if (backgroundMusic) {
-    if (!backgroundMusic.paused) {
-      markMusicAsPlaying();
-      fadeBackgroundMusicTo(0.24, 1500);
-    } else {
-      // Segundo intento para navegadores que permiten reproducir en submit.
-      backgroundMusic.volume = 0.02;
-      backgroundMusic.play().then(() => {
-        markMusicAsPlaying();
-        fadeBackgroundMusicTo(0.24, 1500);
-      }).catch(() => {
-        musicControl?.classList.remove("is-playing");
-        musicControl?.setAttribute("aria-pressed", "false");
-      });
-    }
-  }
+  // La apertura visual nunca depende de que el navegador permita reproducir audio.
+  accessGate?.classList.add("is-leaving");
 
   window.setTimeout(() => {
-    accessGate.hidden = true;
-
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
-        window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    if (accessGate) {
+      accessGate.hidden = true;
+      accessGate.style.display = "none";
+    }
 
     document.body.classList.remove("is-locked");
     document.body.classList.add("access-granted");
 
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     window.setTimeout(() => {
       document.body.classList.remove("access-granted");
-    }, 1000);
-  }, 700);
+    }, 900);
+  }, 420);
+
+  // La música se intenta iniciar por separado. Un fallo de audio no bloquea el acceso.
+  try {
+    if (backgroundMusic) {
+      backgroundMusic.muted = false;
+      backgroundMusic.volume = 0.02;
+
+      const playAttempt = backgroundMusic.paused
+        ? backgroundMusic.play()
+        : Promise.resolve();
+
+      Promise.resolve(playAttempt)
+        .then(() => {
+          markMusicAsPlaying();
+          fadeBackgroundMusicTo(0.24, 1400);
+        })
+        .catch(() => {
+          musicControl?.classList.remove("is-playing");
+          musicControl?.setAttribute("aria-pressed", "false");
+        });
+    }
+  } catch (_) {
+    musicControl?.classList.remove("is-playing");
+    musicControl?.setAttribute("aria-pressed", "false");
+  }
 }
 
 function grantAccess({ remember = true } = {}) {
@@ -455,6 +462,12 @@ function grantAccess({ remember = true } = {}) {
     sessionStorage.setItem("wedding_access_granted", "true");
   }
 
+  if (accessSubmitButton) {
+    accessSubmitButton.disabled = false;
+    accessSubmitButton.textContent = "Continuar";
+  }
+
+  accessCode?.blur();
   startWeddingIntro();
 }
 

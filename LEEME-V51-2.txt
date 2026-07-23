@@ -1,0 +1,11 @@
+DAVID & RAQUEL — V51.2
+
+CORRECCIONES
+- El acceso deja de depender de la reproducción de música.
+- Un código válido abre siempre la invitación.
+- La música se intenta iniciar después, sin bloquear la entrada.
+- Eliminadas y ocultadas todas las amapolas.
+- Pantalla de código responsive en ordenador y móvil.
+- David & Raquel centrado y sin cortes.
+- Campo de código a 16 px y viewport bloqueado para evitar el zoom de iPhone.
+- No requiere cambios en Supabase.
