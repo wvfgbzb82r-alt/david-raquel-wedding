@@ -1034,6 +1034,92 @@ showDashboard = function () {
 };
 
 
+
+// V53.1 · Herramientas para limpiar datos de prueba
+const resetOpeningsButton = byId("resetOpeningsButton");
+const resetConfirmationsButton = byId("resetConfirmationsButton");
+const adminResetMessage = byId("adminResetMessage");
+
+async function resetInvitationOpenings() {
+  const accepted = window.confirm(
+    "¿Quieres marcar todas las invitaciones como pendientes de abrir? " +
+    "No se borrarán confirmaciones ni invitados."
+  );
+  if (!accepted) return;
+
+  resetOpeningsButton.disabled = true;
+  resetOpeningsButton.textContent = "Reiniciando…";
+  adminResetMessage.textContent = "Reiniciando aperturas…";
+
+  try {
+    await api(
+      "/rest/v1/invitaciones_personalizadas?opened_at=not.is.null",
+      {
+        method: "PATCH",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ opened_at: null })
+      }
+    );
+
+    await loadInvitations();
+    adminResetMessage.textContent =
+      "Todas las invitaciones vuelven a aparecer como pendientes de abrir.";
+  } catch (error) {
+    adminResetMessage.textContent =
+      `No se pudieron reiniciar las aperturas: ${error.message}`;
+  } finally {
+    resetOpeningsButton.disabled = false;
+    resetOpeningsButton.textContent = "Marcar todas como pendientes";
+  }
+}
+
+async function resetTestConfirmations() {
+  const firstConfirmation = window.confirm(
+    "Esta acción borrará TODAS las confirmaciones actuales. " +
+    "¿Seguro que son datos de prueba?"
+  );
+  if (!firstConfirmation) return;
+
+  const confirmationText = window.prompt(
+    'Escribe BORRAR para confirmar que deseas eliminar todas las confirmaciones:'
+  );
+  if (String(confirmationText || "").trim().toUpperCase() !== "BORRAR") {
+    adminResetMessage.textContent =
+      "No se borró ninguna confirmación.";
+    return;
+  }
+
+  resetConfirmationsButton.disabled = true;
+  resetConfirmationsButton.textContent = "Borrando…";
+  adminResetMessage.textContent = "Eliminando confirmaciones de prueba…";
+
+  try {
+    await api("/rest/v1/confirmaciones_v24?id=not.is.null", {
+      method: "DELETE",
+      headers: { Prefer: "return=minimal" }
+    });
+
+    await loadGuests();
+    await loadInvitations();
+    adminResetMessage.textContent =
+      "Confirmaciones eliminadas. El panel está listo para los datos reales.";
+  } catch (error) {
+    adminResetMessage.textContent =
+      `No se pudieron borrar las confirmaciones: ${error.message}`;
+  } finally {
+    resetConfirmationsButton.disabled = false;
+    resetConfirmationsButton.textContent =
+      "Borrar confirmaciones de prueba";
+  }
+}
+
+resetOpeningsButton?.addEventListener("click", resetInvitationOpenings);
+resetConfirmationsButton?.addEventListener(
+  "click",
+  resetTestConfirmations
+);
+
+
 // V42 · Gestión de música
 let musicSuggestions=[];const refreshMusicButton=byId("refreshMusicButton"),exportMusicButton=byId("exportMusicButton"),musicTableBody=byId("musicTableBody"),musicCards=byId("musicCards"),musicAdminMessage=byId("musicAdminMessage"),musicRanking=byId("musicRanking");
 function spotifySearchUrl(song,artist){const q=[song,artist].filter(Boolean).join(" ").trim();return q?`https://open.spotify.com/search/${encodeURIComponent(q)}`:"";}

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=53-final">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=53.1">
 </head>
 <body>
   <main>
@@ -190,6 +190,49 @@
       </section>
 
 
+
+      <section class="admin-reset-section" aria-labelledby="adminResetTitle">
+        <div class="media-section__header">
+          <div>
+            <p class="kicker">Antes de enviar las invitaciones</p>
+            <h2 id="adminResetTitle">Herramientas de pruebas</h2>
+          </div>
+        </div>
+
+        <p class="admin-reset-section__intro">
+          Utiliza estas opciones para eliminar la actividad generada durante
+          las pruebas. Las invitaciones y sus códigos no se eliminan.
+        </p>
+
+        <div class="admin-reset-actions">
+          <article>
+            <h3>Reiniciar aperturas</h3>
+            <p>
+              Marca todas las invitaciones como pendientes de abrir, sin tocar
+              confirmaciones ni datos de los invitados.
+            </p>
+            <button id="resetOpeningsButton" type="button">
+              Marcar todas como pendientes
+            </button>
+          </article>
+
+          <article class="admin-reset-actions__danger">
+            <h3>Reiniciar confirmaciones</h3>
+            <p>
+              Elimina todas las respuestas de asistencia realizadas durante
+              las pruebas. Esta acción no se puede deshacer.
+            </p>
+            <button id="resetConfirmationsButton" type="button">
+              Borrar confirmaciones de prueba
+            </button>
+          </article>
+        </div>
+
+        <p id="adminResetMessage" class="dashboard-message"
+           role="status" aria-live="polite"></p>
+      </section>
+
+
       <section class="music-admin-section" aria-labelledby="musicAdminTitle">
         <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="openDinnerSpotifyButton" type="button">Abrir cena en Spotify</button><button id="openDanceSpotifyButton" type="button">Abrir baile en Spotify</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
         <section class="music-stats"><article><span>Sugerencias</span><strong id="musicTotal">0</strong></article><article><span>Para la cena</span><strong id="musicDinner">0</strong></article><article><span>Para el baile</span><strong id="musicDance">0</strong></article><article><span>Canción más pedida</span><strong id="musicTop">—</strong></article></section>
@@ -218,6 +261,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=53-final"></script>
+  <script src="../js/admin-v21.js?v=53.1"></script>
 </body>
 </html>

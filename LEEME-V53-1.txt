@@ -1,0 +1,18 @@
+DAVID & RAQUEL — V53.1 · MENSAJES Y LIMPIEZA DE PRUEBAS
+
+MENSAJES INTELIGENTES
+- La bienvenida decide singular/plural únicamente según el nombre mostrado.
+  Ejemplo: «María del Mar» usa contigo aunque tenga tres plazas.
+- El mensaje posterior a confirmar depende únicamente del número real
+  de asistentes confirmados.
+  1 persona: singular. 2 o más: plural.
+
+PANEL DE ADMINISTRACIÓN
+- Botón para marcar todas las invitaciones como pendientes de abrir.
+- Botón protegido para eliminar todas las confirmaciones de prueba.
+- Las invitaciones, códigos, nombres, teléfonos y límites no se eliminan.
+
+IMPORTANTE
+El borrado de confirmaciones es irreversible y requiere escribir BORRAR.
+No necesita SQL nuevo si el usuario administrador ya puede editar y
+eliminar registros desde el panel.

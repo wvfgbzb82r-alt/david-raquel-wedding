@@ -245,16 +245,10 @@ const WEDDING_CALENDAR = {
 };
 
 function invitationUsesPlural(payload) {
-  const confirmedTotal = Number(payload.adultos || 0) + Number(payload.ninos || 0);
-  if (payload.asistencia === "Sí" && confirmedTotal > 0) {
-    return confirmedTotal > 1;
-  }
+  const confirmedTotal =
+    Number(payload.adultos || 0) + Number(payload.ninos || 0);
 
-  const invitedTotal =
-    Number(document.documentElement.dataset.adultsMax || 1) +
-    Number(document.documentElement.dataset.childrenMax || 0);
-
-  return invitedTotal > 1;
+  return confirmedTotal > 1;
 }
 
 function googleCalendarUrl() {
@@ -668,6 +662,20 @@ configureGuestLimits(20, 20, false);
 
 let currentPersonalizedInvitation = null;
 
+function personalizedNameLooksPlural(name) {
+  const cleanName = String(name || "").trim();
+  const normalizedName = cleanName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  return (
+    /\s(?:y|e|&|\+)\s/i.test(cleanName) ||
+    cleanName.includes(",") ||
+    /\b(familia|los|las|hermanos|hermanas|padres|amigos|primos|tios|tias)\b/i.test(normalizedName)
+  );
+}
+
 function applyPersonalizedInvitation(invitation, code) {
   if (!invitation?.nombre_mostrado) return false;
 
@@ -699,11 +707,13 @@ function applyPersonalizedInvitation(invitation, code) {
   }
 
   if (personalizedMessage) {
-    const totalGuests = Math.max(1, adultsMax + childrenMax);
+    const pluralWelcome = personalizedNameLooksPlural(
+      invitation.nombre_mostrado
+    );
 
-    personalizedMessage.textContent = totalGuests === 1
-      ? "Nos hace muchísima ilusión compartir este día contigo."
-      : "Nos hace muchísima ilusión compartir este día con vosotros.";
+    personalizedMessage.textContent = pluralWelcome
+      ? "Nos hace muchísima ilusión compartir este día con vosotros."
+      : "Nos hace muchísima ilusión compartir este día contigo.";
   }
 
   if (guestNameInput) {
