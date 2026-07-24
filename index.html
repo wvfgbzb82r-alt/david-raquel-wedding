@@ -30,7 +30,7 @@
       display:grid;place-items:center;background:#f7f2e9
     }
   </style>
-  <link rel="stylesheet" href="css/style.css?v=53.1">
+  <link rel="stylesheet" href="css/style.css?v=53.2">
 </head>
 <body class="is-locked">
   <div class="scroll-progress" id="scrollProgress"></div>
@@ -386,9 +386,22 @@
           </div>
           <article class="music-moment">
             <div class="music-moment__heading"><span class="music-moment__icon" aria-hidden="true">🍽️</span><div><p class="music-moment__eyebrow">Durante la cena</p><h3>¿Qué canción te gustaría escuchar mientras disfrutamos de la cena?</h3></div></div>
-            <div class="music-form__grid">
-              <div class="form-field"><label for="dinnerSong">Canción</label><input id="dinnerSong" name="cancion_cena" type="text" placeholder="Ej.: Perfect"></div>
-              <div class="form-field"><label for="dinnerArtist">Artista</label><input id="dinnerArtist" name="artista_cena" type="text" placeholder="Ej.: Ed Sheeran"></div>
+            <div class="music-suggestions-list">
+              <div class="music-suggestion-row">
+                <span class="music-suggestion-row__number">1</span>
+                <div class="form-field"><label for="dinnerSong">Canción</label><input id="dinnerSong" name="cancion_cena" type="text" placeholder="Ej.: Perfect"></div>
+                <div class="form-field"><label for="dinnerArtist">Artista</label><input id="dinnerArtist" name="artista_cena" type="text" placeholder="Ej.: Ed Sheeran"></div>
+              </div>
+              <div class="music-suggestion-row">
+                <span class="music-suggestion-row__number">2</span>
+                <div class="form-field"><label for="dinnerSong2">Canción opcional</label><input id="dinnerSong2" name="cancion_cena_2" type="text" placeholder="Otra canción"></div>
+                <div class="form-field"><label for="dinnerArtist2">Artista</label><input id="dinnerArtist2" name="artista_cena_2" type="text" placeholder="Artista"></div>
+              </div>
+              <div class="music-suggestion-row">
+                <span class="music-suggestion-row__number">3</span>
+                <div class="form-field"><label for="dinnerSong3">Canción opcional</label><input id="dinnerSong3" name="cancion_cena_3" type="text" placeholder="Otra canción"></div>
+                <div class="form-field"><label for="dinnerArtist3">Artista</label><input id="dinnerArtist3" name="artista_cena_3" type="text" placeholder="Artista"></div>
+              </div>
             </div>
           </article>
           <article class="music-moment">
@@ -400,9 +413,22 @@
                 <path d="M17 18c3.5-3.1 7.3-4.7 11.7-4.8M38.5 38.8c-3.2 2.8-6.8 4.2-10.8 4.3"></path>
               </svg>
             </span><div><p class="music-moment__eyebrow">Durante el baile</p><h3>¿Qué canción no puede faltar cuando llegue el momento de darlo todo?</h3></div></div>
-            <div class="music-form__grid">
-              <div class="form-field"><label for="danceSong">Canción</label><input id="danceSong" name="cancion_baile" type="text" placeholder="Ej.: Viva la Vida"></div>
-              <div class="form-field"><label for="danceArtist">Artista</label><input id="danceArtist" name="artista_baile" type="text" placeholder="Ej.: Coldplay"></div>
+            <div class="music-suggestions-list">
+              <div class="music-suggestion-row">
+                <span class="music-suggestion-row__number">1</span>
+                <div class="form-field"><label for="danceSong">Canción</label><input id="danceSong" name="cancion_baile" type="text" placeholder="Ej.: Viva la Vida"></div>
+                <div class="form-field"><label for="danceArtist">Artista</label><input id="danceArtist" name="artista_baile" type="text" placeholder="Ej.: Coldplay"></div>
+              </div>
+              <div class="music-suggestion-row">
+                <span class="music-suggestion-row__number">2</span>
+                <div class="form-field"><label for="danceSong2">Canción opcional</label><input id="danceSong2" name="cancion_baile_2" type="text" placeholder="Otra canción"></div>
+                <div class="form-field"><label for="danceArtist2">Artista</label><input id="danceArtist2" name="artista_baile_2" type="text" placeholder="Artista"></div>
+              </div>
+              <div class="music-suggestion-row">
+                <span class="music-suggestion-row__number">3</span>
+                <div class="form-field"><label for="danceSong3">Canción opcional</label><input id="danceSong3" name="cancion_baile_3" type="text" placeholder="Otra canción"></div>
+                <div class="form-field"><label for="danceArtist3">Artista</label><input id="danceArtist3" name="artista_baile_3" type="text" placeholder="Artista"></div>
+              </div>
             </div>
           </article>
           <div class="music-form__actions"><button class="primary-button" type="submit">Enviar sugerencias</button><p class="form-status" id="musicFormStatus" role="status" aria-live="polite"></p></div>
@@ -509,6 +535,6 @@
     <a href="#regalos" aria-label="Ir a transferencia y Bizum">Detalle</a>
   </nav>
 
-  <script src="js/app.js?v=53.1"></script>
+  <script src="js/app.js?v=53.2"></script>
 </body>
 </html>

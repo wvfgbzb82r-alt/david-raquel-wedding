@@ -1120,22 +1120,334 @@ resetConfirmationsButton?.addEventListener(
 );
 
 
-// V42 · Gestión de música
-let musicSuggestions=[];const refreshMusicButton=byId("refreshMusicButton"),exportMusicButton=byId("exportMusicButton"),musicTableBody=byId("musicTableBody"),musicCards=byId("musicCards"),musicAdminMessage=byId("musicAdminMessage"),musicRanking=byId("musicRanking");
-function spotifySearchUrl(song,artist){const q=[song,artist].filter(Boolean).join(" ").trim();return q?`https://open.spotify.com/search/${encodeURIComponent(q)}`:"";}
-function spotifyLinkHtml(song,artist,label="Abrir en Spotify"){const u=spotifySearchUrl(song,artist);return u?`<a class="spotify-link" href="${u}" target="_blank" rel="noopener noreferrer">🎧 ${label}</a>`:"—";}
-function openSpotifySearches(moment){const seen=new Set(),searches=musicSuggestions.map(i=>moment==="dinner"?[i.cancion_cena,i.artista_cena]:[i.cancion_baile,i.artista_baile]).filter(([s])=>normalize(s)).filter(([s,a])=>{const k=normalizedSong(s,a);if(seen.has(k))return false;seen.add(k);return true;});if(!searches.length){musicAdminMessage.textContent=moment==="dinner"?"Todavía no hay canciones para la cena.":"Todavía no hay canciones para el baile.";return;}const urls=searches.map(([s,a])=>spotifySearchUrl(s,a));window.open(urls[0],"_blank","noopener");if(urls.length>1){navigator.clipboard?.writeText(urls.slice(1).join("\n")).then(()=>musicAdminMessage.textContent=`Se abrió la primera búsqueda y se copiaron ${urls.length-1} enlaces más al portapapeles.`).catch(()=>musicAdminMessage.textContent="Se abrió la primera búsqueda. Usa los botones de cada canción para abrir el resto.");}}
-function artistRankingData(){const counts=new Map();musicSuggestions.forEach(i=>[i.artista_cena,i.artista_baile].forEach(a=>{const clean=String(a||"").trim();if(!clean)return;const k=normalize(clean),c=counts.get(k)||{artist:clean,count:0};c.count++;counts.set(k,c);}));return Array.from(counts.values()).sort((a,b)=>b.count-a.count||a.artist.localeCompare(b.artist));}
-function renderArtistRanking(){const r=artistRankingData().slice(0,10);artistRanking.innerHTML=r.length?`<ol class="music-ranking-list">${r.map((i,x)=>`<li><div><strong>${x+1}. ${escapeHtml(i.artist)}</strong></div><span>${i.count} ${i.count===1?"petición":"peticiones"}</span></li>`).join("")}</ol>`:"<p>Todavía no hay artistas registrados.</p>";}
-function normalizedSong(song,artist){return normalize(`${song||""} — ${artist||""}`)}
-function musicRankingData(){const counts=new Map();musicSuggestions.forEach(i=>[[i.cancion_cena,i.artista_cena,"Cena"],[i.cancion_baile,i.artista_baile,"Baile"]].forEach(([s,a,m])=>{if(!normalize(s))return;const k=normalizedSong(s,a),c=counts.get(k)||{song:s,artist:a,count:0,moments:new Set()};c.count++;c.moments.add(m);counts.set(k,c);}));return Array.from(counts.values()).sort((a,b)=>b.count-a.count||String(a.song).localeCompare(String(b.song)));}
-function updateMusicStats(){const d=musicSuggestions.filter(i=>normalize(i.cancion_cena)).length,b=musicSuggestions.filter(i=>normalize(i.cancion_baile)).length,r=musicRankingData();byId("musicTotal").textContent=musicSuggestions.length;byId("musicDinner").textContent=d;byId("musicDance").textContent=b;byId("musicTop").textContent=r[0]?`${r[0].song} (${r[0].count})`:"—";}
-function renderMusicRanking(){const r=musicRankingData().slice(0,10);musicRanking.innerHTML=r.length?`<ol class="music-ranking-list">${r.map((i,x)=>`<li><div><strong>${x+1}. ${escapeHtml(i.song||"Sin título")}</strong>${i.artist?`<small> — ${escapeHtml(i.artist)}</small>`:""}</div><span>${i.count} ${i.count===1?"voto":"votos"}</span></li>`).join("")}</ol>`:"<p>Todavía no hay canciones sugeridas.</p>";}
-function renderMusicSuggestions(){musicTableBody.innerHTML=musicSuggestions.map(i=>`<tr><td>${formatDate(i.created_at)}</td><td>${escapeHtml(i.nombre||"—")}</td><td>${escapeHtml(i.cancion_cena||"—")}</td><td>${escapeHtml(i.artista_cena||"—")}</td><td>${spotifyLinkHtml(i.cancion_cena,i.artista_cena,"Spotify cena")}</td><td>${escapeHtml(i.cancion_baile||"—")}</td><td>${escapeHtml(i.artista_baile||"—")}</td><td>${spotifyLinkHtml(i.cancion_baile,i.artista_baile,"Spotify baile")}</td><td><button type="button" class="danger-link" data-delete-music="${i.id}">Eliminar</button></td></tr>`).join("");musicCards.innerHTML=musicSuggestions.map(i=>`<article class="guest-card"><h2>${escapeHtml(i.nombre||"Sin nombre")}</h2><dl><dt>Fecha</dt><dd>${formatDate(i.created_at)}</dd><dt>Cena</dt><dd>${escapeHtml(i.cancion_cena||"—")}${i.artista_cena?` — ${escapeHtml(i.artista_cena)}`:""}</dd><dt>Baile</dt><dd>${escapeHtml(i.cancion_baile||"—")}${i.artista_baile?` — ${escapeHtml(i.artista_baile)}`:""}</dd></dl><div class="music-card-links">${i.cancion_cena?spotifyLinkHtml(i.cancion_cena,i.artista_cena,"Cena en Spotify"):""}${i.cancion_baile?spotifyLinkHtml(i.cancion_baile,i.artista_baile,"Baile en Spotify"):""}</div><button type="button" class="danger-link" data-delete-music="${i.id}">Eliminar sugerencia</button></article>`).join("");musicAdminMessage.textContent=musicSuggestions.length?`${musicSuggestions.length} sugerencia${musicSuggestions.length===1?"":"s"} musical${musicSuggestions.length===1?"":"es"}.`:"Todavía no hay sugerencias musicales.";updateMusicStats();renderMusicRanking();renderArtistRanking();}
-async function loadMusicSuggestions(){musicAdminMessage.textContent="Cargando canciones…";try{musicSuggestions=await api("/rest/v1/sugerencias_musicales_v42?select=*&order=created_at.desc");renderMusicSuggestions();}catch(e){musicAdminMessage.textContent=`No se pudieron cargar las canciones: ${e.message}`;}}
-async function deleteMusicSuggestion(id){if(!confirm("¿Quieres eliminar esta sugerencia musical?"))return;try{await api(`/rest/v1/sugerencias_musicales_v42?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}});await loadMusicSuggestions();}catch(e){musicAdminMessage.textContent=`No se pudo eliminar la sugerencia: ${e.message}`;}}
-function handleMusicAction(e){const b=e.target.closest("[data-delete-music]");if(b)deleteMusicSuggestion(b.dataset.deleteMusic);}
-function csvEscapeMusic(v){const t=String(v??"");return `"${t.replaceAll('"','""')}"`;}
-function exportMusicCsv(){const h=["Fecha","Invitado","Canción cena","Artista cena","Spotify cena","Canción baile","Artista baile","Spotify baile"],lines=[h.map(csvEscapeMusic).join(","),...musicSuggestions.map(i=>[i.created_at,i.nombre,i.cancion_cena,i.artista_cena,spotifySearchUrl(i.cancion_cena,i.artista_cena),i.cancion_baile,i.artista_baile,spotifySearchUrl(i.cancion_baile,i.artista_baile)].map(csvEscapeMusic).join(","))],blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="banda-sonora-david-raquel-con-spotify.csv";a.click();URL.revokeObjectURL(url);}
-refreshMusicButton?.addEventListener("click",loadMusicSuggestions);openDinnerSpotifyButton?.addEventListener("click",()=>openSpotifySearches("dinner"));openDanceSpotifyButton?.addEventListener("click",()=>openSpotifySearches("dance"));exportMusicButton?.addEventListener("click",exportMusicCsv);musicTableBody?.addEventListener("click",handleMusicAction);musicCards?.addEventListener("click",handleMusicAction);
-window.addEventListener("load",()=>window.setTimeout(()=>{if(!byId("dashboard")?.hidden)loadMusicSuggestions();},900));
+// V53.2 · Gestión de varias canciones por momento
+let musicSuggestions = [];
+
+const refreshMusicButton = byId("refreshMusicButton");
+const exportMusicButton = byId("exportMusicButton");
+const musicTableBody = byId("musicTableBody");
+const musicCards = byId("musicCards");
+const musicAdminMessage = byId("musicAdminMessage");
+const musicRanking = byId("musicRanking");
+
+function songsFor(item, moment) {
+  const prefix = moment === "dinner" ? "cena" : "baile";
+  return [1, 2, 3]
+    .map(index => {
+      const suffix = index === 1 ? "" : `_${index}`;
+      return {
+        song: String(item[`cancion_${prefix}${suffix}`] || "").trim(),
+        artist: String(item[`artista_${prefix}${suffix}`] || "").trim()
+      };
+    })
+    .filter(entry => entry.song);
+}
+
+function allMusicEntries() {
+  return musicSuggestions.flatMap(item => [
+    ...songsFor(item, "dinner").map(entry => ({
+      ...entry,
+      moment: "Cena",
+      item
+    })),
+    ...songsFor(item, "dance").map(entry => ({
+      ...entry,
+      moment: "Baile",
+      item
+    }))
+  ]);
+}
+
+function spotifySearchUrl(song, artist) {
+  const query = [song, artist].filter(Boolean).join(" ").trim();
+  return query
+    ? `https://open.spotify.com/search/${encodeURIComponent(query)}`
+    : "";
+}
+
+function spotifyLinkHtml(song, artist, label = "Abrir en Spotify") {
+  const url = spotifySearchUrl(song, artist);
+  return url
+    ? `<a class="spotify-link" href="${url}" target="_blank" rel="noopener noreferrer">🎧 ${label}</a>`
+    : "—";
+}
+
+function songListHtml(entries) {
+  if (!entries.length) return "—";
+  return `<ol class="admin-song-list">${entries.map(entry =>
+    `<li><strong>${escapeHtml(entry.song)}</strong>` +
+    `${entry.artist ? `<span> — ${escapeHtml(entry.artist)}</span>` : ""}` +
+    `</li>`
+  ).join("")}</ol>`;
+}
+
+function spotifyListHtml(entries, label) {
+  if (!entries.length) return "—";
+  return `<div class="admin-spotify-list">${entries.map((entry, index) =>
+    spotifyLinkHtml(entry.song, entry.artist, `${label} ${index + 1}`)
+  ).join("")}</div>`;
+}
+
+function openSpotifySearches(moment) {
+  const entries = musicSuggestions.flatMap(item => songsFor(item, moment));
+  const unique = [];
+  const seen = new Set();
+
+  entries.forEach(entry => {
+    const key = normalizedSong(entry.song, entry.artist);
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(entry);
+    }
+  });
+
+  if (!unique.length) {
+    musicAdminMessage.textContent = moment === "dinner"
+      ? "Todavía no hay canciones para la cena."
+      : "Todavía no hay canciones para el baile.";
+    return;
+  }
+
+  window.open(
+    spotifySearchUrl(unique[0].song, unique[0].artist),
+    "_blank",
+    "noopener"
+  );
+
+  if (unique.length > 1) {
+    const remaining = unique.slice(1)
+      .map(entry => spotifySearchUrl(entry.song, entry.artist))
+      .join("\n");
+
+    navigator.clipboard?.writeText(remaining)
+      .then(() => {
+        musicAdminMessage.textContent =
+          `Se abrió la primera búsqueda y se copiaron ` +
+          `${unique.length - 1} enlaces más.`;
+      })
+      .catch(() => {
+        musicAdminMessage.textContent =
+          "Se abrió la primera búsqueda. Usa los botones para abrir el resto.";
+      });
+  }
+}
+
+function normalizedSong(song, artist) {
+  return normalize(`${song || ""} — ${artist || ""}`);
+}
+
+function artistRankingData() {
+  const counts = new Map();
+
+  allMusicEntries().forEach(entry => {
+    if (!entry.artist) return;
+    const key = normalize(entry.artist);
+    const current = counts.get(key) || {
+      artist: entry.artist,
+      count: 0
+    };
+    current.count += 1;
+    counts.set(key, current);
+  });
+
+  return Array.from(counts.values())
+    .sort((a, b) =>
+      b.count - a.count || a.artist.localeCompare(b.artist)
+    );
+}
+
+function musicRankingData() {
+  const counts = new Map();
+
+  allMusicEntries().forEach(entry => {
+    const key = normalizedSong(entry.song, entry.artist);
+    const current = counts.get(key) || {
+      song: entry.song,
+      artist: entry.artist,
+      count: 0,
+      moments: new Set()
+    };
+    current.count += 1;
+    current.moments.add(entry.moment);
+    counts.set(key, current);
+  });
+
+  return Array.from(counts.values())
+    .sort((a, b) =>
+      b.count - a.count ||
+      String(a.song).localeCompare(String(b.song))
+    );
+}
+
+function renderArtistRanking() {
+  const ranking = artistRankingData().slice(0, 10);
+  artistRanking.innerHTML = ranking.length
+    ? `<ol class="music-ranking-list">${ranking.map((item, index) =>
+        `<li><div><strong>${index + 1}. ${escapeHtml(item.artist)}</strong></div>` +
+        `<span>${item.count} ${item.count === 1 ? "petición" : "peticiones"}</span></li>`
+      ).join("")}</ol>`
+    : "<p>Todavía no hay artistas registrados.</p>";
+}
+
+function renderMusicRanking() {
+  const ranking = musicRankingData().slice(0, 10);
+  musicRanking.innerHTML = ranking.length
+    ? `<ol class="music-ranking-list">${ranking.map((item, index) =>
+        `<li><div><strong>${index + 1}. ${escapeHtml(item.song || "Sin título")}</strong>` +
+        `${item.artist ? `<small> — ${escapeHtml(item.artist)}</small>` : ""}</div>` +
+        `<span>${item.count} ${item.count === 1 ? "voto" : "votos"}</span></li>`
+      ).join("")}</ol>`
+    : "<p>Todavía no hay canciones sugeridas.</p>";
+}
+
+function updateMusicStats() {
+  const dinnerCount = musicSuggestions
+    .reduce((sum, item) => sum + songsFor(item, "dinner").length, 0);
+  const danceCount = musicSuggestions
+    .reduce((sum, item) => sum + songsFor(item, "dance").length, 0);
+  const ranking = musicRankingData();
+
+  byId("musicTotal").textContent = dinnerCount + danceCount;
+  byId("musicDinner").textContent = dinnerCount;
+  byId("musicDance").textContent = danceCount;
+  byId("musicTop").textContent = ranking[0]
+    ? `${ranking[0].song} (${ranking[0].count})`
+    : "—";
+}
+
+function renderMusicSuggestions() {
+  musicTableBody.innerHTML = musicSuggestions.map(item => {
+    const dinner = songsFor(item, "dinner");
+    const dance = songsFor(item, "dance");
+
+    return `<tr>
+      <td>${formatDate(item.created_at)}</td>
+      <td>${escapeHtml(item.nombre || "—")}</td>
+      <td>${songListHtml(dinner)}</td>
+      <td>${spotifyListHtml(dinner, "Cena")}</td>
+      <td>${songListHtml(dance)}</td>
+      <td>${spotifyListHtml(dance, "Baile")}</td>
+      <td><button type="button" class="danger-link" data-delete-music="${item.id}">Eliminar</button></td>
+    </tr>`;
+  }).join("");
+
+  musicCards.innerHTML = musicSuggestions.map(item => {
+    const dinner = songsFor(item, "dinner");
+    const dance = songsFor(item, "dance");
+
+    return `<article class="guest-card">
+      <h2>${escapeHtml(item.nombre || "Sin nombre")}</h2>
+      <dl>
+        <dt>Fecha</dt><dd>${formatDate(item.created_at)}</dd>
+        <dt>Cena</dt><dd>${songListHtml(dinner)}</dd>
+        <dt>Baile</dt><dd>${songListHtml(dance)}</dd>
+      </dl>
+      <div class="music-card-links">
+        ${spotifyListHtml(dinner, "Cena")}
+        ${spotifyListHtml(dance, "Baile")}
+      </div>
+      <button type="button" class="danger-link" data-delete-music="${item.id}">
+        Eliminar sugerencia
+      </button>
+    </article>`;
+  }).join("");
+
+  const totalSongs = allMusicEntries().length;
+  musicAdminMessage.textContent = totalSongs
+    ? `${totalSongs} canción${totalSongs === 1 ? "" : "es"} sugerida${totalSongs === 1 ? "" : "s"}.`
+    : "Todavía no hay sugerencias musicales.";
+
+  updateMusicStats();
+  renderMusicRanking();
+  renderArtistRanking();
+}
+
+async function loadMusicSuggestions() {
+  musicAdminMessage.textContent = "Cargando canciones…";
+  try {
+    musicSuggestions = await api(
+      "/rest/v1/sugerencias_musicales_v42?select=*&order=created_at.desc"
+    );
+    renderMusicSuggestions();
+  } catch (error) {
+    musicAdminMessage.textContent =
+      `No se pudieron cargar las canciones: ${error.message}`;
+  }
+}
+
+async function deleteMusicSuggestion(id) {
+  if (!confirm("¿Quieres eliminar esta sugerencia musical?")) return;
+  try {
+    await api(
+      `/rest/v1/sugerencias_musicales_v42?id=eq.${encodeURIComponent(id)}`,
+      { method: "DELETE", headers: { Prefer: "return=minimal" } }
+    );
+    await loadMusicSuggestions();
+  } catch (error) {
+    musicAdminMessage.textContent =
+      `No se pudo eliminar la sugerencia: ${error.message}`;
+  }
+}
+
+function handleMusicAction(event) {
+  const button = event.target.closest("[data-delete-music]");
+  if (button) deleteMusicSuggestion(button.dataset.deleteMusic);
+}
+
+function csvEscapeMusic(value) {
+  const text = String(value ?? "");
+  return `"${text.replaceAll('"', '""')}"`;
+}
+
+function exportMusicCsv() {
+  const headers = [
+    "Fecha", "Invitado", "Momento", "Canción", "Artista", "Spotify"
+  ];
+
+  const rows = musicSuggestions.flatMap(item => [
+    ...songsFor(item, "dinner").map(entry => [
+      item.created_at, item.nombre, "Cena", entry.song, entry.artist,
+      spotifySearchUrl(entry.song, entry.artist)
+    ]),
+    ...songsFor(item, "dance").map(entry => [
+      item.created_at, item.nombre, "Baile", entry.song, entry.artist,
+      spotifySearchUrl(entry.song, entry.artist)
+    ])
+  ]);
+
+  const lines = [
+    headers.map(csvEscapeMusic).join(","),
+    ...rows.map(row => row.map(csvEscapeMusic).join(","))
+  ];
+
+  const blob = new Blob(
+    ["\ufeff" + lines.join("\n")],
+    { type: "text/csv;charset=utf-8" }
+  );
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "banda-sonora-david-raquel.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+refreshMusicButton?.addEventListener("click", loadMusicSuggestions);
+openDinnerSpotifyButton?.addEventListener(
+  "click",
+  () => openSpotifySearches("dinner")
+);
+openDanceSpotifyButton?.addEventListener(
+  "click",
+  () => openSpotifySearches("dance")
+);
+exportMusicButton?.addEventListener("click", exportMusicCsv);
+musicTableBody?.addEventListener("click", handleMusicAction);
+musicCards?.addEventListener("click", handleMusicAction);
+
+window.addEventListener("load", () => {
+  window.setTimeout(() => {
+    if (!byId("dashboard")?.hidden) loadMusicSuggestions();
+  }, 900);
+});
+

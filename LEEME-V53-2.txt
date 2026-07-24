@@ -1,0 +1,10 @@
+DAVID & RAQUEL — V53.2 · MÚLTIPLES CANCIONES
+
+- Cada invitado puede proponer hasta 3 canciones para la cena.
+- Cada invitado puede proponer hasta 3 canciones para el baile.
+- Todos los campos adicionales son opcionales.
+- El panel muestra todas las canciones agrupadas por momento.
+- Estadísticas, ranking, Spotify y CSV cuentan cada canción por separado.
+
+IMPORTANTE:
+Ejecutar SUPABASE-V53-2-MULTIPLES-CANCIONES.sql antes de publicar esta versión.

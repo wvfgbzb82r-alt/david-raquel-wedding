@@ -948,9 +948,112 @@ if (ibanNode && "MutationObserver" in window) {
 }
 
 
-// V42 · Sugerencias musicales
-const musicSuggestionForm=document.getElementById("musicSuggestionForm");
-const musicFormStatus=document.getElementById("musicFormStatus");
-function fillMusicGuestName(){const t=document.getElementById("musicGuestName"),s=document.getElementById("guestName");if(t&&s?.value&&!t.value)t.value=s.value;}
-document.getElementById("guestName")?.addEventListener("input",fillMusicGuestName);fillMusicGuestName();
-musicSuggestionForm?.addEventListener("submit",async event=>{event.preventDefault();const b=musicSuggestionForm.querySelector('button[type="submit"]'),f=new FormData(musicSuggestionForm),p={nombre:String(f.get("nombre")||"").trim(),codigo_invitacion:document.documentElement.dataset.invitationCode||null,cancion_cena:String(f.get("cancion_cena")||"").trim(),artista_cena:String(f.get("artista_cena")||"").trim(),cancion_baile:String(f.get("cancion_baile")||"").trim(),artista_baile:String(f.get("artista_baile")||"").trim()};musicFormStatus.textContent="";musicFormStatus.className="form-status";if(!p.nombre){musicFormStatus.textContent="Escribe tu nombre.";musicFormStatus.classList.add("is-error");return;}if(!p.cancion_cena&&!p.cancion_baile){musicFormStatus.textContent="Escribe al menos una canción para la cena o para el baile.";musicFormStatus.classList.add("is-error");return;}b.disabled=true;const o=b.textContent;b.textContent="Enviando…";try{const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/guardar_sugerencia_musical_v42`,{method:"POST",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,"Content-Type":"application/json"},body:JSON.stringify({datos:p})});const d=await r.json().catch(()=>null);if(!r.ok)throw new Error(d?.message||"No se pudo guardar la sugerencia.");musicFormStatus.textContent="¡Muchas gracias! Tendremos en cuenta tus canciones para preparar la banda sonora de nuestro gran día.";musicFormStatus.classList.add("is-success");const n=p.nombre;musicSuggestionForm.reset();document.getElementById("musicGuestName").value=n;}catch(e){musicFormStatus.textContent=`No hemos podido guardar las canciones: ${e.message}`;musicFormStatus.classList.add("is-error");}finally{b.disabled=false;b.textContent=o;}});
+// V53.2 · Hasta tres canciones para cena y baile
+const musicSuggestionForm = document.getElementById("musicSuggestionForm");
+const musicFormStatus = document.getElementById("musicFormStatus");
+
+function fillMusicGuestName() {
+  const target = document.getElementById("musicGuestName");
+  const source = document.getElementById("guestName");
+  if (target && source?.value && !target.value) target.value = source.value;
+}
+
+document.getElementById("guestName")
+  ?.addEventListener("input", fillMusicGuestName);
+fillMusicGuestName();
+
+function musicValue(formData, name) {
+  return String(formData.get(name) || "").trim();
+}
+
+musicSuggestionForm?.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const button = musicSuggestionForm.querySelector('button[type="submit"]');
+  const formData = new FormData(musicSuggestionForm);
+  const payload = {
+    nombre: musicValue(formData, "nombre"),
+    codigo_invitacion:
+      document.documentElement.dataset.invitationCode || null,
+    cancion_cena: musicValue(formData, "cancion_cena"),
+    artista_cena: musicValue(formData, "artista_cena"),
+    cancion_cena_2: musicValue(formData, "cancion_cena_2"),
+    artista_cena_2: musicValue(formData, "artista_cena_2"),
+    cancion_cena_3: musicValue(formData, "cancion_cena_3"),
+    artista_cena_3: musicValue(formData, "artista_cena_3"),
+    cancion_baile: musicValue(formData, "cancion_baile"),
+    artista_baile: musicValue(formData, "artista_baile"),
+    cancion_baile_2: musicValue(formData, "cancion_baile_2"),
+    artista_baile_2: musicValue(formData, "artista_baile_2"),
+    cancion_baile_3: musicValue(formData, "cancion_baile_3"),
+    artista_baile_3: musicValue(formData, "artista_baile_3")
+  };
+
+  musicFormStatus.textContent = "";
+  musicFormStatus.className = "form-status";
+
+  if (!payload.nombre) {
+    musicFormStatus.textContent = "Escribe tu nombre.";
+    musicFormStatus.classList.add("is-error");
+    return;
+  }
+
+  const songs = [
+    payload.cancion_cena,
+    payload.cancion_cena_2,
+    payload.cancion_cena_3,
+    payload.cancion_baile,
+    payload.cancion_baile_2,
+    payload.cancion_baile_3
+  ];
+
+  if (!songs.some(Boolean)) {
+    musicFormStatus.textContent =
+      "Escribe al menos una canción para la cena o para el baile.";
+    musicFormStatus.classList.add("is-error");
+    return;
+  }
+
+  button.disabled = true;
+  const originalText = button.textContent;
+  button.textContent = "Enviando…";
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/rpc/guardar_sugerencia_musical_v42`,
+      {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ datos: payload })
+      }
+    );
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(
+        data?.message || "No se pudo guardar la sugerencia."
+      );
+    }
+
+    musicFormStatus.textContent =
+      "¡Muchas gracias! Tendremos en cuenta todas tus canciones " +
+      "para preparar la banda sonora de nuestro gran día.";
+    musicFormStatus.classList.add("is-success");
+
+    const guestName = payload.nombre;
+    musicSuggestionForm.reset();
+    document.getElementById("musicGuestName").value = guestName;
+  } catch (error) {
+    musicFormStatus.textContent =
+      `No hemos podido guardar las canciones: ${error.message}`;
+    musicFormStatus.classList.add("is-error");
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+});
+

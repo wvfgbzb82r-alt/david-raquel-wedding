@@ -566,3 +566,19 @@ td .row-actions { margin-top: 0; }
     width: 100%;
   }
 }
+
+/* V53.2 · Listados musicales múltiples */
+.admin-song-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+.admin-song-list li { line-height: 1.35; }
+.admin-spotify-list {
+  display: grid;
+  gap: 7px;
+}
+.admin-spotify-list .spotify-link {
+  width: fit-content;
+}
