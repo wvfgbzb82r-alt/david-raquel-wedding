@@ -1,0 +1,24 @@
+DAVID & RAQUEL — V53 FINAL REVISADA
+
+COMPROBACIONES REALIZADAS
+- Sintaxis de js/app.js y js/admin-v21.js.
+- Referencias locales de imágenes, CSS, JavaScript y audio.
+- IDs duplicados en la web y el panel.
+- Acceso mediante código general y códigos personalizados.
+- Mensajes inteligentes singular/plural/familia.
+- Botones Copiar enlace, Copiar mensaje y WhatsApp.
+- Edición de nombre, teléfono, adultos y niños.
+- Estadísticas de respuestas e invitados asignados.
+- Confirmación inteligente y enlaces de calendario.
+- Responsive de la pantalla de acceso y prevención del zoom en iPhone.
+- Eliminación visual de las amapolas.
+
+AJUSTES DE ESTA REVISIÓN
+- El enlace copiado desde el panel abre la portada sin incluir el código.
+  Así el texto «se te/se os pedirá un código» coincide con el funcionamiento.
+- WhatsApp evita duplicar el prefijo internacional 34.
+- El calendario comienza a las 16:30 y usa la zona Europe/Madrid.
+- Versiones de caché actualizadas.
+
+SUPABASE
+No requiere SQL nuevo.

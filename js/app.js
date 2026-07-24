@@ -238,7 +238,7 @@ refreshDietaryPersonOptions();
 
 const WEDDING_CALENDAR = {
   title: "Boda de David & Raquel",
-  start: "20261122T160000",
+  start: "20261122T163000",
   end: "20261123T020000",
   location: "Iglesia Nuestra Señora de los Dolores y Espacio Capitana, Isla Cristina, Huelva",
   description: "Ceremonia a las 17:00 y celebración posterior. Estamos deseando compartir este día contigo."
@@ -263,7 +263,8 @@ function googleCalendarUrl() {
     text: WEDDING_CALENDAR.title,
     dates: `${WEDDING_CALENDAR.start}/${WEDDING_CALENDAR.end}`,
     details: WEDDING_CALENDAR.description,
-    location: WEDDING_CALENDAR.location
+    location: WEDDING_CALENDAR.location,
+    ctz: "Europe/Madrid"
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }

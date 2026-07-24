@@ -513,8 +513,8 @@ const refreshInvitationsButton = byId("refreshInvitationsButton");
 
 let personalizedInvitations = [];
 
-function weddingInvitationUrl(code) {
-  return `${window.location.origin}/?i=${encodeURIComponent(code)}`;
+function weddingInvitationUrl() {
+  return `${window.location.origin}/`;
 }
 
 function invitationNameLooksPlural(name, adultsMax = 1, childrenMax = 0) {
@@ -580,11 +580,19 @@ function invitationShareMessage(
 }
 
 function whatsappUrl(phone, name, code, adultsMax = 1, childrenMax = 0) {
-  const cleanPhone = String(phone || "").replace(/\D/g, "");
+  let cleanPhone = String(phone || "").replace(/\D/g, "");
   const text = invitationShareMessage(name, code, adultsMax, childrenMax);
 
+  if (cleanPhone.startsWith("00")) {
+    cleanPhone = cleanPhone.slice(2);
+  }
+
+  if (cleanPhone && !cleanPhone.startsWith("34")) {
+    cleanPhone = `34${cleanPhone}`;
+  }
+
   const base = cleanPhone
-    ? `https://wa.me/34${cleanPhone}`
+    ? `https://wa.me/${cleanPhone}`
     : "https://wa.me/";
 
   return `${base}?text=${encodeURIComponent(text)}`;
