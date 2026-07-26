@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=54.1">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=54.2">
 </head>
 <body>
   <main>
@@ -45,7 +45,21 @@
         </div>
       </header>
 
-      <section class="stats" aria-label="Resumen de confirmaciones">
+      <nav class="dashboard-quick-nav" aria-label="Accesos rápidos del panel">
+        <span class="dashboard-quick-nav__label">Ir a:</span>
+        <div class="dashboard-quick-nav__links">
+          <a href="#confirmaciones">Confirmaciones</a>
+          <a href="#menus-especiales">Menús</a>
+          <a href="#enlaces-unicos" data-open-invitations>Invitaciones</a>
+          <a href="#seating">Seating</a>
+          <a href="#regalos">Regalos</a>
+          <a href="#musica">Música</a>
+          <a href="#archivos">Archivos</a>
+        </div>
+      </nav>
+
+      <section id="confirmaciones" class="stats dashboard-anchor"
+               aria-label="Resumen de confirmaciones">
         <article><span>Respuestas</span><strong id="statTotal">0</strong></article>
         <article><span>Asistirán</span><strong id="statYes">0</strong></article>
         <article><span>No asistirán</span><strong id="statNo">0</strong></article>
@@ -83,7 +97,7 @@
 
 
 
-      <section class="catering-admin-section" aria-labelledby="cateringTitle">
+      <section id="menus-especiales" class="catering-admin-section dashboard-anchor" aria-labelledby="cateringTitle">
         <div class="media-section__header">
           <div>
             <p class="kicker">Organización del banquete</p>
@@ -103,7 +117,7 @@
         </div>
       </section>
 
-      <details class="invitation-manager-collapsible">
+      <details id="enlaces-unicos" class="invitation-manager-collapsible dashboard-anchor">
         <summary>
           <div>
             <p class="kicker">Invitaciones personalizadas</p>
@@ -257,7 +271,7 @@
 
 
       
-      <section class="planning-section" aria-labelledby="seatingTitle">
+      <section id="seating" class="planning-section dashboard-anchor" aria-labelledby="seatingTitle">
         <div class="media-section__header">
           <div>
             <p class="kicker">Organización privada</p>
@@ -306,7 +320,7 @@
         </div>
       </section>
 
-      <section class="planning-section" aria-labelledby="giftsTitle">
+      <section id="regalos" class="planning-section dashboard-anchor" aria-labelledby="giftsTitle">
         <div class="media-section__header">
           <div>
             <p class="kicker">Registro privado</p>
@@ -374,7 +388,7 @@
         <div id="giftCards" class="guest-cards"></div>
       </section>
 
-      <section class="music-admin-section" aria-labelledby="musicAdminTitle">
+      <section id="musica" class="music-admin-section dashboard-anchor" aria-labelledby="musicAdminTitle">
         <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="openDinnerSpotifyButton" type="button">Abrir cena en Spotify</button><button id="openDanceSpotifyButton" type="button">Abrir baile en Spotify</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
         <section class="music-stats"><article><span>Sugerencias</span><strong id="musicTotal">0</strong></article><article><span>Para la cena</span><strong id="musicDinner">0</strong></article><article><span>Para el baile</span><strong id="musicDance">0</strong></article><article><span>Canción más pedida</span><strong id="musicTop">—</strong></article></section>
         <p id="musicAdminMessage" class="dashboard-message" role="status" aria-live="polite"></p>
@@ -383,7 +397,7 @@
         <div class="music-rankings"><section class="music-ranking"><h3>Canciones más pedidas</h3><div id="musicRanking"></div></section><section class="music-ranking"><h3>Artistas más pedidos</h3><div id="artistRanking"></div></section></div>
       </section>
 
-      <section class="media-section" aria-labelledby="mediaTitle">
+      <section id="archivos" class="media-section dashboard-anchor" aria-labelledby="mediaTitle">
         <div class="media-section__header">
           <div>
             <p class="kicker">Álbum privado</p>
@@ -402,6 +416,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=54"></script>
+  <script src="../js/admin-v21.js?v=54.2"></script>
 </body>
 </html>

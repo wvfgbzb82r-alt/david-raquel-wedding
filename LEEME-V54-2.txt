@@ -1,0 +1,16 @@
+DAVID & RAQUEL — V54.2 · ACCESOS RÁPIDOS
+
+Se ha añadido una barra compacta al inicio del panel con accesos a:
+- Confirmaciones
+- Menús especiales
+- Invitaciones
+- Seating
+- Regalos
+- Música
+- Archivos
+
+La barra permanece visible al desplazarse y permite navegación horizontal
+en móviles. Al pulsar «Invitaciones», la sección plegada se abre
+automáticamente.
+
+No necesita SQL nuevo.

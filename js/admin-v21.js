@@ -1913,3 +1913,16 @@ window.addEventListener("load", () => {
   }, 900);
 });
 
+
+
+// V54.2 · Accesos rápidos del panel
+document.querySelectorAll(".dashboard-quick-nav a").forEach(link => {
+  link.addEventListener("click", () => {
+    if (link.hasAttribute("data-open-invitations")) {
+      const invitations = document.getElementById("enlaces-unicos");
+      if (invitations instanceof HTMLDetailsElement) {
+        invitations.open = true;
+      }
+    }
+  });
+});
