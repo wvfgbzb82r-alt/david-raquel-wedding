@@ -265,6 +265,7 @@ async function loadGuests(allowRetry = true) {
     updateStats();
     renderGuests();
     if (personalizedInvitations.length) renderInvitations();
+    if (seatingTablesData.length || seatingAssignments.length) renderSeating();
     byId("lastUpdate").textContent = `Actualizado: ${new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}`;
   } catch (error) {
     if (allowRetry && /jwt|token|401/i.test(error.message) && await refreshSession()) return loadGuests(false);
@@ -272,7 +273,7 @@ async function loadGuests(allowRetry = true) {
   }
 }
 
-function showDashboard() { loginView.hidden = true; dashboard.hidden = false; loadGuests(); }
+function showDashboard() { loginView.hidden = true; dashboard.hidden = false; loadGuests(); loadSeating(); loadGifts(); }
 function showLogin() { dashboard.hidden = true; loginView.hidden = false; }
 
 loginForm.addEventListener("submit", async event => {
@@ -505,6 +506,7 @@ mediaGrid?.addEventListener("click", event => {
 const invitationForm = byId("invitationForm");
 const invitationName = byId("invitationName");
 const invitationPhone = byId("invitationPhone");
+const invitationTreatment = byId("invitationTreatment");
 const invitationAdults = byId("invitationAdults");
 const invitationChildren = byId("invitationChildren");
 const invitationList = byId("invitationList");
@@ -532,20 +534,35 @@ function invitationNameLooksPlural(name, adultsMax = 1, childrenMax = 0) {
   );
 }
 
+function inferredInvitationTreatment(name) {
+  return invitationNameLooksPlural(name, 1, 0)
+    ? "plural_mixto"
+    : "singular";
+}
+
+function normalizeAdminTreatment(value, name = "") {
+  const treatment = String(value || "").trim().toLowerCase();
+
+  if (treatment === "singular") return "singular";
+  if (treatment === "plural_femenino") return "plural_femenino";
+  if (treatment === "plural_mixto") return "plural_mixto";
+
+  return inferredInvitationTreatment(name);
+}
+
 function invitationShareMessage(
   name,
   code,
   adultsMax = 1,
-  childrenMax = 0
+  childrenMax = 0,
+  treatmentValue = ""
 ) {
   const guestName = String(name || "").trim();
   const greeting = guestName ? `Hola ${guestName},` : "Hola,";
   const link = weddingInvitationUrl(code);
-  const plural = invitationNameLooksPlural(
-    guestName,
-    adultsMax,
-    childrenMax
-  );
+  const treatment = normalizeAdminTreatment(treatmentValue, guestName);
+  const plural = treatment !== "singular";
+  const femininePlural = treatment === "plural_femenino";
   const isFamily = /\bfamilia\b/i.test(normalize(guestName));
 
   const inviteVerb = plural ? "invitaros" : "invitarte";
@@ -555,10 +572,11 @@ function invitationShareMessage(
   const instruction = plural
     ? "Solo tenéis que introducir:"
     : "Solo tienes que introducir:";
+  const pronoun = femininePlural ? "vosotras" : "vosotros";
   const closing = isFamily
     ? "¡Será un placer compartir este día con toda la familia!"
     : plural
-      ? "¡Estamos deseando compartir este día con vosotros!"
+      ? `¡Estamos deseando compartir este día con ${pronoun}!`
       : "¡Estamos deseando compartir este día contigo!";
 
   return [
@@ -579,9 +597,9 @@ function invitationShareMessage(
   ].join("\n");
 }
 
-function whatsappUrl(phone, name, code, adultsMax = 1, childrenMax = 0) {
+function whatsappUrl(phone, name, code, adultsMax = 1, childrenMax = 0, treatment = "") {
   let cleanPhone = String(phone || "").replace(/\D/g, "");
-  const text = invitationShareMessage(name, code, adultsMax, childrenMax);
+  const text = invitationShareMessage(name, code, adultsMax, childrenMax, treatment);
 
   if (cleanPhone.startsWith("00")) {
     cleanPhone = cleanPhone.slice(2);
@@ -623,13 +641,15 @@ async function copyInvitationMessage(
   name,
   code,
   adultsMax = 1,
-  childrenMax = 0
+  childrenMax = 0,
+  treatment = ""
 ) {
   const message = invitationShareMessage(
     name,
     code,
     adultsMax,
-    childrenMax
+    childrenMax,
+    treatment
   );
   const copied = await copyTextSafely(
     message,
@@ -743,6 +763,24 @@ function renderInvitations() {
                    data-invitation-phone-input="${item.id}">
           </label>
 
+          <label class="invitation-edit-field">
+            <span>Tratamiento</span>
+            <select data-invitation-treatment="${item.id}">
+              <option value="singular"
+                ${normalizeAdminTreatment(item.tratamiento, item.nombre_mostrado) === "singular" ? "selected" : ""}>
+                Singular · contigo
+              </option>
+              <option value="plural_mixto"
+                ${normalizeAdminTreatment(item.tratamiento, item.nombre_mostrado) === "plural_mixto" ? "selected" : ""}>
+                Plural · vosotros
+              </option>
+              <option value="plural_femenino"
+                ${normalizeAdminTreatment(item.tratamiento, item.nombre_mostrado) === "plural_femenino" ? "selected" : ""}>
+                Plural femenino · vosotras
+              </option>
+            </select>
+          </label>
+
           <p class="invitation-code-row">
             Código:
             <span class="invitation-code">${escapeHtml(item.codigo)}</span>
@@ -809,7 +847,10 @@ function renderInvitations() {
                   data-copy-invitation-message="${escapeHtml(item.codigo)}"
                   data-invitation-message-name="${escapeHtml(item.nombre_mostrado)}"
                   data-invitation-message-adults="${adultsMax}"
-                  data-invitation-message-children="${childrenMax}">
+                  data-invitation-message-children="${childrenMax}"
+                  data-invitation-message-treatment="${escapeHtml(
+                    normalizeAdminTreatment(item.tratamiento, item.nombre_mostrado)
+                  )}">
             Copiar mensaje
           </button>
 
@@ -818,7 +859,8 @@ function renderInvitations() {
             item.nombre_mostrado,
             item.codigo,
             adultsMax,
-            childrenMax
+            childrenMax,
+            normalizeAdminTreatment(item.tratamiento, item.nombre_mostrado)
           )}"
              target="_blank" rel="noopener">
             Enviar por WhatsApp
@@ -874,6 +916,10 @@ async function createInvitation(event) {
       body: JSON.stringify({
         nombre_mostrado: name,
         telefono: invitationPhone.value.trim() || null,
+        tratamiento: normalizeAdminTreatment(
+          invitationTreatment.value,
+          name
+        ),
         adultos_max: Number(invitationAdults.value || 0),
         ninos_max: Number(invitationChildren.value || 0),
         max_personas:
@@ -885,6 +931,7 @@ async function createInvitation(event) {
     invitationForm.reset();
     invitationAdults.value = "1";
     invitationChildren.value = "0";
+    invitationTreatment.value = "automatico";
     await loadInvitations();
     invitationMessage.textContent = "Invitación creada correctamente.";
   } catch (error) {
@@ -908,11 +955,18 @@ async function saveInvitation(button) {
   const childrenSelect = invitationList.querySelector(
     `[data-invitation-children="${CSS.escape(id)}"]`
   );
+  const treatmentSelect = invitationList.querySelector(
+    `[data-invitation-treatment="${CSS.escape(id)}"]`
+  );
 
   const name = nameInput?.value.trim() || "";
   const phone = phoneInput?.value.trim() || null;
   const adults = Number(adultsSelect?.value || 0);
   const children = Number(childrenSelect?.value || 0);
+  const treatment = normalizeAdminTreatment(
+    treatmentSelect?.value,
+    name
+  );
 
   if (!name) {
     invitationMessage.textContent = "El nombre del invitado no puede estar vacío.";
@@ -934,6 +988,7 @@ async function saveInvitation(button) {
         body: JSON.stringify({
           nombre_mostrado: name,
           telefono: phone,
+          tratamiento: treatment,
           adultos_max: adults,
           ninos_max: children,
           max_personas: adults + children
@@ -1015,7 +1070,8 @@ invitationList?.addEventListener("click", event => {
       copyMessageButton.dataset.invitationMessageName,
       copyMessageButton.dataset.copyInvitationMessage,
       Number(copyMessageButton.dataset.invitationMessageAdults || 1),
-      Number(copyMessageButton.dataset.invitationMessageChildren || 0)
+      Number(copyMessageButton.dataset.invitationMessageChildren || 0),
+      copyMessageButton.dataset.invitationMessageTreatment || ""
     );
     return;
   }
@@ -1118,6 +1174,412 @@ resetConfirmationsButton?.addEventListener(
   "click",
   resetTestConfirmations
 );
+
+
+
+// =========================================================
+// V54 · Seating y regalos privados
+// =========================================================
+let seatingTablesData = [];
+let seatingAssignments = [];
+let giftsData = [];
+
+const euroFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "EUR"
+});
+
+function attendingGuestsForSeating() {
+  return guests.filter(guest => attendanceCategory(guest.asistencia) === "yes");
+}
+
+function guestPeopleCount(guest) {
+  return Number(guest.adultos || 0) + Number(guest.ninos || 0);
+}
+
+function tableAssignedPeople(tableId) {
+  const assignedGuestIds = seatingAssignments
+    .filter(item => String(item.mesa_id) === String(tableId))
+    .map(item => String(item.confirmacion_id));
+
+  return attendingGuestsForSeating()
+    .filter(guest => assignedGuestIds.includes(String(guest.id)))
+    .reduce((sum, guest) => sum + guestPeopleCount(guest), 0);
+}
+
+function assignmentForGuest(guestId) {
+  return seatingAssignments.find(
+    item => String(item.confirmacion_id) === String(guestId)
+  );
+}
+
+function renderSeating() {
+  const attending = attendingGuestsForSeating();
+  const totalCapacity = seatingTablesData.reduce(
+    (sum, table) => sum + Number(table.capacidad || 0), 0
+  );
+  const assignedIds = new Set(
+    seatingAssignments.map(item => String(item.confirmacion_id))
+  );
+  const assignedPeople = attending
+    .filter(guest => assignedIds.has(String(guest.id)))
+    .reduce((sum, guest) => sum + guestPeopleCount(guest), 0);
+  const unassignedPeople = attending
+    .filter(guest => !assignedIds.has(String(guest.id)))
+    .reduce((sum, guest) => sum + guestPeopleCount(guest), 0);
+
+  byId("seatingTableCount").textContent = seatingTablesData.length;
+  byId("seatingCapacity").textContent = totalCapacity;
+  byId("seatingAssigned").textContent = assignedPeople;
+  byId("seatingUnassigned").textContent = unassignedPeople;
+
+  const tableContainer = byId("seatingTables");
+  tableContainer.innerHTML = seatingTablesData.length
+    ? seatingTablesData.map(table => {
+        const occupied = tableAssignedPeople(table.id);
+        const capacity = Number(table.capacidad || 0);
+        const over = occupied > capacity;
+        const members = seatingAssignments
+          .filter(item => String(item.mesa_id) === String(table.id))
+          .map(item => attending.find(g => String(g.id) === String(item.confirmacion_id)))
+          .filter(Boolean);
+
+        return `<article class="seating-table-card ${over ? "is-over-capacity" : ""}">
+          <div class="seating-table-card__header">
+            <div>
+              <span>Mesa ${escapeHtml(table.numero)}</span>
+              <h3>${escapeHtml(table.nombre)}</h3>
+            </div>
+            <strong>${occupied}/${capacity}</strong>
+          </div>
+          ${table.notas ? `<p>${escapeHtml(table.notas)}</p>` : ""}
+          <ul>${members.length
+            ? members.map(guest =>
+                `<li><span>${escapeHtml(guest.nombre || "Sin nombre")}</span><strong>${guestPeopleCount(guest)}</strong></li>`
+              ).join("")
+            : "<li>Sin invitados asignados</li>"}</ul>
+          <div class="seating-table-card__actions">
+            <button type="button" data-edit-table="${table.id}">Editar</button>
+            <button type="button" class="danger-link" data-delete-table="${table.id}">Eliminar</button>
+          </div>
+        </article>`;
+      }).join("")
+    : "<p>Todavía no hay mesas creadas.</p>";
+
+  const guestContainer = byId("seatingGuests");
+  guestContainer.innerHTML = attending.length
+    ? attending.map(guest => {
+        const assignment = assignmentForGuest(guest.id);
+        return `<article class="seating-guest-row">
+          <div>
+            <strong>${escapeHtml(guest.nombre || "Sin nombre")}</strong>
+            <span>${guestPeopleCount(guest)} personas · ${Number(guest.adultos || 0)} adultos · ${Number(guest.ninos || 0)} niños</span>
+            ${guest.alergias ? `<small>Necesidades: ${escapeHtml(guest.alergias)}</small>` : ""}
+          </div>
+          <select data-seat-guest="${guest.id}">
+            <option value="">Sin mesa</option>
+            ${seatingTablesData.map(table =>
+              `<option value="${table.id}" ${assignment && String(assignment.mesa_id) === String(table.id) ? "selected" : ""}>Mesa ${escapeHtml(table.numero)} · ${escapeHtml(table.nombre)}</option>`
+            ).join("")}
+          </select>
+        </article>`;
+      }).join("")
+    : "<p>Todavía no hay asistentes confirmados.</p>";
+}
+
+async function loadSeating() {
+  const message = byId("seatingMessage");
+  message.textContent = "Cargando seating…";
+  try {
+    [seatingTablesData, seatingAssignments] = await Promise.all([
+      api("/rest/v1/mesas_v54?select=*&order=numero.asc"),
+      api("/rest/v1/asignaciones_mesas_v54?select=*")
+    ]);
+    renderSeating();
+    message.textContent = "Seating actualizado.";
+  } catch (error) {
+    message.textContent = `No se pudo cargar el seating: ${error.message}`;
+  }
+}
+
+byId("tableForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const message = byId("seatingMessage");
+  const payload = {
+    numero: Number(byId("tableNumber").value),
+    nombre: byId("tableName").value.trim(),
+    capacidad: Number(byId("tableCapacity").value),
+    notas: byId("tableNotes").value.trim() || null
+  };
+
+  try {
+    await api("/rest/v1/mesas_v54", {
+      method: "POST",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify(payload)
+    });
+    event.target.reset();
+    byId("tableCapacity").value = "10";
+    await loadSeating();
+    message.textContent = "Mesa creada.";
+  } catch (error) {
+    message.textContent = `No se pudo crear la mesa: ${error.message}`;
+  }
+});
+
+byId("seatingGuests")?.addEventListener("change", async event => {
+  const select = event.target.closest("[data-seat-guest]");
+  if (!select) return;
+  const guestId = Number(select.dataset.seatGuest);
+  const tableId = select.value ? Number(select.value) : null;
+  const existing = assignmentForGuest(guestId);
+  const message = byId("seatingMessage");
+
+  try {
+    if (!tableId && existing) {
+      await api(`/rest/v1/asignaciones_mesas_v54?confirmacion_id=eq.${guestId}`, {
+        method: "DELETE",
+        headers: { Prefer: "return=minimal" }
+      });
+    } else if (tableId && existing) {
+      await api(`/rest/v1/asignaciones_mesas_v54?confirmacion_id=eq.${guestId}`, {
+        method: "PATCH",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ mesa_id: tableId })
+      });
+    } else if (tableId) {
+      await api("/rest/v1/asignaciones_mesas_v54", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          confirmacion_id: guestId,
+          mesa_id: tableId
+        })
+      });
+    }
+    await loadSeating();
+    message.textContent = "Asignación guardada.";
+  } catch (error) {
+    message.textContent = `No se pudo guardar la asignación: ${error.message}`;
+  }
+});
+
+byId("seatingTables")?.addEventListener("click", async event => {
+  const edit = event.target.closest("[data-edit-table]");
+  const remove = event.target.closest("[data-delete-table]");
+  const message = byId("seatingMessage");
+
+  if (edit) {
+    const table = seatingTablesData.find(t => String(t.id) === edit.dataset.editTable);
+    if (!table) return;
+    const name = prompt("Nombre de la mesa:", table.nombre);
+    if (name === null) return;
+    const capacity = prompt("Capacidad:", table.capacidad);
+    if (capacity === null) return;
+    const notes = prompt("Notas privadas:", table.notas || "");
+    try {
+      await api(`/rest/v1/mesas_v54?id=eq.${table.id}`, {
+        method: "PATCH",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          nombre: name.trim(),
+          capacidad: Number(capacity),
+          notas: notes.trim() || null
+        })
+      });
+      await loadSeating();
+    } catch (error) {
+      message.textContent = `No se pudo editar la mesa: ${error.message}`;
+    }
+  }
+
+  if (remove) {
+    if (!confirm("¿Eliminar esta mesa? Sus invitados quedarán sin mesa.")) return;
+    try {
+      await api(`/rest/v1/mesas_v54?id=eq.${remove.dataset.deleteTable}`, {
+        method: "DELETE",
+        headers: { Prefer: "return=minimal" }
+      });
+      await loadSeating();
+    } catch (error) {
+      message.textContent = `No se pudo eliminar la mesa: ${error.message}`;
+    }
+  }
+});
+
+function exportSeatingCsv() {
+  const headers = ["Mesa", "Nombre mesa", "Invitado", "Adultos", "Niños", "Total", "Necesidades"];
+  const attending = attendingGuestsForSeating();
+  const rows = attending.map(guest => {
+    const assignment = assignmentForGuest(guest.id);
+    const table = seatingTablesData.find(t => assignment && String(t.id) === String(assignment.mesa_id));
+    return [
+      table ? table.numero : "Sin mesa",
+      table ? table.nombre : "",
+      guest.nombre || "",
+      guest.adultos || 0,
+      guest.ninos || 0,
+      guestPeopleCount(guest),
+      guest.alergias || ""
+    ];
+  });
+  downloadPlanningCsv("seating-david-raquel.csv", headers, rows);
+}
+
+function giftStatusLabel(status) {
+  return ({
+    recibido: "Recibido",
+    pendiente: "Pendiente de comprobar",
+    agradecido: "Agradecimiento enviado"
+  })[status] || status;
+}
+
+function renderGifts() {
+  const total = giftsData
+    .filter(gift => gift.estado !== "pendiente")
+    .reduce((sum, gift) => sum + Number(gift.importe || 0), 0);
+
+  byId("giftCount").textContent = giftsData.length;
+  byId("giftTotal").textContent = euroFormatter.format(total);
+  byId("giftPending").textContent =
+    giftsData.filter(gift => gift.estado === "pendiente").length;
+  byId("giftThanked").textContent =
+    giftsData.filter(gift => gift.estado === "agradecido").length;
+
+  byId("giftsTableBody").innerHTML = giftsData.map(gift => `<tr>
+    <td>${escapeHtml(gift.fecha || "—")}</td>
+    <td>${escapeHtml(gift.invitado)}</td>
+    <td>${escapeHtml(gift.tipo)}</td>
+    <td>${euroFormatter.format(Number(gift.importe || 0))}</td>
+    <td>${escapeHtml(giftStatusLabel(gift.estado))}</td>
+    <td>${escapeHtml(gift.notas || "—")}</td>
+    <td>
+      ${gift.estado !== "agradecido" ? `<button type="button" data-thank-gift="${gift.id}">Agradecido</button>` : ""}
+      <button type="button" class="danger-link" data-delete-gift="${gift.id}">Eliminar</button>
+    </td>
+  </tr>`).join("");
+
+  byId("giftCards").innerHTML = giftsData.map(gift => `<article class="guest-card">
+    <h2>${escapeHtml(gift.invitado)}</h2>
+    <dl>
+      <dt>Fecha</dt><dd>${escapeHtml(gift.fecha || "—")}</dd>
+      <dt>Tipo</dt><dd>${escapeHtml(gift.tipo)}</dd>
+      <dt>Importe</dt><dd>${euroFormatter.format(Number(gift.importe || 0))}</dd>
+      <dt>Estado</dt><dd>${escapeHtml(giftStatusLabel(gift.estado))}</dd>
+      <dt>Notas</dt><dd>${escapeHtml(gift.notas || "—")}</dd>
+    </dl>
+    <div class="card-actions">
+      ${gift.estado !== "agradecido" ? `<button type="button" data-thank-gift="${gift.id}">Marcar agradecido</button>` : ""}
+      <button type="button" class="danger-link" data-delete-gift="${gift.id}">Eliminar</button>
+    </div>
+  </article>`).join("");
+}
+
+async function loadGifts() {
+  const message = byId("giftsMessage");
+  message.textContent = "Cargando regalos…";
+  try {
+    giftsData = await api("/rest/v1/regalos_v54?select=*&order=fecha.desc,created_at.desc");
+    renderGifts();
+    message.textContent = giftsData.length
+      ? `${giftsData.length} regalo${giftsData.length === 1 ? "" : "s"} registrado${giftsData.length === 1 ? "" : "s"}.`
+      : "Todavía no hay regalos registrados.";
+  } catch (error) {
+    message.textContent = `No se pudieron cargar los regalos: ${error.message}`;
+  }
+}
+
+byId("giftForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const payload = {
+    invitado: byId("giftGuest").value.trim(),
+    tipo: byId("giftType").value,
+    importe: Number(byId("giftAmount").value),
+    fecha: byId("giftDate").value,
+    estado: byId("giftStatus").value,
+    notas: byId("giftNotes").value.trim() || null
+  };
+  try {
+    await api("/rest/v1/regalos_v54", {
+      method: "POST",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify(payload)
+    });
+    event.target.reset();
+    byId("giftDate").value = new Date().toISOString().slice(0, 10);
+    await loadGifts();
+    byId("giftsMessage").textContent = "Regalo guardado.";
+  } catch (error) {
+    byId("giftsMessage").textContent = `No se pudo guardar el regalo: ${error.message}`;
+  }
+});
+
+function handleGiftAction(event) {
+  const thank = event.target.closest("[data-thank-gift]");
+  const remove = event.target.closest("[data-delete-gift]");
+
+  if (thank) {
+    api(`/rest/v1/regalos_v54?id=eq.${thank.dataset.thankGift}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({ estado: "agradecido" })
+    }).then(loadGifts).catch(error => {
+      byId("giftsMessage").textContent = error.message;
+    });
+  }
+
+  if (remove && confirm("¿Eliminar este registro de regalo?")) {
+    api(`/rest/v1/regalos_v54?id=eq.${remove.dataset.deleteGift}`, {
+      method: "DELETE",
+      headers: { Prefer: "return=minimal" }
+    }).then(loadGifts).catch(error => {
+      byId("giftsMessage").textContent = error.message;
+    });
+  }
+}
+
+byId("giftsTableBody")?.addEventListener("click", handleGiftAction);
+byId("giftCards")?.addEventListener("click", handleGiftAction);
+
+function downloadPlanningCsv(filename, headers, rows) {
+  const escape = value => `"${String(value ?? "").replaceAll('"', '""')}"`;
+  const csv = [headers, ...rows]
+    .map(row => row.map(escape).join(";"))
+    .join("\n");
+  const blob = new Blob(["\ufeff" + csv], {
+    type: "text/csv;charset=utf-8"
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportGiftsCsv() {
+  downloadPlanningCsv(
+    "regalos-david-raquel.csv",
+    ["Fecha", "Invitado", "Tipo", "Importe EUR", "Estado", "Notas"],
+    giftsData.map(gift => [
+      gift.fecha,
+      gift.invitado,
+      gift.tipo,
+      Number(gift.importe || 0).toFixed(2),
+      giftStatusLabel(gift.estado),
+      gift.notas || ""
+    ])
+  );
+}
+
+byId("refreshSeatingButton")?.addEventListener("click", loadSeating);
+byId("exportSeatingButton")?.addEventListener("click", exportSeatingCsv);
+byId("refreshGiftsButton")?.addEventListener("click", loadGifts);
+byId("exportGiftsButton")?.addEventListener("click", exportGiftsCsv);
+
+if (byId("giftDate")) {
+  byId("giftDate").value = new Date().toISOString().slice(0, 10);
+}
 
 
 // V53.2 · Gestión de varias canciones por momento

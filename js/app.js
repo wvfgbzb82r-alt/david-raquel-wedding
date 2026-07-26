@@ -244,11 +244,27 @@ const WEDDING_CALENDAR = {
   description: "Ceremonia a las 17:00 y celebración posterior. Estamos deseando compartir este día contigo."
 };
 
-function invitationUsesPlural(payload) {
+function confirmationGrammar(payload) {
   const confirmedTotal =
     Number(payload.adultos || 0) + Number(payload.ninos || 0);
+  const attends = payload.asistencia === "Sí";
+  const treatment = normalizeInvitationTreatment(
+    currentPersonalizedInvitation?.tratamiento,
+    currentPersonalizedInvitation?.nombre_mostrado || ""
+  );
 
-  return confirmedTotal > 1;
+  const plural = attends
+    ? confirmedTotal > 1
+    : treatment !== "singular";
+
+  return {
+    plural,
+    pronoun: plural && treatment === "plural_femenino"
+      ? "vosotras"
+      : plural
+        ? "vosotros"
+        : "contigo"
+  };
 }
 
 function googleCalendarUrl() {
@@ -309,7 +325,9 @@ function showSmartRsvpResult(payload) {
   if (!rsvpResult) return;
 
   const attends = payload.asistencia === "Sí";
-  const plural = invitationUsesPlural(payload);
+  const grammar = confirmationGrammar(payload);
+  const plural = grammar.plural;
+  const groupPronoun = grammar.pronoun;
 
   if (attends) {
     const title = plural
@@ -319,7 +337,7 @@ function showSmartRsvpResult(payload) {
       ? "Gracias por confirmar vuestra asistencia."
       : "Gracias por confirmar tu asistencia.";
     const sharing = plural
-      ? "Será un día inolvidable y nos hace muy felices compartirlo con vosotros."
+      ? `Será un día inolvidable y nos hace muy felices compartirlo con ${groupPronoun}.`
       : "Será un día inolvidable y nos hace muy felices compartirlo contigo.";
     const waiting = plural
       ? "¡Os esperamos con muchísima ilusión!"
@@ -357,7 +375,7 @@ function showSmartRsvpResult(payload) {
       ? "Gracias por hacérnoslo saber."
       : "Gracias por hacérnoslo saber.";
     const farewell = plural
-      ? "Os echaremos mucho de menos, pero os llevaremos en el corazón durante todo nuestro gran día."
+      ? `Os echaremos mucho de menos, pero os llevaremos en el corazón durante todo nuestro gran día.`
       : "Te echaremos mucho de menos, pero te llevaremos en el corazón durante todo nuestro gran día.";
 
     rsvpResult.className = "rsvp-result rsvp-result--no";
@@ -676,6 +694,24 @@ function personalizedNameLooksPlural(name) {
   );
 }
 
+function normalizeInvitationTreatment(value, name = "") {
+  const treatment = String(value || "").trim().toLowerCase();
+
+  if (treatment === "singular") return "singular";
+  if (treatment === "plural_femenino") return "plural_femenino";
+  if (treatment === "plural_mixto") return "plural_mixto";
+
+  return personalizedNameLooksPlural(name)
+    ? "plural_mixto"
+    : "singular";
+}
+
+function invitationPronoun(treatment) {
+  if (treatment === "plural_femenino") return "vosotras";
+  if (treatment === "plural_mixto") return "vosotros";
+  return "contigo";
+}
+
 function applyPersonalizedInvitation(invitation, code) {
   if (!invitation?.nombre_mostrado) return false;
 
@@ -685,11 +721,16 @@ function applyPersonalizedInvitation(invitation, code) {
     1
   );
   const childrenMax = Number(invitation.ninos_max ?? 0);
+  const treatment = normalizeInvitationTreatment(
+    invitation.tratamiento,
+    invitation.nombre_mostrado
+  );
 
   currentPersonalizedInvitation = {
     ...invitation,
     adultos_max: adultsMax,
-    ninos_max: childrenMax
+    ninos_max: childrenMax,
+    tratamiento: treatment
   };
 
   document.documentElement.dataset.personalizedInvitation = "true";
@@ -707,13 +748,9 @@ function applyPersonalizedInvitation(invitation, code) {
   }
 
   if (personalizedMessage) {
-    const pluralWelcome = personalizedNameLooksPlural(
-      invitation.nombre_mostrado
-    );
-
-    personalizedMessage.textContent = pluralWelcome
-      ? "Nos hace muchísima ilusión compartir este día con vosotros."
-      : "Nos hace muchísima ilusión compartir este día contigo.";
+    const pronoun = invitationPronoun(treatment);
+    personalizedMessage.textContent =
+      `Nos hace muchísima ilusión compartir este día ${pronoun === "contigo" ? "contigo" : `con ${pronoun}`}.`;
   }
 
   if (guestNameInput) {
@@ -734,7 +771,8 @@ function applyPersonalizedInvitation(invitation, code) {
       codigo: code,
       nombre_mostrado: invitation.nombre_mostrado,
       adultos_max: adultsMax,
-      ninos_max: childrenMax
+      ninos_max: childrenMax,
+      tratamiento: treatment
     })
   );
 

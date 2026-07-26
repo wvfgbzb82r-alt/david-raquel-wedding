@@ -1,0 +1,24 @@
+DAVID & RAQUEL — V54 · SEATING Y REGALOS PRIVADOS
+
+NUEVO EN EL PANEL PRIVADO
+1. Seating:
+   - Crear, editar y eliminar mesas.
+   - Capacidad y ocupación.
+   - Asignar confirmaciones completas a una mesa.
+   - Alertas visuales de exceso de capacidad.
+   - Necesidades especiales visibles.
+   - Exportación CSV para organización/catering.
+
+2. Regalos:
+   - Invitado o familia, tipo, importe, fecha, estado y notas.
+   - Totales en euros.
+   - Pendientes de comprobar.
+   - Agradecimientos enviados.
+   - Exportación CSV.
+
+NO HAY NINGUNA VISTA PÚBLICA.
+Los invitados no pueden consultar mesas ni regalos.
+
+INSTALACIÓN
+Ejecuta primero SUPABASE-V54-SEATING-REGALOS.sql.
+Después publica los archivos de esta versión.

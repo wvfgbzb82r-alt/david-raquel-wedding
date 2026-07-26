@@ -582,3 +582,105 @@ td .row-actions { margin-top: 0; }
 .admin-spotify-list .spotify-link {
   width: fit-content;
 }
+
+
+/* =========================================================
+   V53.3 · Tratamiento inteligente
+   ========================================================= */
+
+.invitation-edit-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid rgba(171, 128, 62, .28);
+  border-radius: 12px;
+  background: rgba(255, 252, 246, .88);
+  color: #3f3324;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.invitation-edit-field select:focus {
+  border-color: rgba(171, 128, 62, .72);
+  outline: 3px solid rgba(171, 128, 62, .10);
+}
+
+
+/* =========================================================
+   V54 · Seating y regalos privados
+   ========================================================= */
+.planning-section {
+  margin-top: 30px;
+  padding: clamp(20px, 4vw, 32px);
+  border: 1px solid rgba(171,128,62,.22);
+  border-radius: 22px;
+  background: rgba(255,252,246,.72);
+}
+.planning-stats {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.planning-stats article {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.62);
+  border: 1px solid rgba(171,128,62,.16);
+}
+.planning-stats span { display:block; color:#746247; font-size:.88rem; }
+.planning-stats strong { display:block; margin-top:6px; font-size:1.35rem; }
+.planning-form {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 14px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+.planning-form label { display:grid; gap:7px; }
+.planning-form input,.planning-form select {
+  width:100%; min-height:46px; box-sizing:border-box;
+  border:1px solid rgba(171,128,62,.28); border-radius:12px;
+  padding:10px 12px; background:#fffdf8; font:inherit;
+}
+.planning-form__wide { grid-column: span 2; }
+.seating-tables {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:14px;
+  margin:18px 0 24px;
+}
+.seating-table-card {
+  padding:18px; border-radius:18px; background:#fff;
+  border:1px solid rgba(171,128,62,.18);
+}
+.seating-table-card.is-over-capacity { border-color:#a6453a; }
+.seating-table-card__header {
+  display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
+}
+.seating-table-card__header span { color:#806a48; font-size:.82rem; }
+.seating-table-card__header h3 { margin:3px 0 0; }
+.seating-table-card ul { display:grid; gap:6px; padding:0; list-style:none; }
+.seating-table-card li { display:flex; justify-content:space-between; gap:10px; }
+.seating-table-card__actions,.card-actions { display:flex; gap:9px; flex-wrap:wrap; }
+.seating-assignment-panel { margin-top:22px; }
+.seating-guests { display:grid; gap:10px; }
+.seating-guest-row {
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(220px,340px);
+  gap:14px; align-items:center; padding:14px;
+  border-radius:14px; background:rgba(255,255,255,.58);
+  border:1px solid rgba(171,128,62,.14);
+}
+.seating-guest-row div { display:grid; gap:3px; }
+.seating-guest-row span,.seating-guest-row small { color:#746247; }
+.seating-guest-row select {
+  min-height:44px; border:1px solid rgba(171,128,62,.28);
+  border-radius:12px; padding:8px 10px; background:#fff;
+}
+.planning-table td { vertical-align:top; }
+@media (max-width:800px) {
+  .planning-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .planning-form { grid-template-columns:1fr; }
+  .planning-form__wide { grid-column:auto; }
+  .seating-guest-row { grid-template-columns:1fr; }
+}

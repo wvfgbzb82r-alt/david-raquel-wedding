@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=53.2">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=54">
 </head>
 <body>
   <main>
@@ -145,6 +145,16 @@
           </label>
 
           <label>
+            <span>Tratamiento del mensaje</span>
+            <select id="invitationTreatment" required>
+              <option value="automatico" selected>Detectar según el nombre</option>
+              <option value="singular">Singular · contigo</option>
+              <option value="plural_mixto">Plural · vosotros</option>
+              <option value="plural_femenino">Plural femenino · vosotras</option>
+            </select>
+          </label>
+
+          <label>
             <span>Adultos permitidos</span>
             <select id="invitationAdults" required>
               <option value="0">0</option>
@@ -233,6 +243,124 @@
       </section>
 
 
+      
+      <section class="planning-section" aria-labelledby="seatingTitle">
+        <div class="media-section__header">
+          <div>
+            <p class="kicker">Organización privada</p>
+            <h2 id="seatingTitle">Seating y mesas</h2>
+          </div>
+          <div class="header-actions">
+            <button id="refreshSeatingButton" type="button">Actualizar seating</button>
+            <button id="exportSeatingButton" type="button">Exportar mesas</button>
+          </div>
+        </div>
+
+        <section class="planning-stats" aria-label="Resumen de mesas">
+          <article><span>Mesas</span><strong id="seatingTableCount">0</strong></article>
+          <article><span>Plazas</span><strong id="seatingCapacity">0</strong></article>
+          <article><span>Asignados</span><strong id="seatingAssigned">0</strong></article>
+          <article><span>Sin mesa</span><strong id="seatingUnassigned">0</strong></article>
+        </section>
+
+        <form id="tableForm" class="planning-form">
+          <label>
+            <span>Número</span>
+            <input id="tableNumber" type="number" min="1" placeholder="Ej.: 1" required>
+          </label>
+          <label>
+            <span>Nombre de la mesa</span>
+            <input id="tableName" type="text" placeholder="Ej.: La Antilla" required>
+          </label>
+          <label>
+            <span>Capacidad</span>
+            <input id="tableCapacity" type="number" min="1" max="30" value="10" required>
+          </label>
+          <label class="planning-form__wide">
+            <span>Notas privadas</span>
+            <input id="tableNotes" type="text" placeholder="Opcional">
+          </label>
+          <button class="primary-button" type="submit">Crear mesa</button>
+        </form>
+
+        <p id="seatingMessage" class="dashboard-message" role="status" aria-live="polite"></p>
+        <div id="seatingTables" class="seating-tables"></div>
+
+        <div class="seating-assignment-panel">
+          <h3>Asignar invitados confirmados</h3>
+          <p>La asignación se realiza por confirmación completa para mantener juntas a las personas de la misma invitación.</p>
+          <div id="seatingGuests" class="seating-guests"></div>
+        </div>
+      </section>
+
+      <section class="planning-section" aria-labelledby="giftsTitle">
+        <div class="media-section__header">
+          <div>
+            <p class="kicker">Registro privado</p>
+            <h2 id="giftsTitle">Regalos</h2>
+          </div>
+          <div class="header-actions">
+            <button id="refreshGiftsButton" type="button">Actualizar regalos</button>
+            <button id="exportGiftsButton" type="button">Exportar regalos</button>
+          </div>
+        </div>
+
+        <section class="planning-stats" aria-label="Resumen de regalos">
+          <article><span>Registros</span><strong id="giftCount">0</strong></article>
+          <article><span>Total recibido</span><strong id="giftTotal">0,00 €</strong></article>
+          <article><span>Pendientes</span><strong id="giftPending">0</strong></article>
+          <article><span>Agradecidos</span><strong id="giftThanked">0</strong></article>
+        </section>
+
+        <form id="giftForm" class="planning-form">
+          <label>
+            <span>Invitado o familia</span>
+            <input id="giftGuest" type="text" required>
+          </label>
+          <label>
+            <span>Tipo</span>
+            <select id="giftType">
+              <option value="Bizum">Bizum</option>
+              <option value="Transferencia">Transferencia</option>
+              <option value="Sobre">Sobre</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </label>
+          <label>
+            <span>Importe (€)</span>
+            <input id="giftAmount" type="number" min="0" step="0.01" required>
+          </label>
+          <label>
+            <span>Fecha</span>
+            <input id="giftDate" type="date" required>
+          </label>
+          <label>
+            <span>Estado</span>
+            <select id="giftStatus">
+              <option value="recibido">Recibido</option>
+              <option value="pendiente">Pendiente de comprobar</option>
+              <option value="agradecido">Agradecimiento enviado</option>
+            </select>
+          </label>
+          <label class="planning-form__wide">
+            <span>Notas privadas</span>
+            <input id="giftNotes" type="text" placeholder="Opcional">
+          </label>
+          <button class="primary-button" type="submit">Guardar regalo</button>
+        </form>
+
+        <p id="giftsMessage" class="dashboard-message" role="status" aria-live="polite"></p>
+        <div class="table-wrap">
+          <table class="planning-table">
+            <thead>
+              <tr><th>Fecha</th><th>Invitado</th><th>Tipo</th><th>Importe</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="giftsTableBody"></tbody>
+          </table>
+        </div>
+        <div id="giftCards" class="guest-cards"></div>
+      </section>
+
       <section class="music-admin-section" aria-labelledby="musicAdminTitle">
         <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="openDinnerSpotifyButton" type="button">Abrir cena en Spotify</button><button id="openDanceSpotifyButton" type="button">Abrir baile en Spotify</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
         <section class="music-stats"><article><span>Sugerencias</span><strong id="musicTotal">0</strong></article><article><span>Para la cena</span><strong id="musicDinner">0</strong></article><article><span>Para el baile</span><strong id="musicDance">0</strong></article><article><span>Canción más pedida</span><strong id="musicTop">—</strong></article></section>
@@ -261,6 +389,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=53.2"></script>
+  <script src="../js/admin-v21.js?v=54"></script>
 </body>
 </html>

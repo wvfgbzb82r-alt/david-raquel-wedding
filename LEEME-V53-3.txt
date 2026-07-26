@@ -1,0 +1,24 @@
+DAVID & RAQUEL — V53.3 · TRATAMIENTO INTELIGENTE
+
+NUEVO CAMPO EN EL PANEL
+- Singular · contigo
+- Plural · vosotros
+- Plural femenino · vosotras
+
+SE APLICA A
+- Mensaje de bienvenida.
+- Mensaje tras confirmar asistencia.
+- Mensaje copiado desde el panel.
+- Mensaje enviado por WhatsApp.
+
+LÓGICA DE CONFIRMACIÓN
+- Si confirma una persona: singular.
+- Si confirman dos o más: plural.
+- Si la invitación está configurada como plural femenino: vosotras.
+- Si no asistirán, se respeta el tratamiento de la invitación.
+
+IMPORTANTE
+Ejecutar SUPABASE-V53-3-TRATAMIENTO.sql antes de publicar esta versión.
+Las invitaciones existentes se clasifican automáticamente como singular
+o plural mixto. Solo hay que cambiar manualmente las de varias mujeres
+a «Plural femenino · vosotras».
