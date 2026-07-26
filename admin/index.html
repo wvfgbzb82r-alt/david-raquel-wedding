@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=54">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=54.1">
 </head>
 <body>
   <main>
@@ -103,7 +103,19 @@
         </div>
       </section>
 
-      <section class="invitation-manager" aria-labelledby="invitationManagerTitle">
+      <details class="invitation-manager-collapsible">
+        <summary>
+          <div>
+            <p class="kicker">Invitaciones personalizadas</p>
+            <strong>Enlaces únicos</strong>
+            <span>Ver, editar y compartir invitaciones individuales</span>
+          </div>
+          <span class="invitation-manager-collapsible__action" aria-hidden="true">
+            Ver invitaciones
+          </span>
+        </summary>
+
+        <section class="invitation-manager" aria-labelledby="invitationManagerTitle">
         <div class="media-section__header">
           <div>
             <p class="kicker">Invitaciones personalizadas</p>
@@ -199,6 +211,7 @@
         <div class="invitation-list" id="invitationList"></div>
       </section>
 
+      </details>
 
 
       <section class="admin-reset-section" aria-labelledby="adminResetTitle">

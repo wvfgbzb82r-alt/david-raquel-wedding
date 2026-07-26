@@ -1,0 +1,8 @@
+DAVID & RAQUEL — V54.1 · ENLACES ÚNICOS PLEGADOS
+
+- La sección «Enlaces únicos» aparece cerrada por defecto.
+- Solo se muestra un resumen compacto.
+- Al pulsar «Ver invitaciones» se abre toda la gestión.
+- Al abrirse, el botón cambia a «Ocultar invitaciones».
+- No cambia ninguna función ni dato de Supabase.
+- No necesita ejecutar SQL nuevo.

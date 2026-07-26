@@ -684,3 +684,94 @@ td .row-actions { margin-top: 0; }
   .planning-form__wide { grid-column:auto; }
   .seating-guest-row { grid-template-columns:1fr; }
 }
+
+
+/* =========================================================
+   V54.1 · Enlaces únicos plegados por defecto
+   ========================================================= */
+
+.invitation-manager-collapsible {
+  margin-top: 28px;
+  border: 1px solid rgba(171, 128, 62, .22);
+  border-radius: 20px;
+  background: rgba(255, 252, 246, .72);
+  overflow: hidden;
+}
+
+.invitation-manager-collapsible > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px clamp(20px, 4vw, 30px);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.invitation-manager-collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+
+.invitation-manager-collapsible > summary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.invitation-manager-collapsible > summary .kicker {
+  margin: 0;
+}
+
+.invitation-manager-collapsible > summary strong {
+  font-family: var(--serif, Georgia, serif);
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  color: #3f3324;
+}
+
+.invitation-manager-collapsible > summary span:not(.invitation-manager-collapsible__action) {
+  color: #746247;
+  font-size: .92rem;
+}
+
+.invitation-manager-collapsible__action {
+  flex: 0 0 auto;
+  min-width: 132px;
+  padding: 10px 14px;
+  border: 1px solid rgba(171, 128, 62, .32);
+  border-radius: 999px;
+  background: rgba(255,255,255,.68);
+  color: #6d5736;
+  font-weight: 700;
+  text-align: center;
+}
+
+.invitation-manager-collapsible[open]
+  .invitation-manager-collapsible__action {
+  font-size: 0;
+}
+
+.invitation-manager-collapsible[open]
+  .invitation-manager-collapsible__action::after {
+  content: "Ocultar invitaciones";
+  font-size: .92rem;
+}
+
+.invitation-manager-collapsible > .invitation-manager {
+  margin-top: 0;
+  border: 0;
+  border-top: 1px solid rgba(171, 128, 62, .18);
+  border-radius: 0;
+  background: transparent;
+}
+
+@media (max-width: 640px) {
+  .invitation-manager-collapsible > summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .invitation-manager-collapsible__action {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
