@@ -273,7 +273,7 @@ async function loadGuests(allowRetry = true) {
   }
 }
 
-function showDashboard() { loginView.hidden = true; dashboard.hidden = false; loadGuests(); loadSeating(); loadGifts(); }
+function showDashboard() { loginView.hidden = true; dashboard.hidden = false; loadGuests(); loadEconomy(); loadSeating(); loadGifts(); }
 function showLogin() { dashboard.hidden = true; loginView.hidden = false; }
 
 loginForm.addEventListener("submit", async event => {
@@ -1926,3 +1926,76 @@ document.querySelectorAll(".dashboard-quick-nav a").forEach(link => {
     }
   });
 });
+
+
+// V55 · Control económico
+let expensesData = [];
+let weddingBudget = 0;
+const euroV55 = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
+const expenseStatusLabels = { pagado: "Pagado", reserva: "Reserva", pendiente: "Pendiente", cancelado: "Cancelado" };
+
+function expenseShares(expense) {
+  const amount = Number(expense.importe || 0);
+  if (expense.pagado_por === "David") return { david: amount, raquel: 0 };
+  if (expense.pagado_por === "Raquel") return { david: 0, raquel: amount };
+  if (expense.pagado_por === "Ambos") return { david: amount / 2, raquel: amount / 2 };
+  const davidPct = Number(expense.porcentaje_david ?? 50) / 100;
+  return { david: amount * davidPct, raquel: amount * (1 - davidPct) };
+}
+
+function filteredExpenses() {
+  const q = normalize(byId("expenseSearch")?.value);
+  const category = byId("expenseCategoryFilter")?.value || "";
+  const payer = byId("expensePayerFilter")?.value || "";
+  const status = byId("expenseStatusFilter")?.value || "";
+  return expensesData.filter(item => {
+    const text = normalize([item.concepto,item.categoria,item.proveedor,item.referencia,item.forma_pago,item.observaciones].join(" "));
+    return (!q || text.includes(q)) && (!category || item.categoria === category) && (!payer || item.pagado_por === payer) && (!status || item.estado === status);
+  });
+}
+
+function renderEconomy() {
+  const active = expensesData.filter(item => item.estado !== "cancelado");
+  const spent = active.reduce((s,i) => s + Number(i.importe || 0), 0);
+  const pending = active.filter(i => i.estado === "pendiente" || i.estado === "reserva").reduce((s,i)=>s+Number(i.importe||0),0);
+  const paid = active.filter(i => i.estado === "pagado" || i.estado === "reserva");
+  const totals = paid.reduce((acc,item)=>{ const x=expenseShares(item); acc.david+=x.david; acc.raquel+=x.raquel; return acc; }, {david:0,raquel:0});
+  byId("economyBudget").textContent = euroV55.format(weddingBudget);
+  byId("economySpent").textContent = euroV55.format(spent);
+  byId("economyRemaining").textContent = euroV55.format(weddingBudget - spent);
+  byId("economyDavid").textContent = euroV55.format(totals.david);
+  byId("economyRaquel").textContent = euroV55.format(totals.raquel);
+  byId("economyPending").textContent = euroV55.format(pending);
+  const diff = Math.abs(totals.david - totals.raquel) / 2;
+  byId("economyBalance").textContent = totals.david === totals.raquel ? "Las aportaciones están equilibradas." : `${totals.david < totals.raquel ? "David" : "Raquel"} debería aportar ${euroV55.format(diff)} para equilibrar al 50 %.`;
+  const categories = [...new Set(expensesData.map(i=>i.categoria).filter(Boolean))].sort();
+  const catFilter = byId("expenseCategoryFilter"); const current = catFilter.value;
+  catFilter.innerHTML = '<option value="">Todas</option>' + categories.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join(""); catFilter.value=current;
+  const rows = filteredExpenses();
+  byId("expensesTableBody").innerHTML = rows.map(item => `<tr><td>${escapeHtml(item.fecha||"—")}</td><td>${escapeHtml(item.concepto)}</td><td>${escapeHtml(item.categoria)}</td><td>${escapeHtml(item.proveedor||"—")}</td><td>${euroV55.format(Number(item.importe||0))}</td><td>${escapeHtml(item.pagado_por)}</td><td>${escapeHtml(item.forma_pago_otro||item.forma_pago||"—")}</td><td><span class="expense-status expense-status--${escapeHtml(item.estado)}">${escapeHtml(expenseStatusLabels[item.estado]||item.estado)}</span></td><td>${item.requiere_factura ? (item.factura_recibida ? "Recibida" : "Pendiente") : "No requerida"}</td><td><div class="row-actions"><button type="button" data-edit-expense="${item.id}">Editar</button>${item.documento_url ? `<a class="button-link" target="_blank" rel="noopener" href="${escapeHtml(item.documento_url)}">Documento</a>`:""}<button type="button" class="danger-link" data-delete-expense="${item.id}">Eliminar</button></div></td></tr>`).join("");
+  byId("expenseCards").innerHTML = rows.map(item => `<article class="guest-card"><h2>${escapeHtml(item.concepto)}</h2><dl><dt>Fecha</dt><dd>${escapeHtml(item.fecha||"—")}</dd><dt>Categoría</dt><dd>${escapeHtml(item.categoria)}</dd><dt>Importe</dt><dd>${euroV55.format(Number(item.importe||0))}</dd><dt>Pagado por</dt><dd>${escapeHtml(item.pagado_por)}</dd><dt>Forma</dt><dd>${escapeHtml(item.forma_pago_otro||item.forma_pago||"—")}</dd><dt>Estado</dt><dd>${escapeHtml(expenseStatusLabels[item.estado]||item.estado)}</dd></dl><div class="row-actions"><button type="button" data-edit-expense="${item.id}">Editar</button><button type="button" class="danger-link" data-delete-expense="${item.id}">Eliminar</button></div></article>`).join("");
+}
+
+async function loadEconomy() {
+  const message=byId("expensesMessage"); if (!message) return;
+  message.textContent="Cargando control económico…";
+  try {
+    const [expenses, settings] = await Promise.all([api("/rest/v1/gastos_boda_v55?select=*&order=fecha.desc,created_at.desc"), api("/rest/v1/configuracion_economica_v55?select=*&id=eq.1")]);
+    expensesData=expenses||[]; weddingBudget=Number(settings?.[0]?.presupuesto_total||0); byId("budgetTotal").value=weddingBudget||""; renderEconomy(); message.textContent=expensesData.length?`${expensesData.length} gasto${expensesData.length===1?"":"s"} registrado${expensesData.length===1?"":"s"}.`:"Todavía no hay gastos registrados.";
+  } catch(error) { message.textContent=`No se pudo cargar el control económico: ${error.message}. Ejecuta SUPABASE-V55-CONTROL-ECONOMICO.sql.`; }
+}
+
+function resetExpenseForm(){ byId("expenseForm").reset(); byId("expenseId").value=""; byId("expenseDate").value=new Date().toISOString().slice(0,10); byId("expenseDavidShare").value=50; byId("saveExpenseButton").textContent="Guardar gasto"; byId("cancelExpenseEdit").hidden=true; byId("expenseDavidShareLabel").hidden=true; byId("expenseOtherPaymentLabel").hidden=true; }
+function editExpense(id){ const item=expensesData.find(x=>String(x.id)===String(id)); if(!item)return; byId("expenseId").value=item.id; byId("expenseDate").value=item.fecha||""; byId("expenseConcept").value=item.concepto||""; byId("expenseCategory").value=item.categoria||""; byId("expenseSupplier").value=item.proveedor||""; byId("expenseAmount").value=item.importe||""; byId("expensePayer").value=item.pagado_por||"David"; byId("expenseDavidShare").value=item.porcentaje_david??50; byId("expensePaymentMethod").value=item.forma_pago||"Transferencia"; byId("expenseOtherPayment").value=item.forma_pago_otro||""; byId("expenseReference").value=item.referencia||""; byId("expenseStatus").value=item.estado||"pagado"; byId("expenseDueDate").value=item.fecha_vencimiento||""; byId("expenseRequiresInvoice").value=String(Boolean(item.requiere_factura)); byId("expenseInvoiceReceived").value=String(Boolean(item.factura_recibida)); byId("expenseDocumentUrl").value=item.documento_url||""; byId("expenseNotes").value=item.observaciones||""; byId("expenseDavidShareLabel").hidden=item.pagado_por!=="Personalizado"; byId("expenseOtherPaymentLabel").hidden=item.forma_pago!=="Otro"; byId("saveExpenseButton").textContent="Guardar cambios"; byId("cancelExpenseEdit").hidden=false; byId("expenseForm").scrollIntoView({behavior:"smooth",block:"center"}); }
+
+byId("expensePayer")?.addEventListener("change",e=>byId("expenseDavidShareLabel").hidden=e.target.value!=="Personalizado");
+byId("expensePaymentMethod")?.addEventListener("change",e=>byId("expenseOtherPaymentLabel").hidden=e.target.value!=="Otro");
+byId("budgetForm")?.addEventListener("submit",async e=>{e.preventDefault(); try{weddingBudget=Number(byId("budgetTotal").value||0); await api("/rest/v1/configuracion_economica_v55?id=eq.1",{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({presupuesto_total:weddingBudget,updated_at:new Date().toISOString()})}); renderEconomy(); byId("expensesMessage").textContent="Presupuesto actualizado.";}catch(error){byId("expensesMessage").textContent=error.message;}});
+byId("expenseForm")?.addEventListener("submit",async e=>{e.preventDefault(); const id=byId("expenseId").value; const payer=byId("expensePayer").value; const payload={fecha:byId("expenseDate").value,concepto:byId("expenseConcept").value.trim(),categoria:byId("expenseCategory").value.trim(),proveedor:byId("expenseSupplier").value.trim()||null,importe:Number(byId("expenseAmount").value),pagado_por:payer,porcentaje_david:payer==="David"?100:payer==="Raquel"?0:payer==="Ambos"?50:Number(byId("expenseDavidShare").value||50),forma_pago:byId("expensePaymentMethod").value,forma_pago_otro:byId("expensePaymentMethod").value==="Otro"?(byId("expenseOtherPayment").value.trim()||null):null,referencia:byId("expenseReference").value.trim()||null,estado:byId("expenseStatus").value,fecha_vencimiento:byId("expenseDueDate").value||null,requiere_factura:byId("expenseRequiresInvoice").value==="true",factura_recibida:byId("expenseInvoiceReceived").value==="true",documento_url:byId("expenseDocumentUrl").value.trim()||null,observaciones:byId("expenseNotes").value.trim()||null,updated_at:new Date().toISOString()}; try{await api(id?`/rest/v1/gastos_boda_v55?id=eq.${encodeURIComponent(id)}`:"/rest/v1/gastos_boda_v55",{method:id?"PATCH":"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(payload)}); resetExpenseForm(); await loadEconomy();}catch(error){byId("expensesMessage").textContent=`No se pudo guardar: ${error.message}`;}});
+byId("cancelExpenseEdit")?.addEventListener("click",resetExpenseForm);
+byId("expensesTableBody")?.addEventListener("click",handleExpenseAction); byId("expenseCards")?.addEventListener("click",handleExpenseAction);
+function handleExpenseAction(e){const edit=e.target.closest("[data-edit-expense]");const del=e.target.closest("[data-delete-expense]");if(edit)editExpense(edit.dataset.editExpense);if(del&&confirm("¿Eliminar este gasto?"))api(`/rest/v1/gastos_boda_v55?id=eq.${encodeURIComponent(del.dataset.deleteExpense)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}}).then(loadEconomy).catch(error=>byId("expensesMessage").textContent=error.message);}
+["expenseSearch","expenseCategoryFilter","expensePayerFilter","expenseStatusFilter"].forEach(id=>byId(id)?.addEventListener(id==="expenseSearch"?"input":"change",renderEconomy));
+byId("refreshExpensesButton")?.addEventListener("click",loadEconomy);
+byId("exportExpensesButton")?.addEventListener("click",()=>{const headers=["Fecha","Concepto","Categoría","Proveedor","Importe","Pagado por","% David","Forma de pago","Referencia","Estado","Vencimiento","Requiere factura","Factura recibida","Documento","Observaciones"];const rows=filteredExpenses().map(i=>[i.fecha,i.concepto,i.categoria,i.proveedor,i.importe,i.pagado_por,i.porcentaje_david,i.forma_pago_otro||i.forma_pago,i.referencia,i.estado,i.fecha_vencimiento,i.requiere_factura?"Sí":"No",i.factura_recibida?"Sí":"No",i.documento_url,i.observaciones]);downloadPlanningCsv("gastos-boda-david-raquel.csv",headers,rows);});
+window.addEventListener("load",()=>{if(byId("expenseDate"))resetExpenseForm();});

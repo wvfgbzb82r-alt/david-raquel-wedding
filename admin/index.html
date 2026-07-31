@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=54.2">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=55">
 </head>
 <body>
   <main>
@@ -51,6 +51,7 @@
           <a href="#confirmaciones">Confirmaciones</a>
           <a href="#menus-especiales">Menús</a>
           <a href="#enlaces-unicos" data-open-invitations>Invitaciones</a>
+          <a href="#economia">Gastos</a>
           <a href="#seating">Seating</a>
           <a href="#regalos">Regalos</a>
           <a href="#musica">Música</a>
@@ -320,6 +321,63 @@
         </div>
       </section>
 
+
+      <section id="economia" class="planning-section economy-section dashboard-anchor" aria-labelledby="economyTitle">
+        <div class="media-section__header">
+          <div><p class="kicker">Control privado</p><h2 id="economyTitle">Control económico</h2></div>
+          <div class="header-actions">
+            <button id="refreshExpensesButton" type="button">Actualizar gastos</button>
+            <button id="exportExpensesButton" type="button">Exportar CSV</button>
+          </div>
+        </div>
+
+        <form id="budgetForm" class="budget-form">
+          <label><span>Presupuesto total (€)</span><input id="budgetTotal" type="number" min="0" step="0.01" placeholder="Ej.: 25000"></label>
+          <button class="secondary-button" type="submit">Guardar presupuesto</button>
+        </form>
+
+        <section class="planning-stats economy-stats" aria-label="Resumen económico">
+          <article><span>Presupuesto</span><strong id="economyBudget">0,00 €</strong></article>
+          <article><span>Gastado / comprometido</span><strong id="economySpent">0,00 €</strong></article>
+          <article><span>Restante</span><strong id="economyRemaining">0,00 €</strong></article>
+          <article><span>Pagado por David</span><strong id="economyDavid">0,00 €</strong></article>
+          <article><span>Pagado por Raquel</span><strong id="economyRaquel">0,00 €</strong></article>
+          <article><span>Pagos pendientes</span><strong id="economyPending">0,00 €</strong></article>
+        </section>
+        <p id="economyBalance" class="economy-balance"></p>
+
+        <form id="expenseForm" class="planning-form economy-form">
+          <input id="expenseId" type="hidden">
+          <label><span>Fecha</span><input id="expenseDate" type="date" required></label>
+          <label><span>Concepto</span><input id="expenseConcept" type="text" required placeholder="Ej.: Reserva del fotógrafo"></label>
+          <label><span>Categoría</span><input id="expenseCategory" list="expenseCategories" type="text" required placeholder="Ej.: Fotografía"><datalist id="expenseCategories"><option value="Finca"><option value="Catering"><option value="Fotografía"><option value="Vídeo"><option value="Música / DJ"><option value="Flores"><option value="Decoración"><option value="Vestido"><option value="Traje"><option value="Alianzas"><option value="Invitaciones"><option value="Transporte"><option value="Viaje"><option value="Detalles invitados"><option value="Otros"></datalist></label>
+          <label><span>Proveedor</span><input id="expenseSupplier" type="text" placeholder="Opcional"></label>
+          <label><span>Importe (€)</span><input id="expenseAmount" type="number" min="0" step="0.01" required></label>
+          <label><span>Quién ha pagado</span><select id="expensePayer"><option value="David">David</option><option value="Raquel">Raquel</option><option value="Ambos">Ambos (50/50)</option><option value="Personalizado">Reparto personalizado</option></select></label>
+          <label id="expenseDavidShareLabel" hidden><span>% David</span><input id="expenseDavidShare" type="number" min="0" max="100" step="1" value="50"></label>
+          <label><span>Forma de pago</span><select id="expensePaymentMethod"><option value="Tarjeta David">Tarjeta David</option><option value="Tarjeta Raquel">Tarjeta Raquel</option><option value="Transferencia">Transferencia</option><option value="Bizum">Bizum</option><option value="Efectivo">Efectivo</option><option value="Cuenta conjunta">Cuenta conjunta</option><option value="Otro">Otro</option></select></label>
+          <label id="expenseOtherPaymentLabel" hidden><span>Otra forma de pago</span><input id="expenseOtherPayment" type="text"></label>
+          <label><span>Referencia</span><input id="expenseReference" type="text" placeholder="Opcional"></label>
+          <label><span>Estado</span><select id="expenseStatus"><option value="pagado">Pagado</option><option value="reserva">Reserva</option><option value="pendiente">Pendiente</option><option value="cancelado">Cancelado</option></select></label>
+          <label><span>Vencimiento</span><input id="expenseDueDate" type="date"></label>
+          <label><span>¿Requiere factura?</span><select id="expenseRequiresInvoice"><option value="false">No</option><option value="true">Sí</option></select></label>
+          <label><span>Factura recibida</span><select id="expenseInvoiceReceived"><option value="false">No</option><option value="true">Sí</option></select></label>
+          <label class="planning-form__wide"><span>Documento (URL)</span><input id="expenseDocumentUrl" type="url" placeholder="Enlace a factura, contrato o ticket"></label>
+          <label class="planning-form__wide"><span>Observaciones</span><textarea id="expenseNotes" rows="3" placeholder="Opcional"></textarea></label>
+          <div class="expense-form-actions planning-form__wide"><button id="saveExpenseButton" class="primary-button" type="submit">Guardar gasto</button><button id="cancelExpenseEdit" type="button" hidden>Cancelar edición</button></div>
+        </form>
+
+        <div class="economy-toolbar">
+          <label><span>Buscar</span><input id="expenseSearch" type="search" placeholder="Concepto, proveedor, referencia…"></label>
+          <label><span>Categoría</span><select id="expenseCategoryFilter"><option value="">Todas</option></select></label>
+          <label><span>Pagado por</span><select id="expensePayerFilter"><option value="">Todos</option><option>David</option><option>Raquel</option><option>Ambos</option><option>Personalizado</option></select></label>
+          <label><span>Estado</span><select id="expenseStatusFilter"><option value="">Todos</option><option value="pagado">Pagado</option><option value="reserva">Reserva</option><option value="pendiente">Pendiente</option><option value="cancelado">Cancelado</option></select></label>
+        </div>
+        <p id="expensesMessage" class="dashboard-message" role="status" aria-live="polite"></p>
+        <div class="table-wrap"><table class="planning-table"><thead><tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th>Proveedor</th><th>Importe</th><th>Pagado por</th><th>Forma</th><th>Estado</th><th>Factura</th><th>Acciones</th></tr></thead><tbody id="expensesTableBody"></tbody></table></div>
+        <div id="expenseCards" class="guest-cards"></div>
+      </section>
+
       <section id="regalos" class="planning-section dashboard-anchor" aria-labelledby="giftsTitle">
         <div class="media-section__header">
           <div>
@@ -416,6 +474,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=54.2"></script>
+  <script src="../js/admin-v21.js?v=55"></script>
 </body>
 </html>

@@ -870,3 +870,10 @@ html {
     scroll-margin-top: 128px;
   }
 }
+
+
+/* V55 · Control económico */
+.economy-section{border-top:1px solid rgba(120,96,62,.18)}
+.budget-form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:1rem 0}.budget-form label{min-width:220px;flex:1}.budget-form span,.economy-toolbar span{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}.economy-stats{grid-template-columns:repeat(6,minmax(130px,1fr))}.economy-balance{padding:.9rem 1rem;background:#f7f2e8;border-radius:12px;font-weight:500}.economy-toolbar{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:12px;margin:1rem 0}.economy-toolbar input,.economy-toolbar select,.economy-form textarea{width:100%}.expense-form-actions{display:flex;gap:10px;align-items:center}.expense-status{display:inline-block;padding:.25rem .55rem;border-radius:999px;font-size:.78rem;background:#eee}.expense-status--pagado{background:#e5f4e9}.expense-status--reserva{background:#e8eef8}.expense-status--pendiente{background:#fff1cc}.expense-status--cancelado{background:#f8dddd}.button-link{display:inline-flex;align-items:center;text-decoration:none;padding:.45rem .6rem;border:1px solid currentColor;border-radius:6px;font-size:.78rem}
+@media(max-width:1050px){.economy-stats{grid-template-columns:repeat(3,1fr)}.economy-toolbar{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.economy-stats,.economy-toolbar{grid-template-columns:1fr 1fr}.budget-form{align-items:stretch}.budget-form button{width:100%}}
