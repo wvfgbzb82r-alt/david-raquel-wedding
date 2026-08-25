@@ -107,60 +107,142 @@ function validateRsvpForm() {
     valid = false;
   }
 
+  if (!validateDietaryRequirements(adults, children)) {
+    valid = false;
+  }
+
   return valid;
 }
 
 function collectDietaryRequirements() {
   return Array.from(document.querySelectorAll(".dietary-row"))
     .map(row => {
-      const type = row.querySelector(".dietary-type")?.value || "";
-      const other = row.querySelector(".dietary-other")?.value.trim() || "";
+      const requirementType =
+        row.querySelector(".dietary-type")?.value || "";
+      const other =
+        row.querySelector(".dietary-other input")?.value.trim() || "";
+
       return {
-        nombre: row.querySelector(".dietary-person")?.value || "",
-        detalle: type === "Otra" ? other : type
+        nombre:
+          row.querySelector(".dietary-person")?.value.trim() || "",
+        tipo_persona:
+          row.querySelector(".dietary-attendee-type")?.value || "adulto",
+        detalle:
+          requirementType === "Otra" ? other : requirementType
       };
     })
     .filter(item => item.nombre || item.detalle);
 }
 
-function getRsvpPayload() {
-  const formData = new FormData(rsvpForm);
-  return {
-    nombre: String(formData.get("nombre") || "").trim(),
-    telefono: String(formData.get("telefono") || "").trim(),
-    asistencia: String(formData.get("asistencia") || "").trim(),
-    codigo_invitacion: document.documentElement.dataset.invitationCode || null,
-    adultos: Number(formData.get("adultos") || 0),
-    ninos: Number(formData.get("ninos") || 0),
-    alergias: collectDietaryRequirements(),
-    comentarios: String(formData.get("comentarios") || "").trim()
-  };
+function validateDietaryRequirements(adults, children) {
+  if (hasSpecialMenu?.value !== "yes") return true;
+
+  const rows = Array.from(
+    dietaryList?.querySelectorAll(".dietary-row") || []
+  );
+
+  if (!rows.length) return true;
+
+  let valid = true;
+  let adultRows = 0;
+  let childRows = 0;
+
+  rows.forEach(row => {
+    const nameInput = row.querySelector(".dietary-person");
+    const attendeeType =
+      row.querySelector(".dietary-attendee-type")?.value || "adulto";
+    const requirementType =
+      row.querySelector(".dietary-type")?.value || "";
+    const otherInput = row.querySelector(".dietary-other input");
+    const error = row.querySelector(".dietary-row-error");
+
+    if (error) error.textContent = "";
+
+    if (attendeeType === "nino") childRows += 1;
+    else adultRows += 1;
+
+    if (!nameInput?.value.trim()) {
+      if (error) {
+        error.textContent =
+          "Escribe el nombre de la persona que necesita este menú.";
+      }
+      nameInput?.focus();
+      valid = false;
+      return;
+    }
+
+    if (
+      requirementType === "Otra" &&
+      !otherInput?.value.trim()
+    ) {
+      if (error) {
+        error.textContent =
+          "Especifica la necesidad alimentaria.";
+      }
+      valid = false;
+    }
+  });
+
+  if (adultRows > adults) {
+    const error = rows.at(-1)?.querySelector(".dietary-row-error");
+    if (error) {
+      error.textContent =
+        `Has indicado ${adultRows} adultos con menú especial, ` +
+        `pero has confirmado ${adults} adultos.`;
+    }
+    valid = false;
+  }
+
+  if (childRows > children) {
+    const error = rows.at(-1)?.querySelector(".dietary-row-error");
+    if (error) {
+      error.textContent =
+        `Has indicado ${childRows} niños con menú especial, ` +
+        `pero has confirmado ${children} niños.`;
+    }
+    valid = false;
+  }
+
+  return valid;
 }
 
 const dietaryList = document.getElementById("dietaryList");
 const addDietaryRowButton = document.getElementById("addDietaryRow");
 const hasSpecialMenu = document.getElementById("hasSpecialMenu");
 
-function attendeeNamesForDietary() {
-  const mainName = document.getElementById("guestName")?.value.trim();
-  const count = Number(adultsSelect?.value || 0) + Number(childrenSelect?.value || 0);
-  return Array.from({ length: Math.max(1, count) }, (_, index) => ({
-    value: index === 0 && mainName ? mainName : `Asistente ${index + 1}`,
-    label: index === 0 && mainName ? mainName : `Asistente ${index + 1}`
-  }));
+function attendeeTypeOptions() {
+  const adults = Number(adultsSelect?.value || 0);
+  const children = Number(childrenSelect?.value || 0);
+  const options = [];
+
+  if (adults > 0) {
+    options.push('<option value="adulto">Adulto</option>');
+  }
+  if (children > 0) {
+    options.push('<option value="nino">Niño</option>');
+  }
+
+  if (!options.length) {
+    options.push('<option value="adulto">Adulto</option>');
+  }
+
+  return options.join("");
 }
 
-function refreshDietaryPersonOptions() {
-  const names = attendeeNamesForDietary();
-  document.querySelectorAll(".dietary-person").forEach(select => {
-    const current = select.value;
-    select.innerHTML = names.map(item =>
-      `<option value="${item.value}">${item.label}</option>`
-    ).join("");
-    if ([...select.options].some(option => option.value === current)) {
-      select.value = current;
-    }
-  });
+function refreshDietaryAttendeeTypes() {
+  document
+    .querySelectorAll(".dietary-attendee-type")
+    .forEach(select => {
+      const current = select.value;
+      select.innerHTML = attendeeTypeOptions();
+
+      if (
+        Array.from(select.options)
+          .some(option => option.value === current)
+      ) {
+        select.value = current;
+      }
+    });
 }
 
 function updateDietaryRemoveButtons() {
@@ -188,25 +270,56 @@ function dietaryTypeOptions() {
 
 function addDietaryRow() {
   if (!dietaryList) return;
+
   const row = document.createElement("div");
   row.className = "dietary-row";
   row.innerHTML = `
     <label>
-      <span>Persona</span>
-      <select class="dietary-person"></select>
+      <span>Nombre de la persona</span>
+      <input
+        class="dietary-person"
+        type="text"
+        autocomplete="name"
+        placeholder="Ej.: Cristina"
+      >
     </label>
+
+    <label>
+      <span>Es adulto o niño</span>
+      <select class="dietary-attendee-type">
+        ${attendeeTypeOptions()}
+      </select>
+    </label>
+
     <label>
       <span>Necesidad alimentaria</span>
-      <select class="dietary-type">${dietaryTypeOptions()}</select>
+      <select class="dietary-type">
+        ${dietaryTypeOptions()}
+      </select>
     </label>
-    <button type="button" class="dietary-remove" aria-label="Eliminar esta persona">×</button>
+
+    <button
+      type="button"
+      class="dietary-remove"
+      aria-label="Eliminar esta persona"
+    >×</button>
+
     <label class="dietary-other" hidden>
       <span>Especificar</span>
-      <input type="text" placeholder="Indica la necesidad">
+      <input
+        type="text"
+        placeholder="Indica la necesidad"
+      >
     </label>
+
+    <small
+      class="dietary-row-error"
+      aria-live="polite"
+    ></small>
   `;
+
   dietaryList.appendChild(row);
-  refreshDietaryPersonOptions();
+  refreshDietaryAttendeeTypes();
   updateDietaryRemoveButtons();
 }
 
@@ -230,10 +343,9 @@ dietaryList?.addEventListener("change", event => {
   const row = event.target.closest(".dietary-row");
   row.querySelector(".dietary-other").hidden = event.target.value !== "Otra";
 });
-adultsSelect?.addEventListener("change", refreshDietaryPersonOptions);
-childrenSelect?.addEventListener("change", refreshDietaryPersonOptions);
-document.getElementById("guestName")?.addEventListener("input", refreshDietaryPersonOptions);
-refreshDietaryPersonOptions();
+adultsSelect?.addEventListener("change", refreshDietaryAttendeeTypes);
+childrenSelect?.addEventListener("change", refreshDietaryAttendeeTypes);
+refreshDietaryAttendeeTypes();
 
 
 const WEDDING_CALENDAR = {

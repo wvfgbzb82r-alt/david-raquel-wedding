@@ -2101,3 +2101,48 @@ img[src*="amapolas"] {
     grid-column: 2;
   }
 }
+
+
+/* =========================================================
+   V55.2 · Menús especiales por persona
+   ========================================================= */
+
+.dietary-row {
+  grid-template-columns:
+    minmax(0, 1.15fr)
+    minmax(120px, .72fr)
+    minmax(0, 1.2fr)
+    auto;
+}
+
+.dietary-row input,
+.dietary-row select {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.dietary-other {
+  grid-column: 1 / -2;
+}
+
+.dietary-row-error {
+  grid-column: 1 / -1;
+  min-height: 1em;
+  color: #9f6153;
+  font-family: var(--sans);
+  font-size: .76rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+  .dietary-row {
+    grid-template-columns: 1fr;
+    padding-right: 54px;
+  }
+
+  .dietary-other,
+  .dietary-row-error {
+    grid-column: 1;
+  }
+}

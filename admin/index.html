@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=55">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=55.1">
 </head>
 <body>
   <main>
@@ -284,11 +284,15 @@
           </div>
         </div>
 
-        <section class="planning-stats" aria-label="Resumen de mesas">
-          <article><span>Mesas</span><strong id="seatingTableCount">0</strong></article>
-          <article><span>Plazas</span><strong id="seatingCapacity">0</strong></article>
-          <article><span>Asignados</span><strong id="seatingAssigned">0</strong></article>
-          <article><span>Sin mesa</span><strong id="seatingUnassigned">0</strong></article>
+        <section class="planning-stats seating-stats" aria-label="Resumen de mesas">
+          <article><span>Mesas adultos</span><strong id="seatingAdultTables">0</strong></article>
+          <article><span>Mesas niños</span><strong id="seatingChildTables">0</strong></article>
+          <article><span>Plazas adultos</span><strong id="seatingAdultCapacity">0</strong></article>
+          <article><span>Plazas niños</span><strong id="seatingChildCapacity">0</strong></article>
+          <article><span>Adultos asignados</span><strong id="seatingAdultsAssigned">0</strong></article>
+          <article><span>Niños asignados</span><strong id="seatingChildrenAssigned">0</strong></article>
+          <article><span>Adultos sin mesa</span><strong id="seatingAdultsUnassigned">0</strong></article>
+          <article><span>Niños sin mesa</span><strong id="seatingChildrenUnassigned">0</strong></article>
         </section>
 
         <form id="tableForm" class="planning-form">
@@ -299,6 +303,13 @@
           <label>
             <span>Nombre de la mesa</span>
             <input id="tableName" type="text" placeholder="Ej.: La Antilla" required>
+          </label>
+          <label>
+            <span>Tipo de mesa</span>
+            <select id="tableType" required>
+              <option value="adultos" selected>Mesa de adultos</option>
+              <option value="ninos">Mesa de niños</option>
+            </select>
           </label>
           <label>
             <span>Capacidad</span>
@@ -316,7 +327,7 @@
 
         <div class="seating-assignment-panel">
           <h3>Asignar invitados confirmados</h3>
-          <p>La asignación se realiza por confirmación completa para mantener juntas a las personas de la misma invitación.</p>
+          <p>Los adultos y los niños se asignan por separado. Una misma invitación puede tener a sus adultos en una mesa y a sus niños en otra.</p>
           <div id="seatingGuests" class="seating-guests"></div>
         </div>
       </section>
@@ -474,6 +485,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=55"></script>
+  <script src="../js/admin-v21.js?v=55.2"></script>
 </body>
 </html>

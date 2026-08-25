@@ -127,9 +127,17 @@ function dietaryItems(value) {
 function dietaryHtml(value) {
   const items = dietaryItems(value);
   if (!items.length) return "—";
-  return `<ul class="dietary-admin-list">${items.map(item =>
-    `<li><strong>${escapeHtml(item.nombre || "Sin nombre")}:</strong> ${escapeHtml(item.detalle || "Sin detalle")}</li>`
-  ).join("")}</ul>`;
+  return `<ul class="dietary-admin-list">${items.map(item => {
+    const personType =
+      item.tipo_persona === "nino"
+        ? "Niño"
+        : item.tipo_persona === "adulto"
+          ? "Adulto"
+          : "";
+    return `<li><strong>${escapeHtml(item.nombre || "Sin nombre")}</strong>` +
+      `${personType ? ` <span>(${personType})</span>` : ""}: ` +
+      `${escapeHtml(item.detalle || "Sin detalle")}</li>`;
+  }).join("")}</ul>`;
 }
 
 function filteredGuests() {
@@ -335,6 +343,12 @@ function specialRequirementRows() {
         rows.push({
           invitation: guest.nombre || "",
           person: item.nombre || guest.nombre || "Sin nombre",
+          personType:
+            item.tipo_persona === "nino"
+              ? "Niño"
+              : item.tipo_persona === "adulto"
+                ? "Adulto"
+                : "Sin especificar",
           requirement: item.detalle || "Otra"
         });
       });
@@ -358,7 +372,9 @@ function updateCateringDashboard() {
   const groups = new Map();
   specialRows.forEach(row => {
     if (!groups.has(row.requirement)) groups.set(row.requirement, []);
-    groups.get(row.requirement).push(row.person);
+    groups.get(row.requirement).push(
+      `${row.person} · ${row.personType}`
+    );
   });
 
   specialMenuBreakdown.innerHTML = groups.size
@@ -374,8 +390,13 @@ function updateCateringDashboard() {
 function exportCateringCsv() {
   const rows = specialRequirementRows();
   const data = [
-    ["Invitación", "Persona", "Alergia o preferencia alimentaria"],
-    ...rows.map(row => [row.invitation, row.person, row.requirement])
+    ["Invitación", "Persona", "Adulto / Niño", "Alergia o preferencia alimentaria"],
+    ...rows.map(row => [
+      row.invitation,
+      row.person,
+      row.personType,
+      row.requirement
+    ])
   ];
 
   const csv = data
@@ -1190,98 +1211,246 @@ const euroFormatter = new Intl.NumberFormat("es-ES", {
 });
 
 function attendingGuestsForSeating() {
-  return guests.filter(guest => attendanceCategory(guest.asistencia) === "yes");
-}
-
-function guestPeopleCount(guest) {
-  return Number(guest.adultos || 0) + Number(guest.ninos || 0);
-}
-
-function tableAssignedPeople(tableId) {
-  const assignedGuestIds = seatingAssignments
-    .filter(item => String(item.mesa_id) === String(tableId))
-    .map(item => String(item.confirmacion_id));
-
-  return attendingGuestsForSeating()
-    .filter(guest => assignedGuestIds.includes(String(guest.id)))
-    .reduce((sum, guest) => sum + guestPeopleCount(guest), 0);
-}
-
-function assignmentForGuest(guestId) {
-  return seatingAssignments.find(
-    item => String(item.confirmacion_id) === String(guestId)
+  return guests.filter(
+    guest => attendanceCategory(guest.asistencia) === "yes"
   );
+}
+
+function seatingGroupCount(guest, groupType) {
+  return groupType === "ninos"
+    ? Number(guest.ninos || 0)
+    : Number(guest.adultos || 0);
+}
+
+function tablesByType(type) {
+  return seatingTablesData.filter(
+    table => String(table.tipo || "adultos") === type
+  );
+}
+
+function assignmentForGuest(guestId, groupType) {
+  return seatingAssignments.find(
+    item =>
+      String(item.confirmacion_id) === String(guestId) &&
+      String(item.tipo_grupo || "adultos") === groupType
+  );
+}
+
+function tableAssignedPeople(table) {
+  const tableType = String(table.tipo || "adultos");
+
+  return seatingAssignments
+    .filter(item => String(item.mesa_id) === String(table.id))
+    .reduce((sum, item) => {
+      const guest = attendingGuestsForSeating().find(
+        person => String(person.id) === String(item.confirmacion_id)
+      );
+      if (!guest) return sum;
+      return sum + seatingGroupCount(guest, tableType);
+    }, 0);
+}
+
+function seatingTableCard(table, attending) {
+  const tableType = String(table.tipo || "adultos");
+  const occupied = tableAssignedPeople(table);
+  const capacity = Number(table.capacidad || 0);
+  const over = occupied > capacity;
+
+  const members = seatingAssignments
+    .filter(
+      item =>
+        String(item.mesa_id) === String(table.id) &&
+        String(item.tipo_grupo || "adultos") === tableType
+    )
+    .map(item => {
+      const guest = attending.find(
+        person => String(person.id) === String(item.confirmacion_id)
+      );
+      return guest
+        ? {
+            guest,
+            count: seatingGroupCount(guest, tableType)
+          }
+        : null;
+    })
+    .filter(Boolean);
+
+  return `<article class="seating-table-card seating-table-card--${tableType} ${over ? "is-over-capacity" : ""}">
+    <div class="seating-table-card__header">
+      <div>
+        <span>Mesa ${escapeHtml(table.numero)}</span>
+        <h3>${escapeHtml(table.nombre)}</h3>
+        <small class="seating-table-type">
+          ${tableType === "ninos" ? "Mesa de niños" : "Mesa de adultos"}
+        </small>
+      </div>
+      <strong>${occupied}/${capacity}</strong>
+    </div>
+    ${table.notas ? `<p>${escapeHtml(table.notas)}</p>` : ""}
+    <ul>${
+      members.length
+        ? members.map(item =>
+            `<li>
+              <span>${escapeHtml(item.guest.nombre || "Sin nombre")}</span>
+              <strong>${item.count}</strong>
+            </li>`
+          ).join("")
+        : "<li>Sin invitados asignados</li>"
+    }</ul>
+    <div class="seating-table-card__actions">
+      <button type="button" data-edit-table="${table.id}">Editar</button>
+      <button type="button" class="danger-link" data-delete-table="${table.id}">
+        Eliminar
+      </button>
+    </div>
+  </article>`;
 }
 
 function renderSeating() {
   const attending = attendingGuestsForSeating();
-  const totalCapacity = seatingTablesData.reduce(
+  const adultTables = tablesByType("adultos");
+  const childTables = tablesByType("ninos");
+
+  const adultCapacity = adultTables.reduce(
     (sum, table) => sum + Number(table.capacidad || 0), 0
   );
-  const assignedIds = new Set(
-    seatingAssignments.map(item => String(item.confirmacion_id))
+  const childCapacity = childTables.reduce(
+    (sum, table) => sum + Number(table.capacidad || 0), 0
   );
-  const assignedPeople = attending
-    .filter(guest => assignedIds.has(String(guest.id)))
-    .reduce((sum, guest) => sum + guestPeopleCount(guest), 0);
-  const unassignedPeople = attending
-    .filter(guest => !assignedIds.has(String(guest.id)))
-    .reduce((sum, guest) => sum + guestPeopleCount(guest), 0);
 
-  byId("seatingTableCount").textContent = seatingTablesData.length;
-  byId("seatingCapacity").textContent = totalCapacity;
-  byId("seatingAssigned").textContent = assignedPeople;
-  byId("seatingUnassigned").textContent = unassignedPeople;
+  const totalAdults = attending.reduce(
+    (sum, guest) => sum + Number(guest.adultos || 0), 0
+  );
+  const totalChildren = attending.reduce(
+    (sum, guest) => sum + Number(guest.ninos || 0), 0
+  );
+
+  const adultsAssigned = attending.reduce(
+    (sum, guest) =>
+      sum + (assignmentForGuest(guest.id, "adultos")
+        ? Number(guest.adultos || 0)
+        : 0),
+    0
+  );
+  const childrenAssigned = attending.reduce(
+    (sum, guest) =>
+      sum + (assignmentForGuest(guest.id, "ninos")
+        ? Number(guest.ninos || 0)
+        : 0),
+    0
+  );
+
+  byId("seatingAdultTables").textContent = adultTables.length;
+  byId("seatingChildTables").textContent = childTables.length;
+  byId("seatingAdultCapacity").textContent = adultCapacity;
+  byId("seatingChildCapacity").textContent = childCapacity;
+  byId("seatingAdultsAssigned").textContent = adultsAssigned;
+  byId("seatingChildrenAssigned").textContent = childrenAssigned;
+  byId("seatingAdultsUnassigned").textContent =
+    Math.max(0, totalAdults - adultsAssigned);
+  byId("seatingChildrenUnassigned").textContent =
+    Math.max(0, totalChildren - childrenAssigned);
 
   const tableContainer = byId("seatingTables");
-  tableContainer.innerHTML = seatingTablesData.length
-    ? seatingTablesData.map(table => {
-        const occupied = tableAssignedPeople(table.id);
-        const capacity = Number(table.capacidad || 0);
-        const over = occupied > capacity;
-        const members = seatingAssignments
-          .filter(item => String(item.mesa_id) === String(table.id))
-          .map(item => attending.find(g => String(g.id) === String(item.confirmacion_id)))
-          .filter(Boolean);
-
-        return `<article class="seating-table-card ${over ? "is-over-capacity" : ""}">
-          <div class="seating-table-card__header">
-            <div>
-              <span>Mesa ${escapeHtml(table.numero)}</span>
-              <h3>${escapeHtml(table.nombre)}</h3>
-            </div>
-            <strong>${occupied}/${capacity}</strong>
-          </div>
-          ${table.notas ? `<p>${escapeHtml(table.notas)}</p>` : ""}
-          <ul>${members.length
-            ? members.map(guest =>
-                `<li><span>${escapeHtml(guest.nombre || "Sin nombre")}</span><strong>${guestPeopleCount(guest)}</strong></li>`
+  tableContainer.innerHTML = `
+    <section class="seating-table-group">
+      <div class="seating-table-group__heading">
+        <h3>Mesas de adultos</h3>
+        <span>${adultTables.length} mesa${adultTables.length === 1 ? "" : "s"}</span>
+      </div>
+      <div class="seating-table-group__grid">
+        ${
+          adultTables.length
+            ? adultTables.map(table =>
+                seatingTableCard(table, attending)
               ).join("")
-            : "<li>Sin invitados asignados</li>"}</ul>
-          <div class="seating-table-card__actions">
-            <button type="button" data-edit-table="${table.id}">Editar</button>
-            <button type="button" class="danger-link" data-delete-table="${table.id}">Eliminar</button>
-          </div>
-        </article>`;
-      }).join("")
-    : "<p>Todavía no hay mesas creadas.</p>";
+            : "<p>Todavía no hay mesas de adultos.</p>"
+        }
+      </div>
+    </section>
+
+    <section class="seating-table-group">
+      <div class="seating-table-group__heading">
+        <h3>Mesas de niños</h3>
+        <span>${childTables.length} mesa${childTables.length === 1 ? "" : "s"}</span>
+      </div>
+      <div class="seating-table-group__grid">
+        ${
+          childTables.length
+            ? childTables.map(table =>
+                seatingTableCard(table, attending)
+              ).join("")
+            : "<p>Todavía no hay mesas de niños.</p>"
+        }
+      </div>
+    </section>`;
 
   const guestContainer = byId("seatingGuests");
   guestContainer.innerHTML = attending.length
     ? attending.map(guest => {
-        const assignment = assignmentForGuest(guest.id);
-        return `<article class="seating-guest-row">
-          <div>
+        const adults = Number(guest.adultos || 0);
+        const children = Number(guest.ninos || 0);
+        const adultAssignment =
+          assignmentForGuest(guest.id, "adultos");
+        const childAssignment =
+          assignmentForGuest(guest.id, "ninos");
+
+        return `<article class="seating-guest-row seating-guest-row--split">
+          <div class="seating-guest-row__identity">
             <strong>${escapeHtml(guest.nombre || "Sin nombre")}</strong>
-            <span>${guestPeopleCount(guest)} personas · ${Number(guest.adultos || 0)} adultos · ${Number(guest.ninos || 0)} niños</span>
-            ${guest.alergias ? `<small>Necesidades: ${escapeHtml(guest.alergias)}</small>` : ""}
+            <span>${adults} adultos · ${children} niños</span>
+            ${
+              guest.alergias
+                ? `<small>Necesidades: ${escapeHtml(guest.alergias)}</small>`
+                : ""
+            }
           </div>
-          <select data-seat-guest="${guest.id}">
-            <option value="">Sin mesa</option>
-            ${seatingTablesData.map(table =>
-              `<option value="${table.id}" ${assignment && String(assignment.mesa_id) === String(table.id) ? "selected" : ""}>Mesa ${escapeHtml(table.numero)} · ${escapeHtml(table.nombre)}</option>`
-            ).join("")}
-          </select>
+
+          <div class="seating-split-selects">
+            ${
+              adults > 0
+                ? `<label>
+                    <span>Mesa adultos · ${adults}</span>
+                    <select data-seat-guest="${guest.id}" data-seat-type="adultos">
+                      <option value="">Sin mesa de adultos</option>
+                      ${adultTables.map(table =>
+                        `<option value="${table.id}"
+                          ${
+                            adultAssignment &&
+                            String(adultAssignment.mesa_id) === String(table.id)
+                              ? "selected"
+                              : ""
+                          }>
+                          Mesa ${escapeHtml(table.numero)} · ${escapeHtml(table.nombre)}
+                        </option>`
+                      ).join("")}
+                    </select>
+                  </label>`
+                : ""
+            }
+
+            ${
+              children > 0
+                ? `<label>
+                    <span>Mesa niños · ${children}</span>
+                    <select data-seat-guest="${guest.id}" data-seat-type="ninos">
+                      <option value="">Sin mesa de niños</option>
+                      ${childTables.map(table =>
+                        `<option value="${table.id}"
+                          ${
+                            childAssignment &&
+                            String(childAssignment.mesa_id) === String(table.id)
+                              ? "selected"
+                              : ""
+                          }>
+                          Mesa ${escapeHtml(table.numero)} · ${escapeHtml(table.nombre)}
+                        </option>`
+                      ).join("")}
+                    </select>
+                  </label>`
+                : ""
+            }
+          </div>
         </article>`;
       }).join("")
     : "<p>Todavía no hay asistentes confirmados.</p>";
@@ -1290,24 +1459,28 @@ function renderSeating() {
 async function loadSeating() {
   const message = byId("seatingMessage");
   message.textContent = "Cargando seating…";
+
   try {
     [seatingTablesData, seatingAssignments] = await Promise.all([
-      api("/rest/v1/mesas_v54?select=*&order=numero.asc"),
+      api("/rest/v1/mesas_v54?select=*&order=tipo.asc,numero.asc"),
       api("/rest/v1/asignaciones_mesas_v54?select=*")
     ]);
     renderSeating();
     message.textContent = "Seating actualizado.";
   } catch (error) {
-    message.textContent = `No se pudo cargar el seating: ${error.message}`;
+    message.textContent =
+      `No se pudo cargar el seating: ${error.message}`;
   }
 }
 
 byId("tableForm")?.addEventListener("submit", async event => {
   event.preventDefault();
+
   const message = byId("seatingMessage");
   const payload = {
     numero: Number(byId("tableNumber").value),
     nombre: byId("tableName").value.trim(),
+    tipo: byId("tableType").value,
     capacidad: Number(byId("tableCapacity").value),
     notas: byId("tableNotes").value.trim() || null
   };
@@ -1318,34 +1491,51 @@ byId("tableForm")?.addEventListener("submit", async event => {
       headers: { Prefer: "return=minimal" },
       body: JSON.stringify(payload)
     });
+
     event.target.reset();
     byId("tableCapacity").value = "10";
+    byId("tableType").value = "adultos";
+
     await loadSeating();
-    message.textContent = "Mesa creada.";
+    message.textContent =
+      payload.tipo === "ninos"
+        ? "Mesa de niños creada."
+        : "Mesa de adultos creada.";
   } catch (error) {
-    message.textContent = `No se pudo crear la mesa: ${error.message}`;
+    message.textContent =
+      `No se pudo crear la mesa: ${error.message}`;
   }
 });
 
 byId("seatingGuests")?.addEventListener("change", async event => {
   const select = event.target.closest("[data-seat-guest]");
   if (!select) return;
+
   const guestId = Number(select.dataset.seatGuest);
+  const groupType = select.dataset.seatType || "adultos";
   const tableId = select.value ? Number(select.value) : null;
-  const existing = assignmentForGuest(guestId);
+  const existing = assignmentForGuest(guestId, groupType);
   const message = byId("seatingMessage");
 
   try {
+    const query =
+      `/rest/v1/asignaciones_mesas_v54` +
+      `?confirmacion_id=eq.${guestId}` +
+      `&tipo_grupo=eq.${encodeURIComponent(groupType)}`;
+
     if (!tableId && existing) {
-      await api(`/rest/v1/asignaciones_mesas_v54?confirmacion_id=eq.${guestId}`, {
+      await api(query, {
         method: "DELETE",
         headers: { Prefer: "return=minimal" }
       });
     } else if (tableId && existing) {
-      await api(`/rest/v1/asignaciones_mesas_v54?confirmacion_id=eq.${guestId}`, {
+      await api(query, {
         method: "PATCH",
         headers: { Prefer: "return=minimal" },
-        body: JSON.stringify({ mesa_id: tableId })
+        body: JSON.stringify({
+          mesa_id: tableId,
+          tipo_grupo: groupType
+        })
       });
     } else if (tableId) {
       await api("/rest/v1/asignaciones_mesas_v54", {
@@ -1353,14 +1543,20 @@ byId("seatingGuests")?.addEventListener("change", async event => {
         headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
           confirmacion_id: guestId,
-          mesa_id: tableId
+          mesa_id: tableId,
+          tipo_grupo: groupType
         })
       });
     }
+
     await loadSeating();
-    message.textContent = "Asignación guardada.";
+    message.textContent =
+      groupType === "ninos"
+        ? "Mesa de niños guardada."
+        : "Mesa de adultos guardada.";
   } catch (error) {
-    message.textContent = `No se pudo guardar la asignación: ${error.message}`;
+    message.textContent =
+      `No se pudo guardar la asignación: ${error.message}`;
   }
 });
 
@@ -1370,13 +1566,19 @@ byId("seatingTables")?.addEventListener("click", async event => {
   const message = byId("seatingMessage");
 
   if (edit) {
-    const table = seatingTablesData.find(t => String(t.id) === edit.dataset.editTable);
+    const table = seatingTablesData.find(
+      item => String(item.id) === edit.dataset.editTable
+    );
     if (!table) return;
+
     const name = prompt("Nombre de la mesa:", table.nombre);
     if (name === null) return;
+
     const capacity = prompt("Capacidad:", table.capacidad);
     if (capacity === null) return;
+
     const notes = prompt("Notas privadas:", table.notas || "");
+
     try {
       await api(`/rest/v1/mesas_v54?id=eq.${table.id}`, {
         method: "PATCH",
@@ -1388,42 +1590,82 @@ byId("seatingTables")?.addEventListener("click", async event => {
         })
       });
       await loadSeating();
+      message.textContent = "Mesa actualizada.";
     } catch (error) {
-      message.textContent = `No se pudo editar la mesa: ${error.message}`;
+      message.textContent =
+        `No se pudo editar la mesa: ${error.message}`;
     }
   }
 
   if (remove) {
-    if (!confirm("¿Eliminar esta mesa? Sus invitados quedarán sin mesa.")) return;
+    if (!confirm(
+      "¿Eliminar esta mesa? Sus invitados quedarán sin mesa en ese grupo."
+    )) return;
+
     try {
-      await api(`/rest/v1/mesas_v54?id=eq.${remove.dataset.deleteTable}`, {
-        method: "DELETE",
-        headers: { Prefer: "return=minimal" }
-      });
+      await api(
+        `/rest/v1/mesas_v54?id=eq.${remove.dataset.deleteTable}`,
+        {
+          method: "DELETE",
+          headers: { Prefer: "return=minimal" }
+        }
+      );
       await loadSeating();
     } catch (error) {
-      message.textContent = `No se pudo eliminar la mesa: ${error.message}`;
+      message.textContent =
+        `No se pudo eliminar la mesa: ${error.message}`;
     }
   }
 });
 
 function exportSeatingCsv() {
-  const headers = ["Mesa", "Nombre mesa", "Invitado", "Adultos", "Niños", "Total", "Necesidades"];
   const attending = attendingGuestsForSeating();
+
+  const headers = [
+    "Invitación",
+    "Adultos",
+    "Mesa adultos",
+    "Niños",
+    "Mesa niños",
+    "Necesidades"
+  ];
+
   const rows = attending.map(guest => {
-    const assignment = assignmentForGuest(guest.id);
-    const table = seatingTablesData.find(t => assignment && String(t.id) === String(assignment.mesa_id));
+    const adultAssignment =
+      assignmentForGuest(guest.id, "adultos");
+    const childAssignment =
+      assignmentForGuest(guest.id, "ninos");
+
+    const adultTable = seatingTablesData.find(
+      table =>
+        adultAssignment &&
+        String(table.id) === String(adultAssignment.mesa_id)
+    );
+    const childTable = seatingTablesData.find(
+      table =>
+        childAssignment &&
+        String(table.id) === String(childAssignment.mesa_id)
+    );
+
     return [
-      table ? table.numero : "Sin mesa",
-      table ? table.nombre : "",
       guest.nombre || "",
-      guest.adultos || 0,
-      guest.ninos || 0,
-      guestPeopleCount(guest),
+      Number(guest.adultos || 0),
+      adultTable
+        ? `Mesa ${adultTable.numero} · ${adultTable.nombre}`
+        : "Sin mesa",
+      Number(guest.ninos || 0),
+      childTable
+        ? `Mesa ${childTable.numero} · ${childTable.nombre}`
+        : "Sin mesa",
       guest.alergias || ""
     ];
   });
-  downloadPlanningCsv("seating-david-raquel.csv", headers, rows);
+
+  downloadPlanningCsv(
+    "seating-adultos-ninos-david-raquel.csv",
+    headers,
+    rows
+  );
 }
 
 function giftStatusLabel(status) {

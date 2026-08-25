@@ -1,0 +1,31 @@
+DAVID & RAQUEL — V55.2 · MENÚS ESPECIALES POR PERSONA
+
+CAMBIO
+Cuando una invitación tiene varias personas, el menú especial se identifica
+ahora por el nombre real de la persona.
+
+Ejemplo:
+Invitación: Cristina y Adrián
+- Cristina · Adulto · Sin gluten
+- Adrián no necesita menú especial y no se añade.
+
+FORMULARIO DEL INVITADO
+Al indicar que existe un menú especial, se pide:
+- Nombre de la persona.
+- Si es adulto o niño.
+- Necesidad alimentaria.
+
+Se pueden añadir varias personas si fuese necesario.
+
+VALIDACIONES
+- El nombre es obligatorio.
+- No pueden registrarse más adultos con menú especial que adultos confirmados.
+- No pueden registrarse más niños con menú especial que niños confirmados.
+
+PANEL PRIVADO
+Muestra nombre + Adulto/Niño + necesidad.
+La exportación de catering también incluye estos datos.
+
+SUPABASE
+No requiere SQL nuevo: la información se sigue guardando dentro del JSON
+de alergias/necesidades existente.

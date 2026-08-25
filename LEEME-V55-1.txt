@@ -1,0 +1,28 @@
+DAVID & RAQUEL — V55.1 · SEATING ADULTOS / NIÑOS
+
+CAMBIO PRINCIPAL
+El seating ya no asigna toda una invitación a una sola mesa.
+
+Ahora cada confirmación puede tener:
+- una mesa para sus adultos;
+- otra mesa diferente para sus niños.
+
+LAS MESAS
+Al crear una mesa se elige:
+- Mesa de adultos
+- Mesa de niños
+
+EL PANEL MUESTRA
+- Mesas y plazas de adultos.
+- Mesas y plazas de niños.
+- Adultos y niños ya asignados.
+- Adultos y niños pendientes de mesa.
+- Dos selectores independientes para las invitaciones que tengan niños.
+
+EXPORTACIÓN
+El CSV incluye por separado la mesa de adultos y la mesa de niños.
+
+IMPORTANTE
+Ejecutar SUPABASE-V55-1-SEATING-ADULTOS-NINOS.sql antes de publicar.
+Los seating ya existentes se conservan y se consideran mesas/asignaciones
+de adultos.

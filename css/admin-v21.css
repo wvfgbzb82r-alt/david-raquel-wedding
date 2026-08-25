@@ -877,3 +877,103 @@ html {
 .budget-form{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:1rem 0}.budget-form label{min-width:220px;flex:1}.budget-form span,.economy-toolbar span{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}.economy-stats{grid-template-columns:repeat(6,minmax(130px,1fr))}.economy-balance{padding:.9rem 1rem;background:#f7f2e8;border-radius:12px;font-weight:500}.economy-toolbar{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:12px;margin:1rem 0}.economy-toolbar input,.economy-toolbar select,.economy-form textarea{width:100%}.expense-form-actions{display:flex;gap:10px;align-items:center}.expense-status{display:inline-block;padding:.25rem .55rem;border-radius:999px;font-size:.78rem;background:#eee}.expense-status--pagado{background:#e5f4e9}.expense-status--reserva{background:#e8eef8}.expense-status--pendiente{background:#fff1cc}.expense-status--cancelado{background:#f8dddd}.button-link{display:inline-flex;align-items:center;text-decoration:none;padding:.45rem .6rem;border:1px solid currentColor;border-radius:6px;font-size:.78rem}
 @media(max-width:1050px){.economy-stats{grid-template-columns:repeat(3,1fr)}.economy-toolbar{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.economy-stats,.economy-toolbar{grid-template-columns:1fr 1fr}.budget-form{align-items:stretch}.budget-form button{width:100%}}
+
+
+/* =========================================================
+   V55.1 · Seating separado adultos / niños
+   ========================================================= */
+
+.seating-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.seating-table-group {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.seating-table-group__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(171, 128, 62, .18);
+}
+
+.seating-table-group__heading h3 {
+  margin: 0;
+}
+
+.seating-table-group__heading span {
+  color: #746247;
+  font-size: .9rem;
+}
+
+.seating-table-group__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.seating-table-card--ninos {
+  background: rgba(252, 249, 242, .96);
+}
+
+.seating-table-card--adultos {
+  background: rgba(255, 255, 255, .96);
+}
+
+.seating-table-type {
+  display: inline-block;
+  margin-top: 5px;
+  color: #806a48;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.seating-guest-row--split {
+  grid-template-columns: minmax(180px, .8fr) minmax(300px, 1.2fr);
+}
+
+.seating-split-selects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.seating-split-selects label {
+  display: grid;
+  gap: 6px;
+}
+
+.seating-split-selects label > span {
+  color: #6f5a3a;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.seating-split-selects select {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .seating-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .seating-guest-row--split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .seating-split-selects {
+    grid-template-columns: 1fr;
+  }
+}
