@@ -509,71 +509,150 @@ rsvpForm.addEventListener("submit", async event => {
     return;
   }
 
-  const submitButton = rsvpForm.querySelector('button[type="submit"]');
+  const submitButton =
+    rsvpForm.querySelector('button[type="submit"]');
   const originalButtonText = submitButton.textContent;
 
   submitButton.disabled = true;
   submitButton.textContent = "Enviando…";
-  formStatus.textContent = "Estamos guardando tu confirmación…";
+  formStatus.textContent =
+    "Estamos guardando tu confirmación…";
+  formStatus.className = "form-status";
 
-  const confirmationPayload = getRsvpPayload();
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(
+    () => controller.abort(),
+    18000
+  );
 
   try {
+    // Se construye dentro del try para que cualquier error del
+    // formulario nunca deje el botón bloqueado en «Enviando…».
+    const confirmationPayload = getRsvpPayload();
+
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/rpc/guardar_confirmacion_v24`,
       {
         method: "POST",
         headers: {
           "apikey": SUPABASE_PUBLISHABLE_KEY,
-          "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+          "Authorization":
+            `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
           "Content-Type": "application/json",
           "Prefer": "return=representation"
         },
-        body: JSON.stringify({ datos: confirmationPayload })
+        body: JSON.stringify({
+          datos: confirmationPayload
+        }),
+        signal: controller.signal
       }
     );
 
+    const responseText = await response.text();
+
     if (!response.ok) {
-      const errorText = await response.text();
-      let detail = errorText;
+      let detail = responseText;
+
       try {
-        const parsed = JSON.parse(errorText);
-        detail = parsed.message || parsed.details || parsed.hint || errorText;
+        const parsed = JSON.parse(responseText);
+        detail =
+          parsed.message ||
+          parsed.details ||
+          parsed.hint ||
+          responseText;
       } catch {}
-      throw new Error(detail || `Error ${response.status}`);
+
+      throw new Error(
+        detail || `Error ${response.status}`
+      );
     }
 
+    // Éxito: conservar el payload antes de limpiar el formulario.
+    showSmartRsvpResult(confirmationPayload);
+
     rsvpForm.reset();
-    if (hasSpecialMenu) hasSpecialMenu.value = "no";
-    if (dietaryList) {
-      dietaryList.innerHTML = `
-        <div class="dietary-row">
-          <label><span>Nombre de la persona</span><input type="text" class="dietary-name" placeholder="Ej.: María Gómez"></label>
-          <label><span>Alergia o preferencia</span><input type="text" class="dietary-detail" placeholder="Ej.: Celíaca"></label>
-          <button type="button" class="dietary-remove" aria-label="Eliminar esta persona" hidden>×</button>
-        </div>`;
-      updateDietaryRemoveButtons();
+
+    if (hasSpecialMenu) {
+      hasSpecialMenu.value = "no";
     }
-    const currentAdultsMax = Number(document.documentElement.dataset.adultsMax || 20);
-    buildNumberOptions(adultsSelect, currentAdultsMax, currentAdultsMax > 0 ? 1 : 0);
+
+    if (dietaryList) {
+      dietaryList.innerHTML = "";
+      dietaryList.hidden = true;
+    }
+
+    if (addDietaryRowButton) {
+      addDietaryRowButton.hidden = true;
+    }
+
+    const currentAdultsMax = Number(
+      document.documentElement.dataset.adultsMax || 20
+    );
+
+    buildNumberOptions(
+      adultsSelect,
+      currentAdultsMax,
+      currentAdultsMax > 0 ? 1 : 0
+    );
+
     buildNumberOptions(
       childrenSelect,
-      Number(document.documentElement.dataset.childrenMax || 20),
+      Number(
+        document.documentElement.dataset.childrenMax || 20
+      ),
       0
     );
-    formStatus.textContent = "Confirmación recibida correctamente.";
-    formStatus.className = "form-status is-success form-status--compact";
-    showSmartRsvpResult(confirmationPayload);
+
+    // En invitaciones personalizadas restauramos el nombre
+    // después del reset para que siga apareciendo correctamente.
+    if (
+      currentPersonalizedInvitation?.nombre_mostrado
+    ) {
+      const guestName =
+        document.getElementById("guestName");
+
+      if (guestName) {
+        guestName.value =
+          currentPersonalizedInvitation.nombre_mostrado;
+        guestName.readOnly = true;
+      }
+    }
+
+    formStatus.textContent =
+      "Confirmación recibida correctamente.";
+    formStatus.className =
+      "form-status is-success form-status--compact";
   } catch (error) {
-    console.error("Error al enviar la confirmación:", error);
-    const configurationProblem = /column|policy|permission|row-level|schema|relation|function|rpc/i.test(error.message);
-    formStatus.textContent = configurationProblem
-      ? "La confirmación todavía no está activada. Ejecuta INSTALACION-UNICA-SUPABASE.sql en Supabase."
-      : `No hemos podido guardar la confirmación: ${error.message}`;
-    formStatus.className = "form-status is-error";
+    console.error(
+      "Error al enviar la confirmación:",
+      error
+    );
+
+    if (error?.name === "AbortError") {
+      formStatus.textContent =
+        "La conexión está tardando demasiado. " +
+        "Comprueba Internet y vuelve a pulsar Enviar. " +
+        "No cierres la página hasta ver el mensaje de confirmación.";
+    } else {
+      const message =
+        String(error?.message || "Error desconocido");
+
+      const configurationProblem =
+        /column|policy|permission|row-level|schema|relation|function|rpc/i
+          .test(message);
+
+      formStatus.textContent = configurationProblem
+        ? "No se ha podido guardar la confirmación por un problema de configuración de Supabase."
+        : `No hemos podido guardar la confirmación: ${message}`;
+    }
+
+    formStatus.className =
+      "form-status is-error";
   } finally {
+    window.clearTimeout(timeoutId);
     submitButton.disabled = false;
-    submitButton.textContent = originalButtonText;
+    submitButton.textContent =
+      originalButtonText;
   }
 });
 

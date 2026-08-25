@@ -1,0 +1,14 @@
+DAVID & RAQUEL — V55.2.1 · CONFIRMACIÓN CORREGIDA
+
+CORRECCIONES
+- El botón ya no puede quedarse indefinidamente en «Enviando…».
+- La construcción de los datos de confirmación está protegida por try/catch.
+- Se añade un timeout de red de 18 segundos.
+- Se muestran errores claros si Supabase no responde.
+- Se corrige el reset de los menús especiales tras una confirmación.
+- Se restaura correctamente el nombre de la invitación personalizada
+  después de confirmar.
+- Se fuerza una nueva versión de app.js para evitar caché antigua.
+
+SUPABASE
+No requiere SQL nuevo.
