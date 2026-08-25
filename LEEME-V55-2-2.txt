@@ -1,0 +1,22 @@
+DAVID & RAQUEL — V55.2.2 · CONFIRMACIÓN CORREGIDA
+
+ERROR CORREGIDO
+La pantalla mostraba:
+getRsvpPayload is not defined
+
+CAUSA
+Durante la modificación de menús especiales por persona se sustituyó
+accidentalmente el bloque de JavaScript donde estaba definida la función
+getRsvpPayload(). El botón llegaba al envío, pero no podía construir los
+datos que debía mandar a Supabase.
+
+CORRECCIÓN
+- Restaurada getRsvpPayload().
+- Se conservan los menús especiales por persona.
+- Se conserva el seating separado adultos/niños.
+- Se conserva el control económico y el resto del panel.
+- Se mantiene el timeout y manejo de errores de V55.2.1.
+- Cache bust actualizado a V55.2.2.
+
+SUPABASE
+No requiere SQL nuevo.

@@ -206,6 +206,22 @@ function validateDietaryRequirements(adults, children) {
   return valid;
 }
 
+function getRsvpPayload() {
+  const formData = new FormData(rsvpForm);
+
+  return {
+    nombre: String(formData.get("nombre") || "").trim(),
+    telefono: String(formData.get("telefono") || "").trim(),
+    asistencia: String(formData.get("asistencia") || "").trim(),
+    codigo_invitacion:
+      document.documentElement.dataset.invitationCode || null,
+    adultos: Number(formData.get("adultos") || 0),
+    ninos: Number(formData.get("ninos") || 0),
+    alergias: collectDietaryRequirements(),
+    comentarios: String(formData.get("comentarios") || "").trim()
+  };
+}
+
 const dietaryList = document.getElementById("dietaryList");
 const addDietaryRowButton = document.getElementById("addDietaryRow");
 const hasSpecialMenu = document.getElementById("hasSpecialMenu");
