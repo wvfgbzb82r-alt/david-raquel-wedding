@@ -1,0 +1,19 @@
+DAVID & RAQUEL — V55.2.3 · CONFIRMACIÓN SIN CACHÉ
+
+Esta versión corrige definitivamente el error:
+getRsvpPayload is not defined
+
+IMPORTANTE
+El JavaScript principal ya NO se llama app.js.
+Ahora se llama:
+js/app-v55-2-3.js
+
+Esto obliga a navegador, CDN y Netlify a descargar un archivo nuevo,
+evitando cualquier copia antigua en caché.
+
+COMPROBACIÓN
+El index.html incluye:
+<meta name="build-version" content="55.2.3-confirmacion-fix">
+
+SUPABASE
+No requiere SQL nuevo.
