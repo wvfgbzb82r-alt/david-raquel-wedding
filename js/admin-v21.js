@@ -2182,6 +2182,7 @@ function expenseShares(expense) {
   if (expense.pagado_por === "David") return { david: amount, raquel: 0 };
   if (expense.pagado_por === "Raquel") return { david: 0, raquel: amount };
   if (expense.pagado_por === "Ambos") return { david: amount / 2, raquel: amount / 2 };
+  if (expense.pagado_por === "Préstamo") return { david: 0, raquel: 0 };
   const davidPct = Number(expense.porcentaje_david ?? 50) / 100;
   return { david: amount * davidPct, raquel: amount * (1 - davidPct) };
 }
@@ -2203,16 +2204,20 @@ function renderEconomy() {
   const pending = active.filter(i => i.estado === "pendiente" || i.estado === "reserva").reduce((s,i)=>s+Number(i.importe||0),0);
   const paid = active.filter(i => i.estado === "pagado" || i.estado === "reserva");
   const totals = paid.reduce((acc,item)=>{ const x=expenseShares(item); acc.david+=x.david; acc.raquel+=x.raquel; return acc; }, {david:0,raquel:0});
+  const loanSpent = expensesData
+    .filter(item => item.estado !== "cancelado" && item.pagado_por === "Préstamo")
+    .reduce((sum, item) => sum + Number(item.importe || 0), 0);
   byId("economyBudget").textContent = euroV55.format(weddingBudget);
   byId("economySpent").textContent = euroV55.format(spent);
   byId("economyRemaining").textContent = euroV55.format(weddingBudget - spent);
   byId("economyLoan").textContent = euroV55.format(weddingLoan);
-  byId("economyLoanRemaining").textContent = euroV55.format(weddingLoan - spent);
+  byId("economyLoanRemaining").textContent = euroV55.format(weddingLoan - loanSpent);
+  byId("economyLoanSpent").textContent = euroV55.format(loanSpent);
   byId("economyDavid").textContent = euroV55.format(totals.david);
   byId("economyRaquel").textContent = euroV55.format(totals.raquel);
   byId("economyPending").textContent = euroV55.format(pending);
   const diff = Math.abs(totals.david - totals.raquel) / 2;
-  const loanRemaining = weddingLoan - spent;
+  const loanRemaining = weddingLoan - loanSpent;
   const contributionText = totals.david === totals.raquel
     ? "Las aportaciones están equilibradas."
     : `${totals.david < totals.raquel ? "David" : "Raquel"} debería aportar ${euroV55.format(diff)} para equilibrar al 50 %.`;
@@ -2270,7 +2275,7 @@ byId("budgetForm")?.addEventListener("submit",async e=>{
     byId("expensesMessage").textContent=error.message;
   }
 });
-byId("expenseForm")?.addEventListener("submit",async e=>{e.preventDefault(); const id=byId("expenseId").value; const payer=byId("expensePayer").value; const payload={fecha:byId("expenseDate").value,concepto:byId("expenseConcept").value.trim(),categoria:byId("expenseCategory").value.trim(),proveedor:byId("expenseSupplier").value.trim()||null,importe:Number(byId("expenseAmount").value),pagado_por:payer,porcentaje_david:payer==="David"?100:payer==="Raquel"?0:payer==="Ambos"?50:Number(byId("expenseDavidShare").value||50),forma_pago:byId("expensePaymentMethod").value,forma_pago_otro:byId("expensePaymentMethod").value==="Otro"?(byId("expenseOtherPayment").value.trim()||null):null,referencia:byId("expenseReference").value.trim()||null,estado:byId("expenseStatus").value,fecha_vencimiento:byId("expenseDueDate").value||null,requiere_factura:byId("expenseRequiresInvoice").value==="true",factura_recibida:byId("expenseInvoiceReceived").value==="true",documento_url:byId("expenseDocumentUrl").value.trim()||null,observaciones:byId("expenseNotes").value.trim()||null,updated_at:new Date().toISOString()}; try{await api(id?`/rest/v1/gastos_boda_v55?id=eq.${encodeURIComponent(id)}`:"/rest/v1/gastos_boda_v55",{method:id?"PATCH":"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(payload)}); resetExpenseForm(); await loadEconomy();}catch(error){byId("expensesMessage").textContent=`No se pudo guardar: ${error.message}`;}});
+byId("expenseForm")?.addEventListener("submit",async e=>{e.preventDefault(); const id=byId("expenseId").value; const payer=byId("expensePayer").value; const payload={fecha:byId("expenseDate").value,concepto:byId("expenseConcept").value.trim(),categoria:byId("expenseCategory").value.trim(),proveedor:byId("expenseSupplier").value.trim()||null,importe:Number(byId("expenseAmount").value),pagado_por:payer,porcentaje_david:payer==="David"?100:payer==="Raquel"?0:payer==="Ambos"?50:payer==="Préstamo"?0:Number(byId("expenseDavidShare").value||50),forma_pago:byId("expensePaymentMethod").value,forma_pago_otro:byId("expensePaymentMethod").value==="Otro"?(byId("expenseOtherPayment").value.trim()||null):null,referencia:byId("expenseReference").value.trim()||null,estado:byId("expenseStatus").value,fecha_vencimiento:byId("expenseDueDate").value||null,requiere_factura:byId("expenseRequiresInvoice").value==="true",factura_recibida:byId("expenseInvoiceReceived").value==="true",documento_url:byId("expenseDocumentUrl").value.trim()||null,observaciones:byId("expenseNotes").value.trim()||null,updated_at:new Date().toISOString()}; try{await api(id?`/rest/v1/gastos_boda_v55?id=eq.${encodeURIComponent(id)}`:"/rest/v1/gastos_boda_v55",{method:id?"PATCH":"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(payload)}); resetExpenseForm(); await loadEconomy();}catch(error){byId("expensesMessage").textContent=`No se pudo guardar: ${error.message}`;}});
 byId("cancelExpenseEdit")?.addEventListener("click",resetExpenseForm);
 byId("expensesTableBody")?.addEventListener("click",handleExpenseAction); byId("expenseCards")?.addEventListener("click",handleExpenseAction);
 function handleExpenseAction(e){const edit=e.target.closest("[data-edit-expense]");const del=e.target.closest("[data-delete-expense]");if(edit)editExpense(edit.dataset.editExpense);if(del&&confirm("¿Eliminar este gasto?"))api(`/rest/v1/gastos_boda_v55?id=eq.${encodeURIComponent(del.dataset.deleteExpense)}`,{method:"DELETE",headers:{Prefer:"return=minimal"}}).then(loadEconomy).catch(error=>byId("expensesMessage").textContent=error.message);}

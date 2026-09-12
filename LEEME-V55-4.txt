@@ -1,0 +1,15 @@
+DAVID & RAQUEL — V55.4 · PAGADOR PRÉSTAMO
+
+Ahora «Quién ha pagado» incluye:
+David · Raquel · Ambos · Préstamo · Personalizado
+
+Comportamiento:
+- Un gasto marcado como «Préstamo» resta del saldo del préstamo.
+- No se suma como aportación personal de David ni de Raquel.
+- El resumen muestra «Pagado con préstamo».
+- El filtro de gastos también incluye «Préstamo».
+- Los gastos cancelados no restan del saldo del préstamo.
+
+IMPORTANTE:
+Ejecutar una sola vez en Supabase:
+SUPABASE-V55-4-PAGADOR-PRESTAMO.sql

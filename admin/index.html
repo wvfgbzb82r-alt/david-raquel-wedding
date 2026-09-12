@@ -356,6 +356,7 @@
           <article><span>Saldo del préstamo</span><strong id="economyLoanRemaining">0,00 €</strong></article>
           <article><span>Pagado por David</span><strong id="economyDavid">0,00 €</strong></article>
           <article><span>Pagado por Raquel</span><strong id="economyRaquel">0,00 €</strong></article>
+          <article><span>Pagado con préstamo</span><strong id="economyLoanSpent">0,00 €</strong></article>
           <article><span>Pagos pendientes</span><strong id="economyPending">0,00 €</strong></article>
         </section>
         <p id="economyBalance" class="economy-balance"></p>
@@ -367,7 +368,7 @@
           <label><span>Categoría</span><input id="expenseCategory" list="expenseCategories" type="text" required placeholder="Ej.: Fotografía"><datalist id="expenseCategories"><option value="Finca"><option value="Catering"><option value="Fotografía"><option value="Vídeo"><option value="Música / DJ"><option value="Flores"><option value="Decoración"><option value="Vestido"><option value="Traje"><option value="Alianzas"><option value="Invitaciones"><option value="Transporte"><option value="Viaje"><option value="Detalles invitados"><option value="Otros"></datalist></label>
           <label><span>Proveedor</span><input id="expenseSupplier" type="text" placeholder="Opcional"></label>
           <label><span>Importe (€)</span><input id="expenseAmount" type="number" min="0" step="0.01" required></label>
-          <label><span>Quién ha pagado</span><select id="expensePayer"><option value="David">David</option><option value="Raquel">Raquel</option><option value="Ambos">Ambos (50/50)</option><option value="Personalizado">Reparto personalizado</option></select></label>
+          <label><span>Quién ha pagado</span><select id="expensePayer"><option value="David">David</option><option value="Raquel">Raquel</option><option value="Ambos">Ambos (50/50)</option><option value="Préstamo">Préstamo</option><option value="Personalizado">Reparto personalizado</option></select></label>
           <label id="expenseDavidShareLabel" hidden><span>% David</span><input id="expenseDavidShare" type="number" min="0" max="100" step="1" value="50"></label>
           <label><span>Forma de pago</span><select id="expensePaymentMethod"><option value="Tarjeta David">Tarjeta David</option><option value="Tarjeta Raquel">Tarjeta Raquel</option><option value="Transferencia">Transferencia</option><option value="Bizum">Bizum</option><option value="Efectivo">Efectivo</option><option value="Cuenta conjunta">Cuenta conjunta</option><option value="Otro">Otro</option></select></label>
           <label id="expenseOtherPaymentLabel" hidden><span>Otra forma de pago</span><input id="expenseOtherPayment" type="text"></label>
@@ -384,7 +385,7 @@
         <div class="economy-toolbar">
           <label><span>Buscar</span><input id="expenseSearch" type="search" placeholder="Concepto, proveedor, referencia…"></label>
           <label><span>Categoría</span><select id="expenseCategoryFilter"><option value="">Todas</option></select></label>
-          <label><span>Pagado por</span><select id="expensePayerFilter"><option value="">Todos</option><option>David</option><option>Raquel</option><option>Ambos</option><option>Personalizado</option></select></label>
+          <label><span>Pagado por</span><select id="expensePayerFilter"><option value="">Todos</option><option>David</option><option>Raquel</option><option>Ambos</option><option>Préstamo</option><option>Personalizado</option></select></label>
           <label><span>Estado</span><select id="expenseStatusFilter"><option value="">Todos</option><option value="pagado">Pagado</option><option value="reserva">Reserva</option><option value="pendiente">Pendiente</option><option value="cancelado">Cancelado</option></select></label>
         </div>
         <p id="expensesMessage" class="dashboard-message" role="status" aria-live="polite"></p>
