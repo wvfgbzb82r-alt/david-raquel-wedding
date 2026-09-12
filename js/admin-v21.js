@@ -2173,6 +2173,7 @@ document.querySelectorAll(".dashboard-quick-nav a").forEach(link => {
 // V55 · Control económico
 let expensesData = [];
 let weddingBudget = 0;
+let weddingLoan = 0;
 const euroV55 = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" });
 const expenseStatusLabels = { pagado: "Pagado", reserva: "Reserva", pendiente: "Pendiente", cancelado: "Cancelado" };
 
@@ -2205,11 +2206,22 @@ function renderEconomy() {
   byId("economyBudget").textContent = euroV55.format(weddingBudget);
   byId("economySpent").textContent = euroV55.format(spent);
   byId("economyRemaining").textContent = euroV55.format(weddingBudget - spent);
+  byId("economyLoan").textContent = euroV55.format(weddingLoan);
+  byId("economyLoanRemaining").textContent = euroV55.format(weddingLoan - spent);
   byId("economyDavid").textContent = euroV55.format(totals.david);
   byId("economyRaquel").textContent = euroV55.format(totals.raquel);
   byId("economyPending").textContent = euroV55.format(pending);
   const diff = Math.abs(totals.david - totals.raquel) / 2;
-  byId("economyBalance").textContent = totals.david === totals.raquel ? "Las aportaciones están equilibradas." : `${totals.david < totals.raquel ? "David" : "Raquel"} debería aportar ${euroV55.format(diff)} para equilibrar al 50 %.`;
+  const loanRemaining = weddingLoan - spent;
+  const contributionText = totals.david === totals.raquel
+    ? "Las aportaciones están equilibradas."
+    : `${totals.david < totals.raquel ? "David" : "Raquel"} debería aportar ${euroV55.format(diff)} para equilibrar al 50 %.`;
+  const loanText = weddingLoan > 0
+    ? (loanRemaining >= 0
+      ? `Del préstamo quedan disponibles ${euroV55.format(loanRemaining)}.`
+      : `Los gastos superan el préstamo en ${euroV55.format(Math.abs(loanRemaining))}.`)
+    : "Todavía no se ha indicado el importe del préstamo.";
+  byId("economyBalance").textContent = `${loanText} ${contributionText}`;
   const categories = [...new Set(expensesData.map(i=>i.categoria).filter(Boolean))].sort();
   const catFilter = byId("expenseCategoryFilter"); const current = catFilter.value;
   catFilter.innerHTML = '<option value="">Todas</option>' + categories.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join(""); catFilter.value=current;
@@ -2223,7 +2235,13 @@ async function loadEconomy() {
   message.textContent="Cargando control económico…";
   try {
     const [expenses, settings] = await Promise.all([api("/rest/v1/gastos_boda_v55?select=*&order=fecha.desc,created_at.desc"), api("/rest/v1/configuracion_economica_v55?select=*&id=eq.1")]);
-    expensesData=expenses||[]; weddingBudget=Number(settings?.[0]?.presupuesto_total||0); byId("budgetTotal").value=weddingBudget||""; renderEconomy(); message.textContent=expensesData.length?`${expensesData.length} gasto${expensesData.length===1?"":"s"} registrado${expensesData.length===1?"":"s"}.`:"Todavía no hay gastos registrados.";
+    expensesData=expenses||[];
+    weddingBudget=Number(settings?.[0]?.presupuesto_total||0);
+    weddingLoan=Number(settings?.[0]?.prestamo_total||0);
+    byId("budgetTotal").value=weddingBudget||"";
+    byId("loanTotal").value=weddingLoan||"";
+    renderEconomy();
+    message.textContent=expensesData.length?`${expensesData.length} gasto${expensesData.length===1?"":"s"} registrado${expensesData.length===1?"":"s"}.`:"Todavía no hay gastos registrados.";
   } catch(error) { message.textContent=`No se pudo cargar el control económico: ${error.message}. Ejecuta SUPABASE-V55-CONTROL-ECONOMICO.sql.`; }
 }
 
@@ -2232,7 +2250,26 @@ function editExpense(id){ const item=expensesData.find(x=>String(x.id)===String(
 
 byId("expensePayer")?.addEventListener("change",e=>byId("expenseDavidShareLabel").hidden=e.target.value!=="Personalizado");
 byId("expensePaymentMethod")?.addEventListener("change",e=>byId("expenseOtherPaymentLabel").hidden=e.target.value!=="Otro");
-byId("budgetForm")?.addEventListener("submit",async e=>{e.preventDefault(); try{weddingBudget=Number(byId("budgetTotal").value||0); await api("/rest/v1/configuracion_economica_v55?id=eq.1",{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({presupuesto_total:weddingBudget,updated_at:new Date().toISOString()})}); renderEconomy(); byId("expensesMessage").textContent="Presupuesto actualizado.";}catch(error){byId("expensesMessage").textContent=error.message;}});
+byId("budgetForm")?.addEventListener("submit",async e=>{
+  e.preventDefault();
+  try{
+    weddingBudget=Number(byId("budgetTotal").value||0);
+    weddingLoan=Number(byId("loanTotal").value||0);
+    await api("/rest/v1/configuracion_economica_v55?id=eq.1",{
+      method:"PATCH",
+      headers:{Prefer:"return=minimal"},
+      body:JSON.stringify({
+        presupuesto_total:weddingBudget,
+        prestamo_total:weddingLoan,
+        updated_at:new Date().toISOString()
+      })
+    });
+    renderEconomy();
+    byId("expensesMessage").textContent="Presupuesto y préstamo actualizados.";
+  }catch(error){
+    byId("expensesMessage").textContent=error.message;
+  }
+});
 byId("expenseForm")?.addEventListener("submit",async e=>{e.preventDefault(); const id=byId("expenseId").value; const payer=byId("expensePayer").value; const payload={fecha:byId("expenseDate").value,concepto:byId("expenseConcept").value.trim(),categoria:byId("expenseCategory").value.trim(),proveedor:byId("expenseSupplier").value.trim()||null,importe:Number(byId("expenseAmount").value),pagado_por:payer,porcentaje_david:payer==="David"?100:payer==="Raquel"?0:payer==="Ambos"?50:Number(byId("expenseDavidShare").value||50),forma_pago:byId("expensePaymentMethod").value,forma_pago_otro:byId("expensePaymentMethod").value==="Otro"?(byId("expenseOtherPayment").value.trim()||null):null,referencia:byId("expenseReference").value.trim()||null,estado:byId("expenseStatus").value,fecha_vencimiento:byId("expenseDueDate").value||null,requiere_factura:byId("expenseRequiresInvoice").value==="true",factura_recibida:byId("expenseInvoiceReceived").value==="true",documento_url:byId("expenseDocumentUrl").value.trim()||null,observaciones:byId("expenseNotes").value.trim()||null,updated_at:new Date().toISOString()}; try{await api(id?`/rest/v1/gastos_boda_v55?id=eq.${encodeURIComponent(id)}`:"/rest/v1/gastos_boda_v55",{method:id?"PATCH":"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify(payload)}); resetExpenseForm(); await loadEconomy();}catch(error){byId("expensesMessage").textContent=`No se pudo guardar: ${error.message}`;}});
 byId("cancelExpenseEdit")?.addEventListener("click",resetExpenseForm);
 byId("expensesTableBody")?.addEventListener("click",handleExpenseAction); byId("expenseCards")?.addEventListener("click",handleExpenseAction);

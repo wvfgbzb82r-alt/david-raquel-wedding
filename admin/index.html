@@ -344,13 +344,16 @@
 
         <form id="budgetForm" class="budget-form">
           <label><span>Presupuesto total (€)</span><input id="budgetTotal" type="number" min="0" step="0.01" placeholder="Ej.: 25000"></label>
+          <label><span>Dinero disponible del préstamo (€)</span><input id="loanTotal" type="number" min="0" step="0.01" placeholder="Ej.: 20000"></label>
           <button class="secondary-button" type="submit">Guardar presupuesto</button>
         </form>
 
         <section class="planning-stats economy-stats" aria-label="Resumen económico">
           <article><span>Presupuesto</span><strong id="economyBudget">0,00 €</strong></article>
           <article><span>Gastado / comprometido</span><strong id="economySpent">0,00 €</strong></article>
-          <article><span>Restante</span><strong id="economyRemaining">0,00 €</strong></article>
+          <article><span>Presupuesto restante</span><strong id="economyRemaining">0,00 €</strong></article>
+          <article><span>Préstamo disponible</span><strong id="economyLoan">0,00 €</strong></article>
+          <article><span>Saldo del préstamo</span><strong id="economyLoanRemaining">0,00 €</strong></article>
           <article><span>Pagado por David</span><strong id="economyDavid">0,00 €</strong></article>
           <article><span>Pagado por Raquel</span><strong id="economyRaquel">0,00 €</strong></article>
           <article><span>Pagos pendientes</span><strong id="economyPending">0,00 €</strong></article>

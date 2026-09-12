@@ -1,0 +1,28 @@
+DAVID & RAQUEL — V55.3 · CONTROL DEL PRÉSTAMO
+
+NOVEDAD
+Dentro de Control económico se añade:
+- Dinero disponible del préstamo.
+- Tarjeta «Préstamo disponible».
+- Tarjeta «Saldo del préstamo».
+
+CÁLCULO
+Saldo del préstamo = importe del préstamo - suma de gastos activos.
+
+Se descuentan los gastos con estado:
+- Pagado
+- Reserva
+- Pendiente
+
+Los gastos con estado «Cancelado» NO descuentan saldo.
+
+También se conserva:
+- Presupuesto total.
+- Presupuesto restante.
+- Pagado por David/Raquel.
+- Pagos pendientes.
+- Todos los gastos ya registrados.
+
+IMPORTANTE
+Antes de usar el nuevo campo, ejecutar una sola vez en Supabase:
+SUPABASE-V55-3-PRESTAMO.sql

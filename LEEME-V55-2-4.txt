@@ -1,0 +1,14 @@
+DAVID & RAQUEL — V55.2.4 · SUPABASE FIX
+
+Cambios:
+- Las peticiones públicas usan la publishable key en el header `apikey`.
+- Se elimina el uso manual de `Authorization: Bearer sb_publishable_...`.
+- Se conserva la corrección de getRsvpPayload().
+- El JS público se renombra a app-v55-2-4.js para invalidar caché.
+- No requiere SQL nuevo.
+
+Después de desplegar:
+1. Esperar a que Netlify termine el deploy.
+2. Abrir la web y hacer Ctrl+F5.
+3. Probar primero el código privado.
+4. Después probar una confirmación.
