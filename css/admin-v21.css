@@ -977,3 +977,5 @@ html {
     grid-template-columns: 1fr;
   }
 }
+
+.economy-tabs{display:flex;gap:.65rem;flex-wrap:wrap;margin:1rem 0 1.25rem}.economy-tab{border:1px solid rgba(255,255,255,.16);background:transparent;color:inherit;border-radius:999px;padding:.7rem 1rem;cursor:pointer;font:inherit}.economy-tab.is-active{background:rgba(255,255,255,.12);font-weight:700}.economy-tab-panel[hidden]{display:none!important}

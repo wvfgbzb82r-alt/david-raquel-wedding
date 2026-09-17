@@ -333,7 +333,7 @@
       </section>
 
 
-      <section id="economia" class="planning-section economy-section dashboard-anchor" aria-labelledby="economyTitle">
+     </div><div id="economyForecastPanel" class="economy-tab-panel" hidden><div class="economy-summary-grid"><article><span>Préstamo total</span><strong id="forecastLoanTotal">0,00 €</strong></article><article><span>Gastado del préstamo</span><strong id="forecastLoanSpent">0,00 €</strong></article><article><span>Gastos previstos</span><strong id="forecastTotal">0,00 €</strong></article><article><span>Disponible tras previsión</span><strong id="forecastLoanRemaining">0,00 €</strong></article></div><form id="forecastExpenseForm" class="expense-form"><input id="forecastExpenseId" type="hidden"><label><span>Concepto</span><input id="forecastConcept" required></label><label><span>Categoría</span><input id="forecastCategory"></label><label><span>Importe previsto (€)</span><input id="forecastAmount" type="number" min="0" step="0.01" required></label><label><span>Fecha aproximada</span><input id="forecastDate" type="date"></label><label class="expense-notes"><span>Notas</span><textarea id="forecastNotes" rows="2"></textarea></label><div class="form-actions"><button class="button" type="submit">Guardar gasto previsto</button><button id="forecastCancelEdit" class="button button--secondary" type="button" hidden>Cancelar edición</button></div></form><p id="forecastMessage" class="admin-message"></p><div id="forecastExpensesList" class="expense-list"></div></div> <section id="economia" class="planning-section economy-section dashboard-anchor" aria-labelledby="economyTitle">
         <div class="media-section__header">
           <div><p class="kicker">Control privado</p><h2 id="economyTitle">Control económico</h2></div>
           <div class="header-actions">
@@ -342,7 +342,7 @@
           </div>
         </div>
 
-        <form id="budgetForm" class="budget-form">
+        <div class="economy-tabs"><button type="button" class="economy-tab is-active" data-economy-tab="real">Gastos reales</button><button type="button" class="economy-tab" data-economy-tab="forecast">Gastos previstos</button></div><div id="economyRealPanel" class="economy-tab-panel"><form id="budgetForm" class="budget-form">
           <label><span>Presupuesto total (€)</span><input id="budgetTotal" type="number" min="0" step="0.01" placeholder="Ej.: 25000"></label>
           <label><span>Dinero disponible del préstamo (€)</span><input id="loanTotal" type="number" min="0" step="0.01" placeholder="Ej.: 20000"></label>
           <button class="secondary-button" type="submit">Guardar presupuesto</button>

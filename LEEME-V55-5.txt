@@ -1,0 +1,5 @@
+V55.5 · GASTOS PREVISTOS
+
+Nueva pestaña en Control económico para añadir posibles gastos.
+Disponible tras previsión = préstamo total - gastos reales pagados con Préstamo - gastos previstos.
+Ejecutar una sola vez SUPABASE-V55-5-GASTOS-PREVISTOS.sql en Supabase.
