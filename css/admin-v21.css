@@ -979,3 +979,25 @@ html {
 }
 
 .economy-tabs{display:flex;gap:.65rem;flex-wrap:wrap;margin:1rem 0 1.25rem}.economy-tab{border:1px solid rgba(255,255,255,.16);background:transparent;color:inherit;border-radius:999px;padding:.7rem 1rem;cursor:pointer;font:inherit}.economy-tab.is-active{background:rgba(255,255,255,.12);font-weight:700}.economy-tab-panel[hidden]{display:none!important}
+
+
+/* V55.6 · Edición de asistentes en confirmaciones */
+.edit-confirmation-link {
+  padding: 8px 11px;
+  border: 1px solid rgba(185, 152, 87, .5);
+  border-radius: 999px;
+  background: rgba(247, 242, 232, .9);
+  color: var(--gold-dark);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: .62rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.edit-confirmation-link:hover,
+.edit-confirmation-link:focus-visible {
+  background: var(--gold);
+  color: #fff;
+  outline: none;
+}

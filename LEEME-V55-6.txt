@@ -1,0 +1,13 @@
+DAVID & RAQUEL · V55.6 · EDITAR ASISTENTES
+
+Novedad:
+- En Confirmaciones aparece el botón “Editar asistentes”.
+- Permite modificar adultos y niños de una respuesta existente.
+- El total del panel, catering y seating se recalcula automáticamente al guardar.
+- No requiere ejecutar SQL nuevo en Supabase.
+
+Publicación:
+1. Sustituir los archivos del proyecto por los de esta versión.
+2. GitHub Desktop: Commit.
+3. Push origin.
+4. Recargar el panel con Ctrl+F5.

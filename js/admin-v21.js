@@ -172,6 +172,7 @@ function statusPill(value) {
 function confirmationActions(guest) {
   const hasComment = normalize(guest.comentarios);
   return `<div class="row-actions">
+    <button type="button" class="edit-confirmation-link" data-edit-confirmation="${guest.id}">Editar asistentes</button>
     ${hasComment ? `<button type="button" class="danger-link" data-clear-comment="${guest.id}">Borrar comentario</button>` : ""}
     <button type="button" class="danger-link" data-delete-response="${guest.id}">Eliminar respuesta</button>
   </div>`;
@@ -222,6 +223,61 @@ function renderGuests() {
     : "No hay resultados.";
 }
 
+async function editConfirmation(id) {
+  const guest = guests.find(item => String(item.id) === String(id));
+  if (!guest) {
+    dashboardMessage.textContent = "No se encontró la confirmación.";
+    return;
+  }
+
+  const currentAdults = Number(guest.adultos || 0);
+  const currentChildren = Number(guest.ninos || 0);
+  const adultsInput = prompt(
+    `Editar asistentes de ${guest.nombre || "esta confirmación"}.\n\nNúmero de ADULTOS:`,
+    String(currentAdults)
+  );
+  if (adultsInput === null) return;
+
+  const childrenInput = prompt(
+    "Número de NIÑOS:",
+    String(currentChildren)
+  );
+  if (childrenInput === null) return;
+
+  const adults = Number(adultsInput);
+  const children = Number(childrenInput);
+  const validNumber = value => Number.isInteger(value) && value >= 0;
+
+  if (!validNumber(adults) || !validNumber(children)) {
+    alert("Introduce números enteros iguales o mayores que 0.");
+    return;
+  }
+
+  if (attendanceCategory(guest.asistencia) === "yes" && adults + children < 1) {
+    alert("Una confirmación que asiste debe tener al menos 1 asistente.");
+    return;
+  }
+
+  if (adults === currentAdults && children === currentChildren) return;
+
+  const summary = `${guest.nombre || "Confirmación"}: ${currentAdults + currentChildren} → ${adults + children} asistentes\n` +
+    `Adultos: ${currentAdults} → ${adults}\nNiños: ${currentChildren} → ${children}`;
+  if (!confirm(`¿Guardar este cambio?\n\n${summary}`)) return;
+
+  dashboardMessage.textContent = "Actualizando asistentes…";
+  try {
+    await api(`/rest/v1/confirmaciones_v24?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({ adultos: adults, ninos: children })
+    });
+    await loadGuests();
+    dashboardMessage.textContent = `Confirmación actualizada: ${adults + children} asistente${adults + children === 1 ? "" : "s"}.`;
+  } catch (error) {
+    dashboardMessage.textContent = `No se pudieron actualizar los asistentes: ${error.message}`;
+  }
+}
+
 async function clearComment(id) {
   if (!confirm("¿Quieres borrar únicamente el comentario de esta respuesta?")) return;
   dashboardMessage.textContent = "Borrando comentario…";
@@ -254,6 +310,11 @@ async function deleteResponse(id) {
 }
 
 function handleGuestAction(event) {
+  const editButton = event.target.closest("[data-edit-confirmation]");
+  if (editButton) {
+    editConfirmation(editButton.dataset.editConfirmation);
+    return;
+  }
   const clearButton = event.target.closest("[data-clear-comment]");
   if (clearButton) {
     clearComment(clearButton.dataset.clearComment);
