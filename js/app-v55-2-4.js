@@ -1,5 +1,5 @@
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-const WEDDING_DATE = new Date("2026-11-22T17:00:00+01:00");
+const WEDDING_DATE = new Date("2026-11-22T14:00:00+01:00");
 const els = {
   days: document.getElementById("days"),
   hours: document.getElementById("hours"),
