@@ -2146,3 +2146,11 @@ img[src*="amapolas"] {
     grid-column: 1;
   }
 }
+
+/* V55.9 · Despedida destacada, manteniendo la alineación del programa */
+.program__item--final .program__content{background:linear-gradient(135deg,rgba(250,243,226,.96),rgba(255,255,255,.92));border:2px solid rgba(185,152,87,.65);box-shadow:0 16px 42px rgba(119,94,51,.14);text-align:center;padding:32px 26px}
+.program__item--final time{font-weight:700;color:var(--gold-dark)}
+.program__item--final .program__dot{width:20px;height:20px;background:var(--gold-dark)}
+.program__item--final .program__content h3{font-family:var(--serif);font-size:clamp(1.25rem,3vw,1.85rem);font-weight:700;letter-spacing:.12em;line-height:1.35;margin-bottom:15px}
+.program__item--final .program__final-thanks{font-family:var(--serif);font-size:clamp(.95rem,2.3vw,1.12rem);font-weight:700;letter-spacing:.045em;line-height:1.5;margin-bottom:12px}
+.program__item--final .program__final-note{font-family:var(--serif);font-size:1rem;line-height:1.5;color:#765e38;font-weight:600}
