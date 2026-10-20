@@ -41,8 +41,9 @@ function escapeHtml(value) {
 
 async function api(path, options = {}) {
   const headers = {
-    apikey: CONFIG.key,
-    ...(options.headers || {})
+    ...(options.headers || {}),
+    // Cabecera obligatoria en todas las peticiones a Supabase.
+    apikey: CONFIG.key
   };
 
   // Solo se envía Content-Type cuando la petición contiene realmente un cuerpo.
@@ -1184,17 +1185,21 @@ async function manualInvitationConfirmation(id, button) {
   button.textContent = "Guardando…";
   invitationMessage.textContent = "Guardando confirmación manual…";
   try {
+    let savedId = previous?.id ?? null;
     if (previous) {
-      await api(`/rest/v1/confirmaciones_v24?id=eq.${encodeURIComponent(previous.id)}`, {
+      const updated = await api(`/rest/v1/confirmaciones_v24?id=eq.${encodeURIComponent(previous.id)}&select=id`, {
         method: "PATCH",
-        headers: { Prefer: "return=minimal" },
+        headers: { Prefer: "return=representation" },
         body: JSON.stringify({
           asistencia: yes ? "Sí" : "No", adultos: adults, ninos: children,
           comentarios: note.trim() || null
         })
       });
+      if (!Array.isArray(updated) || updated.length !== 1) {
+        throw new Error("Supabase no ha actualizado ninguna confirmación. Comprueba los permisos de edición.");
+      }
     } else {
-      await api("/rest/v1/rpc/guardar_confirmacion_v24", {
+      const result = await api("/rest/v1/rpc/guardar_confirmacion_v24", {
         method: "POST",
         body: JSON.stringify({ datos: {
           nombre: name,
@@ -1205,10 +1210,28 @@ async function manualInvitationConfirmation(id, button) {
           alergias: "", comentarios: note.trim()
         } })
       });
+      if (!result || result.ok !== true || !result.id) {
+        throw new Error("Supabase no ha confirmado la creación de la asistencia.");
+      }
+      savedId = result.id;
+    }
+    // Leer de vuelta la fila: evita mostrar éxito si el RPC no guarda
+    // los campos necesarios para vincularla a la invitación personal.
+    const verified = await api(`/rest/v1/confirmaciones_v24?id=eq.${encodeURIComponent(savedId)}&select=id,codigo_invitacion,asistencia,adultos,ninos`);
+    const saved = Array.isArray(verified) ? verified[0] : null;
+    if (!saved) {
+      throw new Error("No se puede verificar la confirmación guardada. Comprueba los permisos de lectura en Supabase.");
+    }
+    if (normalize(saved.codigo_invitacion) !== normalize(invitation.codigo)) {
+      throw new Error("La confirmación se ha creado, pero no está vinculada a la invitación personal. Es necesario actualizar la función guardar_confirmacion_v24 en Supabase para guardar codigo_invitacion, adultos y ninos.");
+    }
+    if (Number(saved.adultos || 0) !== adults || Number(saved.ninos || 0) !== children ||
+        attendanceCategory(saved.asistencia) !== (yes ? "yes" : "no")) {
+      throw new Error("Supabase ha guardado datos diferentes a los indicados. Revisa la función guardar_confirmacion_v24.");
     }
     await loadGuests();
     await loadInvitations();
-    invitationMessage.textContent = `Confirmación guardada para ${name}.`;
+    invitationMessage.textContent = `Confirmación verificada y guardada para ${name}.`;
     alert(`Confirmación guardada para ${name}.`);
   } catch (error) {
     invitationMessage.textContent = `No se pudo guardar la confirmación: ${error.message}`;
