@@ -1202,15 +1202,17 @@ async function manualInvitationConfirmation(id, button) {
           asistencia: yes ? "Sí" : "No",
           codigo_invitacion: invitation.codigo,
           adultos, ninos: children,
-          alergias: [], comentarios: note.trim()
+          alergias: "", comentarios: note.trim()
         } })
       });
     }
     await loadGuests();
     await loadInvitations();
     invitationMessage.textContent = `Confirmación guardada para ${name}.`;
+    alert(`Confirmación guardada para ${name}.`);
   } catch (error) {
     invitationMessage.textContent = `No se pudo guardar la confirmación: ${error.message}`;
+    alert(`No se pudo guardar la confirmación de ${name}: ${error.message}`);
     button.disabled = false;
     button.textContent = oldLabel;
   }
