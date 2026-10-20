@@ -1189,7 +1189,7 @@ async function manualInvitationConfirmation(id, button) {
         method: "PATCH",
         headers: { Prefer: "return=minimal" },
         body: JSON.stringify({
-          asistencia: yes ? "Sí" : "No", adultos, ninos: children,
+          asistencia: yes ? "Sí" : "No", adultos: adults, ninos: children,
           comentarios: note.trim() || null
         })
       });
@@ -1201,7 +1201,7 @@ async function manualInvitationConfirmation(id, button) {
           telefono: invitation.telefono || "",
           asistencia: yes ? "Sí" : "No",
           codigo_invitacion: invitation.codigo,
-          adultos, ninos: children,
+          adultos: adults, ninos: children,
           alergias: "", comentarios: note.trim()
         } })
       });
