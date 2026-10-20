@@ -809,8 +809,48 @@ function updateInvitationSummary() {
     invitedAdults + invitedChildren;
 }
 
+function invitationFilterCategory(item) {
+  const response = latestConfirmationForInvitation(item.codigo);
+  if (!response) return "pending";
+  if (attendanceCategory(response.asistencia) === "no") return "declined";
+  const state = invitationResponseState(item);
+  return state.className === "complete" ? "confirmed" : "partial";
+}
+
+function updateInvitationResponseSummary() {
+  let confirmedInvitations = 0, pendingInvitations = 0, declinedInvitations = 0;
+  let confirmedPeople = 0, pendingPeople = 0;
+  for (const item of personalizedInvitations) {
+    const category = invitationFilterCategory(item);
+    const capacity = Math.max(0, Number(item.adultos_max ?? item.max_personas ?? 1) + Number(item.ninos_max ?? 0));
+    const confirmed = Math.min(capacity, invitationResponseState(item).total);
+    if (category === "declined") { declinedInvitations++; continue; }
+    if (category === "confirmed") confirmedInvitations++;
+    else pendingInvitations++;
+    confirmedPeople += confirmed;
+    pendingPeople += Math.max(0, capacity - confirmed);
+  }
+  byId("invConfirmedCount").textContent = confirmedInvitations;
+  byId("invPendingCount").textContent = pendingInvitations;
+  byId("invConfirmedPeople").textContent = confirmedPeople;
+  byId("invPendingPeople").textContent = pendingPeople;
+  byId("invDeclinedCount").textContent = declinedInvitations;
+}
+
+byId("invitationSearch")?.addEventListener("input", renderInvitations);
+byId("invitationStatusFilter")?.addEventListener("change", renderInvitations);
+
 function renderInvitations() {
   updateInvitationSummary();
+  updateInvitationResponseSummary();
+  const search = normalize(byId("invitationSearch")?.value || "");
+  const statusFilter = byId("invitationStatusFilter")?.value || "all";
+  const visibleInvitations = personalizedInvitations.filter(item => {
+    const text = normalize([item.nombre_mostrado, item.telefono, item.codigo].join(" "));
+    const category = invitationFilterCategory(item);
+    return (!search || text.includes(search)) && (statusFilter === "all" || (statusFilter === "pending" ? category === "pending" || category === "partial" : category === statusFilter));
+  });
+  byId("invitationFilterResult").textContent = `${visibleInvitations.length} de ${personalizedInvitations.length} invitaciones`;
 
   if (!personalizedInvitations.length) {
     invitationList.innerHTML = "";
@@ -819,7 +859,7 @@ function renderInvitations() {
     return;
   }
 
-  invitationList.innerHTML = personalizedInvitations.map(item => {
+  invitationList.innerHTML = visibleInvitations.map(item => {
     const opened = item.opened_at
       ? `Abierta: ${formatDate(item.opened_at)}`
       : "Todavía no abierta";
@@ -963,6 +1003,7 @@ function renderInvitations() {
     `;
   }).join("");
 
+  if (!visibleInvitations.length) invitationList.innerHTML = `<p class="dashboard-message">No hay invitaciones que coincidan con los filtros.</p>`;
   invitationMessage.textContent =
     `${personalizedInvitations.length} invitación` +
     `${personalizedInvitations.length === 1 ? "" : "es"} creada` +

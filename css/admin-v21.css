@@ -1001,3 +1001,13 @@ html {
   color: #fff;
   outline: none;
 }
+
+/* V55.9 · Clasificación y búsqueda de invitaciones */
+.invitation-response-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:20px 0}
+.invitation-response-summary article{padding:16px;border:1px solid rgba(165,125,55,.25);border-radius:14px;background:#fffaf0;display:flex;flex-direction:column;gap:7px}
+.invitation-response-summary span{font-size:.84rem;color:#665d50}
+.invitation-response-summary strong{font-size:1.75rem;color:#173d63}
+.invitation-filter-bar{display:flex;align-items:end;flex-wrap:wrap;gap:14px;margin:16px 0 22px}
+.invitation-filter-bar label{display:flex;flex-direction:column;gap:7px;flex:1 1 230px;font-weight:600}
+.invitation-filter-bar input,.invitation-filter-bar select{width:100%;min-height:44px;padding:9px 12px;border:1px solid #d6c7af;border-radius:10px;background:#fff;color:#253344}
+#invitationFilterResult{font-size:.85rem;color:#6e6357;padding-bottom:10px}

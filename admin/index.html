@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=55.6">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=55.9-filtros">
 </head>
 <body>
   <main>
@@ -157,6 +157,29 @@
             <strong id="statInvitedChildren">0</strong>
           </article>
         </section>
+
+        <section class="invitation-response-summary" aria-label="Estado de confirmaciones">
+          <article><span>Invitaciones confirmadas</span><strong id="invConfirmedCount">0</strong></article>
+          <article><span>Invitaciones pendientes</span><strong id="invPendingCount">0</strong></article>
+          <article><span>Confirmados (personas)</span><strong id="invConfirmedPeople">0</strong></article>
+          <article><span>Pendientes de confirmar (personas)</span><strong id="invPendingPeople">0</strong></article>
+          <article><span>No asistirán (invitaciones)</span><strong id="invDeclinedCount">0</strong></article>
+        </section>
+        <div class="invitation-filter-bar">
+          <label for="invitationSearch">Buscar invitaciones
+            <input id="invitationSearch" type="search" placeholder="Nombre, teléfono o código" autocomplete="off">
+          </label>
+          <label for="invitationStatusFilter">Clasificar por estado
+            <select id="invitationStatusFilter">
+              <option value="all">Todas</option>
+              <option value="confirmed">Confirmadas</option>
+              <option value="pending">Pendientes</option>
+              <option value="partial">Parcialmente confirmadas</option>
+              <option value="declined">No asistirán</option>
+            </select>
+          </label>
+          <span id="invitationFilterResult" aria-live="polite"></span>
+        </div>
 
         <form id="invitationForm" class="invitation-form">
           <label>
@@ -489,6 +512,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=55.8-manual-verificacion"></script>
+  <script src="../js/admin-v21.js?v=55.9-filtros"></script>
 </body>
 </html>
