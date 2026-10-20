@@ -948,6 +948,11 @@ function renderInvitations() {
             Enviar por WhatsApp
           </a>
 
+          <button type="button" class="save-limits-button"
+                  data-manual-confirmation="${item.id}">
+            ${latestConfirmationForInvitation(item.codigo) ? "Editar confirmación" : "Confirmar asistencia manualmente"}
+          </button>
+
           <button type="button" class="danger-link"
                   data-delete-invitation="${item.id}">
             Eliminar
@@ -1131,7 +1136,93 @@ invitationList?.addEventListener("keydown", event => {
   if (button) saveInvitation(button);
 });
 
+// Confirmaciones realizadas desde el panel para invitados que no usan la web.
+// Se utiliza el mismo RPC que el formulario público para las altas, y PATCH
+// para editar la respuesta existente sin crear duplicados.
+async function manualInvitationConfirmation(id, button) {
+  const invitation = personalizedInvitations.find(item => String(item.id) === String(id));
+  if (!invitation) return;
+  const previous = latestConfirmationForInvitation(invitation.codigo);
+  const maxAdults = Number(invitation.adultos_max ?? invitation.max_personas ?? 1);
+  const maxChildren = Number(invitation.ninos_max ?? 0);
+  const attending = previous ? attendanceCategory(previous.asistencia) === "yes" : true;
+  const answer = prompt(
+    `Confirmación de ${invitation.nombre_mostrado}\n\n¿Asisten? Escribe SÍ o NO:`,
+    attending ? "SÍ" : "NO"
+  );
+  if (answer === null) return;
+  const normalizedAnswer = normalize(answer);
+  if (!["si", "sí", "no"].includes(normalizedAnswer)) {
+    alert("Escribe SÍ o NO."); return;
+  }
+  const yes = normalizedAnswer !== "no";
+  let adults = 0;
+  let children = 0;
+  if (yes) {
+    const a = prompt(`Adultos que asistirán (máximo ${maxAdults}):`, String(previous?.adultos ?? maxAdults));
+    if (a === null) return;
+    const c = prompt(`Niños que asistirán (máximo ${maxChildren}):`, String(previous?.ninos ?? maxChildren));
+    if (c === null) return;
+    adults = Number(a);
+    children = Number(c);
+    if (!Number.isInteger(adults) || !Number.isInteger(children) || adults < 0 || children < 0 ||
+        adults > maxAdults || children > maxChildren || adults + children < 1) {
+      alert(`Indica al menos una persona, sin superar ${maxAdults} adultos y ${maxChildren} niños.`);
+      return;
+    }
+  }
+  const note = prompt(
+    "Observaciones o menús especiales (opcional). Puedes dejarlo vacío:",
+    String(previous?.comentarios || "")
+  );
+  if (note === null) return;
+  const name = invitation.nombre_mostrado || "Invitado";
+  if (!confirm(`${name}\n${yes ? `Sí asisten: ${adults} adultos y ${children} niños` : "No asistirán"}\n\n¿Guardar confirmación?`)) return;
+
+  const oldLabel = button.textContent;
+  button.disabled = true;
+  button.textContent = "Guardando…";
+  invitationMessage.textContent = "Guardando confirmación manual…";
+  try {
+    if (previous) {
+      await api(`/rest/v1/confirmaciones_v24?id=eq.${encodeURIComponent(previous.id)}`, {
+        method: "PATCH",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          asistencia: yes ? "Sí" : "No", adultos, ninos: children,
+          comentarios: note.trim() || null
+        })
+      });
+    } else {
+      await api("/rest/v1/rpc/guardar_confirmacion_v24", {
+        method: "POST",
+        body: JSON.stringify({ datos: {
+          nombre: name,
+          telefono: invitation.telefono || "",
+          asistencia: yes ? "Sí" : "No",
+          codigo_invitacion: invitation.codigo,
+          adultos, ninos: children,
+          alergias: [], comentarios: note.trim()
+        } })
+      });
+    }
+    await loadGuests();
+    await loadInvitations();
+    invitationMessage.textContent = `Confirmación guardada para ${name}.`;
+  } catch (error) {
+    invitationMessage.textContent = `No se pudo guardar la confirmación: ${error.message}`;
+    button.disabled = false;
+    button.textContent = oldLabel;
+  }
+}
+
 invitationList?.addEventListener("click", event => {
+  const manualButton = event.target.closest("[data-manual-confirmation]");
+  if (manualButton) {
+    manualInvitationConfirmation(manualButton.dataset.manualConfirmation, manualButton);
+    return;
+  }
+
   const saveInvitationButton = event.target.closest("[data-save-invitation]");
   if (saveInvitationButton) {
     saveInvitation(saveInvitationButton);
