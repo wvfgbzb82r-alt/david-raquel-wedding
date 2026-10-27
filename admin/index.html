@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-v21.css?v=55.9-filtros">
+  <link rel="stylesheet" href="../css/admin-v21.css?v=55.11-regalos">
 </head>
 <body>
   <main>
@@ -430,7 +430,9 @@
 
         <section class="planning-stats" aria-label="Resumen de regalos">
           <article><span>Registros</span><strong id="giftCount">0</strong></article>
-          <article><span>Total recibido</span><strong id="giftTotal">0,00 €</strong></article>
+          <article><span>Dinero para cuentas finales</span><strong id="giftTotal">0,00 €</strong></article>
+          <article><span>Dinero separado</span><strong id="giftSeparate">0,00 €</strong></article>
+          <article><span>Regalos materiales</span><strong id="giftMaterial">0</strong></article>
           <article><span>Pendientes</span><strong id="giftPending">0</strong></article>
           <article><span>Agradecidos</span><strong id="giftThanked">0</strong></article>
         </section>
@@ -450,7 +452,15 @@
             </select>
           </label>
           <label>
-            <span>Importe (€)</span>
+            <span>Clasificación para las cuentas</span>
+            <select id="giftCategory" required>
+              <option value="dinero">Dinero para cuentas finales</option>
+              <option value="material">Regalo material (no suma dinero)</option>
+              <option value="separado">Dinero separado (no suma al total)</option>
+            </select>
+          </label>
+          <label>
+            <span>Importe (€; 0 para regalos materiales)</span>
             <input id="giftAmount" type="number" min="0" step="0.01" required>
           </label>
           <label>
@@ -476,7 +486,7 @@
         <div class="table-wrap">
           <table class="planning-table">
             <thead>
-              <tr><th>Fecha</th><th>Invitado</th><th>Tipo</th><th>Importe</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr>
+              <tr><th>Fecha</th><th>Invitado</th><th>Tipo</th><th>Clasificación</th><th>Importe</th><th>Estado</th><th>Notas</th><th>Acciones</th></tr>
             </thead>
             <tbody id="giftsTableBody"></tbody>
           </table>
@@ -512,6 +522,6 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=55.9-filtros"></script>
+  <script src="../js/admin-v21.js?v=55.11-regalos"></script>
 </body>
 </html>

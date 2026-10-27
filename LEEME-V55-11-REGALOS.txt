@@ -1,0 +1,5 @@
+1. Ejecuta SUPABASE-V55-11-CLASIFICACION-REGALOS.sql una vez en Supabase SQL Editor.
+2. Publica los archivos con GitHub Desktop (Commit y Push origin).
+3. En Admin > Regalos cambia la clasificación de los tres registros a Dinero separado.
+4. Registra las arras como Regalo material con importe 0 si no quieres asignar valor.
+5. Los regalos pendientes no suman en los importes recibidos.

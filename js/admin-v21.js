@@ -1894,13 +1894,18 @@ function giftStatusLabel(status) {
   })[status] || status;
 }
 
+function giftCategory(gift) { return gift.clasificacion || "dinero"; }
+function giftCategoryLabel(gift) { return ({dinero: "Dinero para cuentas", material: "Regalo material", separado: "Dinero separado"})[giftCategory(gift)] || giftCategory(gift); }
+
 function renderGifts() {
   const total = giftsData
-    .filter(gift => gift.estado !== "pendiente")
+    .filter(gift => gift.estado !== "pendiente" && giftCategory(gift) === "dinero")
     .reduce((sum, gift) => sum + Number(gift.importe || 0), 0);
 
   byId("giftCount").textContent = giftsData.length;
   byId("giftTotal").textContent = euroFormatter.format(total);
+  byId("giftSeparate").textContent = euroFormatter.format(giftsData.filter(g => g.estado !== "pendiente" && giftCategory(g) === "separado").reduce((sum,g) => sum + Number(g.importe || 0),0));
+  byId("giftMaterial").textContent = giftsData.filter(g => giftCategory(g) === "material").length;
   byId("giftPending").textContent =
     giftsData.filter(gift => gift.estado === "pendiente").length;
   byId("giftThanked").textContent =
@@ -1910,11 +1915,15 @@ function renderGifts() {
     <td>${escapeHtml(gift.fecha || "—")}</td>
     <td>${escapeHtml(gift.invitado)}</td>
     <td>${escapeHtml(gift.tipo)}</td>
+    <td>${escapeHtml(giftCategoryLabel(gift))}</td>
     <td>${euroFormatter.format(Number(gift.importe || 0))}</td>
     <td>${escapeHtml(giftStatusLabel(gift.estado))}</td>
     <td>${escapeHtml(gift.notas || "—")}</td>
     <td>
       ${gift.estado !== "agradecido" ? `<button type="button" data-thank-gift="${gift.id}">Agradecido</button>` : ""}
+      <select aria-label="Clasificación de ${escapeHtml(gift.invitado)}" data-gift-category="${gift.id}">
+        ${[["dinero","Dinero para cuentas"],["material","Regalo material"],["separado","Dinero separado"]].map(([value,label]) => `<option value="${value}" ${giftCategory(gift) === value ? "selected" : ""}>${label}</option>`).join("")}
+      </select>
       <button type="button" class="danger-link" data-delete-gift="${gift.id}">Eliminar</button>
     </td>
   </tr>`).join("");
@@ -1924,12 +1933,16 @@ function renderGifts() {
     <dl>
       <dt>Fecha</dt><dd>${escapeHtml(gift.fecha || "—")}</dd>
       <dt>Tipo</dt><dd>${escapeHtml(gift.tipo)}</dd>
+      <dt>Clasificación</dt><dd>${escapeHtml(giftCategoryLabel(gift))}</dd>
       <dt>Importe</dt><dd>${euroFormatter.format(Number(gift.importe || 0))}</dd>
       <dt>Estado</dt><dd>${escapeHtml(giftStatusLabel(gift.estado))}</dd>
       <dt>Notas</dt><dd>${escapeHtml(gift.notas || "—")}</dd>
     </dl>
     <div class="card-actions">
       ${gift.estado !== "agradecido" ? `<button type="button" data-thank-gift="${gift.id}">Marcar agradecido</button>` : ""}
+      <select aria-label="Clasificación de ${escapeHtml(gift.invitado)}" data-gift-category="${gift.id}">
+        ${[["dinero","Dinero para cuentas"],["material","Regalo material"],["separado","Dinero separado"]].map(([value,label]) => `<option value="${value}" ${giftCategory(gift) === value ? "selected" : ""}>${label}</option>`).join("")}
+      </select>
       <button type="button" class="danger-link" data-delete-gift="${gift.id}">Eliminar</button>
     </div>
   </article>`).join("");
@@ -1955,6 +1968,7 @@ byId("giftForm")?.addEventListener("submit", async event => {
     invitado: byId("giftGuest").value.trim(),
     tipo: byId("giftType").value,
     importe: Number(byId("giftAmount").value),
+    clasificacion: byId("giftCategory").value,
     fecha: byId("giftDate").value,
     estado: byId("giftStatus").value,
     notas: byId("giftNotes").value.trim() || null
@@ -1975,6 +1989,13 @@ byId("giftForm")?.addEventListener("submit", async event => {
 });
 
 function handleGiftAction(event) {
+  const category = event.target.closest("[data-gift-category]");
+  if (category) {
+    api(`/rest/v1/regalos_v54?id=eq.${category.dataset.giftCategory}`, {
+      method: "PATCH", headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({ clasificacion: category.value })
+    }).then(loadGifts).catch(error => { byId("giftsMessage").textContent = `No se pudo cambiar la clasificación: ${error.message}`; });
+  }
   const thank = event.target.closest("[data-thank-gift]");
   const remove = event.target.closest("[data-delete-gift]");
 
@@ -2000,6 +2021,8 @@ function handleGiftAction(event) {
 
 byId("giftsTableBody")?.addEventListener("click", handleGiftAction);
 byId("giftCards")?.addEventListener("click", handleGiftAction);
+byId("giftsTableBody")?.addEventListener("change", handleGiftAction);
+byId("giftCards")?.addEventListener("change", handleGiftAction);
 
 function downloadPlanningCsv(filename, headers, rows) {
   const escape = value => `"${String(value ?? "").replaceAll('"', '""')}"`;
@@ -2020,11 +2043,12 @@ function downloadPlanningCsv(filename, headers, rows) {
 function exportGiftsCsv() {
   downloadPlanningCsv(
     "regalos-david-raquel.csv",
-    ["Fecha", "Invitado", "Tipo", "Importe EUR", "Estado", "Notas"],
+    ["Fecha", "Invitado", "Tipo", "Clasificación", "Importe EUR", "Estado", "Notas"],
     giftsData.map(gift => [
       gift.fecha,
       gift.invitado,
       gift.tipo,
+      giftCategoryLabel(gift),
       Number(gift.importe || 0).toFixed(2),
       giftStatusLabel(gift.estado),
       gift.notas || ""
