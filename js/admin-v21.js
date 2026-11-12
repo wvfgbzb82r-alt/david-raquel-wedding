@@ -151,18 +151,42 @@ function filteredGuests() {
 }
 
 function updateStats() {
-  const attending = guests.filter(g => attendanceCategory(g.asistencia) === "yes");
-  const adults = attending.reduce((sum, guest) => sum + Number(guest.adultos || 0), 0);
-  const children = attending.reduce((sum, guest) => sum + Number(guest.ninos || 0), 0);
-  const specialMenus = attending.reduce((sum, guest) => sum + dietaryItems(guest.alergias).length, 0);
+  // Las invitaciones personalizadas son la fuente de verdad del resumen.
+  // Las filas antiguas de confirmaciones_v24 se conservan para consulta,
+  // pero no deben inflar el número actual de asistentes.
+  if (!invitationsLoaded) {
+    byId("confirmationStatsNote").textContent = "Cargando invitaciones para calcular el resumen actualizado…";
+    return;
+  }
 
-  byId("statTotal").textContent = guests.length;
-  byId("statYes").textContent = attending.length;
-  byId("statNo").textContent = guests.filter(g => attendanceCategory(g.asistencia) === "no").length;
+  let responded = 0, attending = 0, declined = 0;
+  let adults = 0, children = 0, specialMenus = 0;
+  for (const invitation of personalizedInvitations) {
+    const response = latestConfirmationForInvitation(invitation.codigo);
+    if (!response) continue;
+    responded++;
+    const category = attendanceCategory(response.asistencia);
+    if (category === "no") { declined++; continue; }
+    if (category !== "yes") continue;
+    attending++;
+    const maxAdults = Math.max(0, Number(invitation.adultos_max ?? invitation.max_personas ?? 1));
+    const maxChildren = Math.max(0, Number(invitation.ninos_max ?? 0));
+    adults += Math.min(maxAdults, Math.max(0, Number(response.adultos || 0)));
+    children += Math.min(maxChildren, Math.max(0, Number(response.ninos || 0)));
+    specialMenus += dietaryItems(response.alergias).length;
+  }
+
+  byId("statTotal").textContent = responded;
+  byId("statYes").textContent = attending;
+  byId("statNo").textContent = declined;
   byId("statAdults").textContent = adults;
   byId("statChildren").textContent = children;
   byId("statPeople").textContent = adults + children;
   byId("statAllergies").textContent = specialMenus;
+  byId("confirmationStatsNote").textContent =
+    `Resumen calculado con la última confirmación de cada invitación personalizada. ` +
+    `La tabla inferior conserva ${guests.length} respuestas históricas para consulta y edición; ` +
+    `puede incluir registros antiguos o sin invitación vinculada.`;
 }
 
 function statusPill(value) {
@@ -596,6 +620,7 @@ const invitationList = byId("invitationList");
 const invitationMessage = byId("invitationMessage");
 const refreshInvitationsButton = byId("refreshInvitationsButton");
 
+let invitationsLoaded = false;
 let personalizedInvitations = [];
 
 function weddingInvitationUrl() {
@@ -1020,8 +1045,11 @@ async function loadInvitations() {
       "/rest/v1/invitaciones_personalizadas" +
       "?select=*&order=created_at.desc"
     );
+    invitationsLoaded = true;
     renderInvitations();
+    updateStats();
   } catch (error) {
+    byId("confirmationStatsNote").textContent = "No se pudieron cargar las invitaciones; no es posible calcular el resumen fiable.";
     invitationMessage.textContent =
       `No se pudieron cargar las invitaciones: ${error.message}`;
   }
