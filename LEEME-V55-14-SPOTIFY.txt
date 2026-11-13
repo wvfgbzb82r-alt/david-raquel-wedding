@@ -1,0 +1,19 @@
+V55.14 — Sincronización manual con Spotify
+
+1. Abre https://developer.spotify.com/dashboard e inicia sesión con la cuenta propietaria de las dos playlists.
+2. Crea una aplicación Spotify (Web API). Copia su Client ID.
+3. En la configuración de esa aplicación, añade como Redirect URI exacta:
+   https://davidyraquel.es/admin/index.html
+   (si usas otro dominio, debe coincidir exactamente con la URL mostrada en el panel).
+4. En la sección Música del panel, pega el Client ID y pulsa Guardar ID.
+5. Pulsa Sincronizar comida o Sincronizar baile y autoriza el acceso en Spotify.
+6. Spotify vuelve al panel y comienza la sincronización. Repite con la otra lista.
+
+IMPORTANTE:
+- Spotify requiere acceso a la Web API. Algunas aplicaciones nuevas pueden estar sujetas a límites, requisitos de cuenta Premium o restricciones de desarrollo de Spotify.
+- No se necesita ni se debe pegar un Client Secret. OAuth PKCE funciona sin servidor.
+- Solo se añaden canciones identificadas por título y artista; las no encontradas se muestran para revisión.
+- No borra canciones de las playlists.
+- El token se guarda únicamente en sessionStorage de este navegador, el Client ID en localStorage.
+- Debes ser propietario de las playlists y autorizar la cuenta adecuada.
+- No se ha podido probar la sincronización real sin autorización de la cuenta Spotify.

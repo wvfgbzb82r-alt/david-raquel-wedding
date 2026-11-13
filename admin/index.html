@@ -497,8 +497,9 @@
       </section>
 
       <section id="musica" class="music-admin-section dashboard-anchor" aria-labelledby="musicAdminTitle">
-        <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="openDinnerSpotifyButton" type="button">Abrir cena en Spotify</button><button id="openDanceSpotifyButton" type="button">Abrir baile en Spotify</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
+        <div class="media-section__header"><div><p class="kicker">Nuestra banda sonora</p><h2 id="musicAdminTitle">Sugerencias musicales</h2></div><div class="header-actions"><button id="refreshMusicButton" type="button">Actualizar música</button><button id="openDinnerSpotifyButton" type="button">Abrir cena en Spotify</button><button id="openDanceSpotifyButton" type="button">Abrir baile en Spotify</button><button id="syncDinnerSpotifyButton" type="button">Sincronizar comida</button><button id="syncDanceSpotifyButton" type="button">Sincronizar baile</button><button id="exportMusicButton" type="button">Exportar CSV</button></div></div>
         <section class="music-stats"><article><span>Sugerencias</span><strong id="musicTotal">0</strong></article><article><span>Para la cena</span><strong id="musicDinner">0</strong></article><article><span>Para el baile</span><strong id="musicDance">0</strong></article><article><span>Canción más pedida</span><strong id="musicTop">—</strong></article></section>
+        <div class="spotify-sync-panel"><label for="spotifyClientId">Spotify Client ID (solo se configura una vez en este navegador)</label><div class="spotify-sync-config"><input id="spotifyClientId" type="text" placeholder="Pega el Client ID de Spotify Developer" autocomplete="off" spellcheck="false"><button id="spotifySaveClientId" type="button">Guardar ID</button><button id="spotifyDisconnect" type="button">Desconectar Spotify</button></div><p id="spotifySyncStatus" role="status" aria-live="polite">Para sincronizar, configura tu Client ID de Spotify y autoriza el acceso.</p></div>
         <p id="musicAdminMessage" class="dashboard-message" role="status" aria-live="polite"></p>
         <div class="table-wrap"><table class="music-table"><thead><tr><th>Fecha</th><th>Invitado</th><th>Canciones para la cena</th><th>Spotify cena</th><th>Canciones para el baile</th><th>Spotify baile</th><th>Acciones</th></tr></thead><tbody id="musicTableBody"></tbody></table></div>
         <div class="guest-cards" id="musicCards"></div>
@@ -524,6 +525,7 @@
       </section>
     </section>
   </main>
-  <script src="../js/admin-v21.js?v=55.13-spotify-playlists"></script>
+  <script src="../js/admin-v21.js?v=55.14-spotify-sync"></script>
+  <script src="../js/spotify-sync-v55-14.js?v=55.14"></script>
 </body>
 </html>
