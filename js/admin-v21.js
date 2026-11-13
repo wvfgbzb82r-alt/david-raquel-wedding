@@ -2163,47 +2163,14 @@ function spotifyListHtml(entries, label) {
 }
 
 function openSpotifySearches(moment) {
-  const entries = musicSuggestions.flatMap(item => songsFor(item, moment));
-  const unique = [];
-  const seen = new Set();
-
-  entries.forEach(entry => {
-    const key = normalizedSong(entry.song, entry.artist);
-    if (!seen.has(key)) {
-      seen.add(key);
-      unique.push(entry);
-    }
-  });
-
-  if (!unique.length) {
-    musicAdminMessage.textContent = moment === "dinner"
-      ? "Todavía no hay canciones para la cena."
-      : "Todavía no hay canciones para el baile.";
-    return;
-  }
-
-  window.open(
-    spotifySearchUrl(unique[0].song, unique[0].artist),
-    "_blank",
-    "noopener"
-  );
-
-  if (unique.length > 1) {
-    const remaining = unique.slice(1)
-      .map(entry => spotifySearchUrl(entry.song, entry.artist))
-      .join("\n");
-
-    navigator.clipboard?.writeText(remaining)
-      .then(() => {
-        musicAdminMessage.textContent =
-          `Se abrió la primera búsqueda y se copiaron ` +
-          `${unique.length - 1} enlaces más.`;
-      })
-      .catch(() => {
-        musicAdminMessage.textContent =
-          "Se abrió la primera búsqueda. Usa los botones para abrir el resto.";
-      });
-  }
+  const playlists = {
+    dinner: "https://open.spotify.com/playlist/2aYurgkcO1UGqYYoRZ5ul1",
+    dance: "https://open.spotify.com/playlist/0rMZPX9dYVs5jpnWma8LHs"
+  };
+  const url = playlists[moment];
+  if (!url) return;
+  // Abrir la playlist directamente, incluso si aún no hay sugerencias.
+  window.open(url, "_blank", "noopener,noreferrer");
 }
 
 function normalizedSong(song, artist) {
